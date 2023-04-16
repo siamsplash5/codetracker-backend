@@ -1,29 +1,28 @@
-// Dependencies
 const express = require('express');
 const dotenv = require('dotenv');
-const { getBody, getCsrf } = require('../utilites/helpers');
+const { login } = require('../utilites/login');
+// const { submit } = require('../utilites/submit');
 
+const app = express();
 dotenv.config();
 
-// Module scaffolding
-const app = express();
-
-// Creating a default router for our app
 app.get('/', (req, res) => {
     (async () => {
-        const url = 'https://codeforces.com/enter';
-        try {
-            const body = await getBody(url);
-            const csrf = getCsrf(body);
-            console.log(csrf);
-        } catch (error) {
-            console.error(error);
-        }
+        const userName = await login();
+        console.log(`Login Successful! Current User: ${userName}`);
+
+        res.send(userName);
     })();
-    res.send('Helle boi');
 });
 
-// Listening on port 5000
+// app.get('/submit', (req, res) => {
+//     (async () => {
+//         const msg = await submit();
+//         console.log('Submission successful');
+//         res.send(msg);
+//     })();
+// });
+
 app.listen(process.env.PORT, () => {
     console.log(`Listening on port ${process.env.PORT}`);
 });
