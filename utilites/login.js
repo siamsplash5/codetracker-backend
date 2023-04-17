@@ -1,7 +1,7 @@
 /* eslint-disable comma-dangle */
 const superagent = require('superagent').agent();
 const helper = require('./helper');
-const { submit } = require('./submit');
+const client = require('./client');
 
 async function login() {
     try {
@@ -18,13 +18,18 @@ async function login() {
             remember: 'on',
             _tta: 104,
         };
-        await superagent
+        const res = await superagent
             .post(process.env.CF_LOGIN_URL)
             .send(loginData)
             .set('Content-Type', 'application/x-www-form-urlencoded');
 
-        const resp = await submit(csrf, ftaa, bfaa);
-        return resp;
+        client.setSuperAgent(superagent);
+        client.setCsrf(csrf);
+        client.setFtaa(ftaa);
+        client.setBfaa(bfaa);
+        console.log(client);
+        const handle = await helper.getHandle(res.text);
+        return handle;
     } catch (error) {
         return error;
     }
