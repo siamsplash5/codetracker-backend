@@ -1,6 +1,4 @@
-const commonHelper = {};
-
-commonHelper.getRandomString = (len) => {
+const getRandomString = (len) => {
     const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
     const charactersLength = characters.length;
@@ -10,4 +8,4 @@ commonHelper.getRandomString = (len) => {
     return result;
 };
 
-module.exports = commonHelper;
+module.exports = getRandomString;

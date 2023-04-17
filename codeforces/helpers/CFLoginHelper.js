@@ -1,5 +1,5 @@
 const superagent = require('superagent');
-const { getRandomString } = require('./commonHelper');
+const getRandomString = require('../../helpers/randomStringGenerator');
 
 const helper = {};
 
