@@ -1,7 +1,7 @@
 /* eslint-disable comma-dangle */
 const superagent = require('superagent').agent();
-const helper = require('./helper');
-const client = require('./client');
+const helper = require('../../helpers/CFLoginHelper');
+const client = require('../../data/client');
 
 async function login() {
     try {
@@ -27,7 +27,7 @@ async function login() {
         client.setCsrf(csrf);
         client.setFtaa(ftaa);
         client.setBfaa(bfaa);
-        console.log(client);
+
         const handle = await helper.getHandle(res.text);
         return handle;
     } catch (error) {

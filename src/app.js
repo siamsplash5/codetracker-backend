@@ -1,7 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const { login } = require('../utilites/login');
-const { submit } = require('../utilites/submit');
+const { login } = require('../handlers/loginHandlers/CFLoginHandler');
+const { submit } = require('../handlers/submitHandlers/CFSubmitHandler');
 
 const app = express();
 dotenv.config();
@@ -16,7 +16,24 @@ app.get('/login', (req, res) => {
 
 app.get('/submit', (req, res) => {
     (async () => {
-        const msg = await submit();
+        const info = {
+            contestID: '4',
+            problemIndex: 'A',
+            langID: 73,
+            sourceCode: `
+            #include <bits/stdc++.h>
+using namespace std;
+int main() {
+    int w; cin >> w;
+    if(w % 2 == 0 && w > 2){
+        printf("YES");
+    }else{
+        printf("NO");
+    }
+}
+            `,
+        };
+        const msg = await submit(info);
         console.log('Submission successful');
         res.send(msg);
     })();

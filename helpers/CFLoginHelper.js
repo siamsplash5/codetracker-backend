@@ -1,4 +1,5 @@
 const superagent = require('superagent');
+const { getRandomString } = require('./commonHelper');
 
 const helper = {};
 
@@ -20,6 +21,10 @@ helper.getCsrf = async (url) => {
     return tmp[1];
 };
 
+helper.genFtaa = () => getRandomString(18);
+
+helper.genBfaa = () => getRandomString(32);
+
 helper.getHandle = (body) => {
     const reg = /handle = "([\s\S]+?)"/;
     const tmp = reg.exec(body);
@@ -28,19 +33,5 @@ helper.getHandle = (body) => {
     }
     return tmp[1];
 };
-
-helper.getRandomString = (len) => {
-    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    const charactersLength = characters.length;
-    for (let i = 0; i < len; i += 1) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-};
-
-helper.genFtaa = () => helper.getRandomString(18);
-
-helper.genBfaa = () => helper.getRandomString(32);
 
 module.exports = helper;
