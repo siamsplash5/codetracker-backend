@@ -3,15 +3,14 @@
 const client = require('../data/client');
 const helper = require('../helpers/CFSubmitHelper');
 
-async function submit(info) {
+async function cfSubmit(info) {
     try {
         const superagent = client.getSuperAgent();
         const csrf = client.getCsrf();
         const ftaa = client.getFtaa();
         const bfaa = client.getBfaa();
         const { contestID, problemIndex, langID, sourceCode } = info;
-        const submitUrl = `https://codeforces.com/contest/${contestID}/submit`;
-        const url = `${submitUrl}?csrf_token=${csrf}`;
+        const submitUrl = `https://codeforces.com/contest/${contestID}/submit?csrf_token=${csrf}`;
 
         const submitData = {
             csrf_token: csrf,
@@ -26,7 +25,7 @@ async function submit(info) {
         };
 
         const dashboard = await superagent
-            .post(url)
+            .post(submitUrl)
             .send(submitData)
             .set('Content-Type', 'application/x-www-form-urlencoded');
 
@@ -37,4 +36,4 @@ async function submit(info) {
     }
 }
 
-module.exports = { submit };
+module.exports = { cfSubmit };
