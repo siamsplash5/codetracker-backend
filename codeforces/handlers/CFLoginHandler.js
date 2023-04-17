@@ -1,7 +1,7 @@
 /* eslint-disable comma-dangle */
 const superagent = require('superagent').agent();
-const helper = require('../../helpers/CFLoginHelper');
-const client = require('../../data/client');
+const helper = require('../helpers/CFLoginHelper');
+const client = require('../data/client');
 
 async function login() {
     try {

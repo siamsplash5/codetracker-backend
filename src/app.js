@@ -1,12 +1,12 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const { login } = require('../handlers/loginHandlers/CFLoginHandler');
-const { submit } = require('../handlers/submitHandlers/CFSubmitHandler');
+const { login } = require('../codeforces/handlers/CFLoginHandler');
+const { submit } = require('../codeforces/handlers/CFSubmitHandler');
 
 const app = express();
 dotenv.config();
 
-app.get('/login', (req, res) => {
+app.get('/cflogin', (req, res) => {
     (async () => {
         const userName = await login();
         console.log(`Login Successful! Current User: ${userName}`);
@@ -14,7 +14,7 @@ app.get('/login', (req, res) => {
     })();
 });
 
-app.get('/submit', (req, res) => {
+app.get('/cfsubmit', (req, res) => {
     (async () => {
         const info = {
             contestID: '4',
@@ -25,7 +25,7 @@ app.get('/submit', (req, res) => {
 using namespace std;
 int main() {
     int w; cin >> w;
-    if(w % 2 == 0 && w > 2){
+    if(w % 2 == 0 && w > 3){
         printf("YES");
     }else{
         printf("NO");

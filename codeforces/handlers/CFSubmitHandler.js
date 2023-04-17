@@ -1,7 +1,7 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable comma-dangle */
-const client = require('../../data/client');
-const helper = require('../../helpers/CFSubmitHelper');
+const client = require('../data/client');
+const helper = require('../helpers/CFSubmitHelper');
 
 async function submit(info) {
     try {
