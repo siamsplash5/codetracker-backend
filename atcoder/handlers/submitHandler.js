@@ -1,6 +1,6 @@
 /* eslint-disable object-curly-newline */
 const client = require('../data/client');
-// const helper = require('../helpers/AtcoderSubmitHelper');
+// const helper = require('../helpers/submitHelper');
 
 async function atcoderSubmit(info) {
     try {

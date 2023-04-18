@@ -1,9 +1,10 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const { cfLogin } = require('../codeforces/handlers/CFLoginHandler');
-const { cfSubmit } = require('../codeforces/handlers/CFSubmitHandler');
-const { atcoderLogin } = require('../atcoder/handlers/AtcoderLoginHandler');
-const { atcoderSubmit } = require('../atcoder/handlers/AtcoderSubmitHandler');
+const { cfLogin } = require('../codeforces/handlers/loginHandler');
+const { cfSubmit } = require('../codeforces/handlers/submitHandler');
+const { atcoderLogin } = require('../atcoder/handlers/loginHandler');
+const { atcoderSubmit } = require('../atcoder/handlers/submitHandler');
+const { lightojLogin } = require('../lightoj/handlers/loginHandler');
 
 const app = express();
 dotenv.config();
@@ -85,6 +86,15 @@ int main() {
         const msg = await atcoderSubmit(info);
         console.log('Submission successful');
         res.send(msg);
+    })();
+});
+
+app.get('/lightoj/login', (req, res) => {
+    (async () => {
+        const userName = await lightojLogin();
+        // console.log(`LightOJ Login Successful! Current User: ${userName}`);
+        // res.send(`Logged in LightOJ as a ${userName}`);
+        res.send(userName);
     })();
 });
 

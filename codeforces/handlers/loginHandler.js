@@ -1,13 +1,13 @@
 /* eslint-disable comma-dangle */
-const helper = require('../helpers/CFLoginHelper');
+const helper = require('../helpers/loginHelper');
 const client = require('../data/client');
 
 async function cfLogin() {
     try {
         const csrf = await helper.getCsrf(process.env.CF_LOGIN_URL);
+        const superagent = client.getSuperAgent();
         const ftaa = await helper.genFtaa();
         const bfaa = await helper.genBfaa();
-        const superagent = client.getSuperAgent();
         const loginData = {
             csrf_token: csrf,
             action: 'enter',
@@ -18,6 +18,7 @@ async function cfLogin() {
             remember: 'on',
             _tta: 104,
         };
+
         const res = await superagent
             .post(process.env.CF_LOGIN_URL)
             .send(loginData)

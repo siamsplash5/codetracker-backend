@@ -1,15 +1,14 @@
 /* eslint-disable object-curly-newline */
-/* eslint-disable comma-dangle */
 const client = require('../data/client');
-const helper = require('../helpers/CFSubmitHelper');
+const helper = require('../helpers/submitHelper');
 
 async function cfSubmit(info) {
     try {
+        const { contestID, problemIndex, langID, sourceCode } = info;
         const superagent = client.getSuperAgent();
         const csrf = client.getCsrf();
         const ftaa = client.getFtaa();
         const bfaa = client.getBfaa();
-        const { contestID, problemIndex, langID, sourceCode } = info;
         const submitUrl = `https://codeforces.com/contest/${contestID}/submit?csrf_token=${csrf}`;
 
         const submitData = {
