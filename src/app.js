@@ -1,10 +1,13 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const client = require('../codechef/data/client');
 const { cfLogin } = require('../codeforces/handlers/loginHandler');
 const { cfSubmit } = require('../codeforces/handlers/submitHandler');
 const { atcoderLogin } = require('../atcoder/handlers/loginHandler');
 const { atcoderSubmit } = require('../atcoder/handlers/submitHandler');
 const { lightojLogin } = require('../lightoj/handlers/loginHandler');
+const { codechefLogin } = require('../codechef/handlers/loginHandler');
+const { codechefSubmit } = require('../codechef/handlers/submitHandler');
 
 const app = express();
 dotenv.config();
@@ -95,6 +98,37 @@ app.get('/lightoj/login', (req, res) => {
         // console.log(`LightOJ Login Successful! Current User: ${userName}`);
         // res.send(`Logged in LightOJ as a ${userName}`);
         res.send(userName);
+    })();
+});
+
+app.get('/codechef/login', (req, res) => {
+    (async () => {
+        const userName = await codechefLogin();
+        // console.log(userName);
+        res.send(userName);
+    })();
+});
+
+app.get('/codechef/dashboard', (req, res) => {
+    (async () => {
+        const superagent = client.getSuperAgent();
+        const dashboard = await superagent.get('https://www.codechef.com/users/bot_user_1/edit');
+        res.send(dashboard.text);
+    })();
+});
+
+app.get('/codechef/submit', (req, res) => {
+    (async () => {
+        const info = {
+            contestID: 'PRACTICE',
+            problemIndex: 'NTRIPLETS',
+            langID: '63',
+            sourceCode: 'Hello',
+        };
+        const msg = await codechefSubmit(info);
+        console.log(msg);
+        console.error(msg.stack);
+        res.send(msg);
     })();
 });
 
