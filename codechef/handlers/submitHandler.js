@@ -15,7 +15,7 @@ Error: Forbidden
 
 */
 const client = require('../data/client');
-const randomStringGenerator = require('../../helpers/randomStringGenerator');
+// const randomStringGenerator = require('../../helpers/randomStringGenerator');
 // const helper = require('../helpers/submitHelper');
 
 async function codechefSubmit(info) {

@@ -28,11 +28,10 @@ async function cfLogin() {
         client.setCsrf(csrf);
         client.setFtaa(ftaa);
         client.setBfaa(bfaa);
-
         const handle = await helper.getHandle(res.text);
         return handle;
     } catch (error) {
-        return error;
+        throw new Error(error);
     }
 }
 
