@@ -1,6 +1,7 @@
 /* eslint-disable comma-dangle */
 const express = require('express');
 const dotenv = require('dotenv');
+const superagent = require('superagent').agent();
 const client = require('../uva/data/client');
 const { cfLogin } = require('../codeforces/handlers/loginHandler');
 const { cfSubmit } = require('../codeforces/handlers/submitHandler');
@@ -14,6 +15,15 @@ const { timusSubmit } = require('../timus/submitHandler');
 
 const app = express();
 dotenv.config();
+
+app.get('/check', (req, res) => {
+    (async () => {
+        const html = await superagent.get(
+            'https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=9'
+        );
+        res.send(html.text);
+    })();
+});
 
 app.get('/codeforces/login', (req, res) => {
     (async () => {
@@ -142,8 +152,8 @@ app.get('/codechef/submit', (req, res) => {
 app.get('/uva/login', (req, res) => {
     (async () => {
         try {
-            const userName = await uvaLogin();
-            res.send(userName.text);
+            const homePageHTML = await uvaLogin();
+            res.send(homePageHTML);
         } catch (error) {
             console.log(error);
             res.send('Login failed');
@@ -153,13 +163,27 @@ app.get('/uva/login', (req, res) => {
 
 app.get('/uva/dashboard', (req, res) => {
     (async () => {
-        const superagent = client.getSuperAgent();
-        const dashboard = await superagent.get(
+        const myAgent = client.getSuperAgent();
+        const dashboard = await myAgent.get(
             'https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=15'
         );
         res.send(dashboard.text);
     })();
 });
+// app.get('/uva/submit', (req, res) => {
+//     (async () => {
+//         const info = {
+//             contestID: 'PRACTICE',
+//             problemIndex: 'NTRIPLETS',
+//             langID: '63',
+//             sourceCode: 'Hello',
+//         };
+//         const msg = await codechefSubmit(info);
+//         console.log(msg);
+//         console.error(msg.stack);
+//         res.send(msg);
+//     })();
+// });
 
 app.get('/timus/submit', (req, res) => {
     (async () => {
@@ -267,21 +291,6 @@ int main() {
         }
     })();
 });
-
-// app.get('/uva/submit', (req, res) => {
-//     (async () => {
-//         const info = {
-//             contestID: 'PRACTICE',
-//             problemIndex: 'NTRIPLETS',
-//             langID: '63',
-//             sourceCode: 'Hello',
-//         };
-//         const msg = await codechefSubmit(info);
-//         console.log(msg);
-//         console.error(msg.stack);
-//         res.send(msg);
-//     })();
-// });
 
 app.listen(process.env.PORT, () => {
     console.log(`Listening on port ${process.env.PORT}`);

@@ -1,34 +1,30 @@
 const superagent = require('superagent').agent();
+const cheerio = require('cheerio');
 const client = require('../data/client');
 
 const helper = {};
 
-helper.getBody = async (url) => {
-    const response = await superagent.get(url);
-    client.setSuperAgent(superagent);
-    if (!response.status === 200) {
-        return new Error('Unable to fetch CSRF token');
-    }
-    return response.text;
-};
+helper.getTokens = async (url) => {
+    try {
+        const res = await superagent.get(url);
+        if (res.status !== 200) {
+            throw new Error('Unable to get the html body');
+        }
+        const html = res.text;
+        const $ = cheerio.load(html);
+        const returnToken = $('input[name="return"]').attr('value');
+        const cbsecurityToken = $('input[name="cbsecuritym3"]').attr('value');
+        const unknownToken = $('input[value="1"]:eq(1)').attr('name');
 
-helper.getCsrf = async (url) => {
-    const body = await helper.getBody(url);
-    const reg = /var csrfToken = "(.*?)"/;
-    const tmp = reg.exec(body);
-    if (tmp && tmp.length < 2) {
-        throw new Error('Cannot find csrf');
+        client.setSuperAgent(superagent);
+        client.setReturnToken(returnToken);
+        client.setCbsecurityToken(cbsecurityToken);
+        client.setUnknownToken(unknownToken);
+        return '';
+    } catch (error) {
+        console.log(error);
+        return 'fetching cbsecuritym3 token failed';
     }
-    return tmp[1];
-};
-
-helper.getHandle = (body) => {
-    const reg = /userScreenName = "([\s\S]+?)"/;
-    const tmp = reg.exec(body);
-    if (tmp && tmp.length < 2) {
-        throw new Error('Cannot find handle');
-    }
-    return tmp[1];
 };
 
 module.exports = helper;
