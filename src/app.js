@@ -10,6 +10,8 @@ const { atcoderSubmit } = require('../atcoder/handlers/submitHandler');
 const { lightojLogin } = require('../lightoj/handlers/loginHandler');
 const { codechefLogin } = require('../codechef/handlers/loginHandler');
 const { codechefSubmit } = require('../codechef/handlers/submitHandler');
+const { spojLogin } = require('../spoj/handlers/loginHandler');
+const { spojSubmit } = require('../spoj/handlers/submitHandler');
 const { uvaLogin } = require('../uva/handlers/loginHandler');
 const { timusSubmit } = require('../timus/submitHandler');
 
@@ -18,10 +20,30 @@ dotenv.config();
 
 app.get('/check', (req, res) => {
     (async () => {
-        const html = await superagent.get(
-            'https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=9'
-        );
-        res.send(html.text);
+        // const html = await superagent.get('https://www.spoj.com/submit/complete/');
+        // res.send(html.text);
+        const code = String.raw`
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long int lld;
+#define test lld t; cin >>t; while(t--)
+
+#define m 100000007
+lld f[500005];
+int main() {
+    f[1] = 1;
+    f[2] = 1;
+    for (int i = 3; i <= 500000; i++) {
+        f[i] = (f[i - 1] % m + f[i - 2] % m) % m;
+    }
+    test{
+        lld n; scanf("%lld", &n);
+        printf("%lld\n", f[n]);
+    }
+    return 0;
+}`;
+        console.log(code);
+        res.send(code);
     })();
 });
 
@@ -284,6 +306,54 @@ int main() {
 `,
             });
             console.log(verdict);
+            res.send(verdict);
+        } catch (error) {
+            console.log(error);
+            res.send('Submission failed');
+        }
+    })();
+});
+
+app.get('/spoj/login', (req, res) => {
+    (async () => {
+        try {
+            const homePageHTML = await spojLogin();
+            res.send(homePageHTML);
+        } catch (error) {
+            console.log(error);
+            res.send('Login failed');
+        }
+    })();
+});
+
+app.get('/spoj/submit', (req, res) => {
+    (async () => {
+        try {
+            const code = String.raw`
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long int lld;
+#define test lld t; cin >>t; while(t--)
+
+#define m 100000007
+lld f[500005];
+int main() {
+    f[1] = 1;
+    f[2] = 1;
+    for (int i = 3; i <= 500000; i++) {
+        f[i] = (f[i - 1] % m + f[i - 2] % m) % m;
+    }
+    test{
+        lld n; scanf("%lld", &n);
+        printf("%lld\n", f[n]);
+    }
+    return 0;
+}`;
+            const verdict = await spojSubmit({
+                problemIndex: 'FIBEZ',
+                langID: 44,
+                sourceCode: code,
+            });
             res.send(verdict);
         } catch (error) {
             console.log(error);
