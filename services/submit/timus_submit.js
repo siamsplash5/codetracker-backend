@@ -1,6 +1,18 @@
-/* eslint-disable no-promise-executor-return */
-/* eslint-disable comma-dangle */
+/* eslint-disable prettier/prettier */
+/*
+
+Title: Timus Submission System
+Description: Submit to the acm.timus.ru by sending post request to their server.
+Receive: problemIndex (ex: 1000), langID, source code.
+Return: Verdict of that problem
+Author: Siam Ahmed
+Date: 24-04-2023
+
+*/
+
+// dependencies
 const superagent = require('superagent').agent();
+const randomStringGenerator = require('../../helpers/randomStringGenerator');
 // const cheerio = require('cheerio');
 
 // async function sleep(ms) {
@@ -40,12 +52,20 @@ const superagent = require('superagent').agent();
 //     };
 // }
 
+// submit the solution to the acm.timus.ru, no login required
 async function timusSubmit(info) {
     try {
         const { problemIndex, langID, sourceCode } = info;
         const submitUrl = 'https://acm.timus.ru/submit.aspx?space=1';
+        const formToken = randomStringGenerator({
+            lowerCase: true,
+            upperCase: true,
+            numbers: true,
+            specialChar: false,
+            stringLen: 16,
+        });
 
-        const dashboard = await superagent
+        const res = await superagent
             .post(submitUrl)
             .field('Action', 'submit')
             .field('SpaceID', 1)
@@ -56,13 +76,17 @@ async function timusSubmit(info) {
             .field('SourceFile', '(binary)')
             .set(
                 'content-type',
-                'multipart/form-data; boundary=----WebKitFormBoundaryfhQA8c1YoBm4cWgh'
+                `multipart/form-data; boundary=----WebKitFormBoundary${formToken}`,
             );
+
+        if (res.status !== 200 && res.status !== 301 && res.status !== 302) {
+            throw new Error(`SPOJ submit failed, status code ${res.status}`);
+        }
         // const verdict = await getVerdict();
         // return verdict;
-        return dashboard.text;
+        return res;
     } catch (error) {
-        return error;
+        throw new Error(error);
     }
 }
 

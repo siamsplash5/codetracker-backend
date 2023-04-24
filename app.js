@@ -6,16 +6,16 @@ const mongoose = require('mongoose');
 
 // const client = require('../uva/data/client');
 // const { codeforcesLogin } = require('./services/login/codeforces_login');
-// const { codeforcesSubmit } = require('./services/submission/codeforces_submit');
+// const { codeforcesSubmit } = require('./services/submit/codeforces_submit');
 // const { atcoderLogin } = require('./services/login/atcoder_login');
-// const { atcoderSubmit } = require('./services/submission/atcoder_submit');
+// const { atcoderSubmit } = require('./services/submit/atcoder_submit');
 // const { lightojLogin } = require('../lightoj/handlers/loginHandler');
 // const { codechefLogin } = require('../codechef/handlers/loginHandler');
 // const { codechefSubmit } = require('../codechef/handlers/submitHandler');
-// const { spojLogin } = require('../spoj/handlers/loginHandler');
-// const { spojSubmit } = require('../spoj/handlers/submitHandler');
+const { spojLogin } = require('./services/login/spoj_login');
+const { spojSubmit } = require('./services/submit/spoj_submit');
 // const { uvaLogin } = require('../uva/handlers/loginHandler');
-// const { timusSubmit } = require('../timus/submitHandler');
+// const { timusSubmit } = require('./services/submission/timus_submit');
 
 const app = express();
 dotenv.config();
@@ -212,7 +212,6 @@ app.get('/uva/dashboard', (req, res) => {
         res.send(dashboard.text);
     })();
 });
-// app.get('/uva/submit', (req, res) => {
 //     (async () => {
 //         const info = {
 //             contestID: 'PRACTICE',
@@ -227,7 +226,7 @@ app.get('/uva/dashboard', (req, res) => {
 //     })();
 // });
 
-app.get('/timus/submit', (req, res) => {
+app.get('/timus/submit', (req, res, next) => {
     (async () => {
         try {
             const verdict = await timusSubmit({
@@ -328,25 +327,23 @@ int main() {
             console.log(verdict);
             res.send(verdict);
         } catch (error) {
-            console.log(error);
-            res.send('Submission failed');
+            next(error);
         }
     })();
 });
 
-app.get('/spoj/login', (req, res) => {
+app.get('/spoj/login', (req, res, next) => {
     (async () => {
         try {
             const homePageHTML = await spojLogin();
             res.send(homePageHTML);
         } catch (error) {
-            console.log(error);
-            res.send('Login failed');
+            next(error);
         }
     })();
 });
 
-app.get('/spoj/submit', (req, res) => {
+app.get('/spoj/submit', (req, res, next) => {
     (async () => {
         try {
             const code = String.raw`
@@ -369,15 +366,14 @@ int main() {
     }
     return 0;
 }`;
-            const verdict = await spojSubmit({
+            const resp = await spojSubmit({
                 problemIndex: 'FIBEZ',
                 langID: 44,
                 sourceCode: code,
             });
-            res.send(verdict);
+            res.send(resp);
         } catch (error) {
-            console.log(error);
-            res.send('Submission failed');
+            next(error);
         }
     })();
 });
