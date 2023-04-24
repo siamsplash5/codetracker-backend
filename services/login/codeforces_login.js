@@ -9,7 +9,7 @@ Date: 24-04-2023
 
 // dependencies
 const superagent = require('superagent').agent();
-const getRandomString = require('../../helpers/randomStringGenerator');
+const getRandomString = require('../../lib/randomStringGenerator');
 const client = require('../db_controllers/codeforces_client');
 
 // get csrf, bfaa, ftaa tokens for getting authenticate

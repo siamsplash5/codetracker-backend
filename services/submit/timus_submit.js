@@ -12,7 +12,7 @@ Date: 24-04-2023
 
 // dependencies
 const superagent = require('superagent').agent();
-const randomStringGenerator = require('../../helpers/randomStringGenerator');
+const randomStringGenerator = require('../../lib/randomStringGenerator');
 // const cheerio = require('cheerio');
 
 // async function sleep(ms) {

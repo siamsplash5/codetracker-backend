@@ -12,7 +12,7 @@ Date: 24-04-2023
 
 // dependencies
 const client = require('../db_controllers/spoj_client');
-const randomStringGenerator = require('../../helpers/randomStringGenerator');
+const randomStringGenerator = require('../../lib/randomStringGenerator');
 
 // submit the received solution to the judge
 async function spojSubmit(info) {
