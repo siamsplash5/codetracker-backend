@@ -2,22 +2,36 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const superagent = require('superagent').agent();
-const client = require('../uva/data/client');
-const { cfLogin } = require('../codeforces/handlers/loginHandler');
-const { cfSubmit } = require('../codeforces/handlers/submitHandler');
-const { atcoderLogin } = require('../atcoder/handlers/loginHandler');
-const { atcoderSubmit } = require('../atcoder/handlers/submitHandler');
-const { lightojLogin } = require('../lightoj/handlers/loginHandler');
-const { codechefLogin } = require('../codechef/handlers/loginHandler');
-const { codechefSubmit } = require('../codechef/handlers/submitHandler');
-const { spojLogin } = require('../spoj/handlers/loginHandler');
-const { spojSubmit } = require('../spoj/handlers/submitHandler');
-const { uvaLogin } = require('../uva/handlers/loginHandler');
-const { timusSubmit } = require('../timus/submitHandler');
+const mongoose = require('mongoose');
+
+// const client = require('../uva/data/client');
+// const { codeforcesLogin } = require('./services/login/codeforces_login');
+// const { codeforcesSubmit } = require('./services/submission/codeforces_submit');
+// const { atcoderLogin } = require('./services/login/atcoder_login');
+// const { atcoderSubmit } = require('./services/submission/atcoder_submit');
+// const { lightojLogin } = require('../lightoj/handlers/loginHandler');
+// const { codechefLogin } = require('../codechef/handlers/loginHandler');
+// const { codechefSubmit } = require('../codechef/handlers/submitHandler');
+// const { spojLogin } = require('../spoj/handlers/loginHandler');
+// const { spojSubmit } = require('../spoj/handlers/submitHandler');
+// const { uvaLogin } = require('../uva/handlers/loginHandler');
+// const { timusSubmit } = require('../timus/submitHandler');
 
 const app = express();
 dotenv.config();
 
+// database connection with mongoose
+mongoose
+    .connect(process.env.MONGO_CONNECTION_STRING)
+    .then(() => {
+        console.log('Mongoose connection successful');
+        app.listen(process.env.PORT, () => {
+            console.log(`Listening on port ${process.env.PORT}`);
+        });
+    })
+    .catch(console.error);
+
+// routes
 app.get('/check', (req, res) => {
     (async () => {
         // const html = await superagent.get('https://www.spoj.com/submit/complete/');
@@ -47,48 +61,54 @@ int main() {
     })();
 });
 
-app.get('/codeforces/login', (req, res) => {
+app.get('/codeforces/login', (req, res, next) => {
     (async () => {
         try {
-            const userName = await cfLogin();
-            res.send(`CF Login Successful! Current User: ${userName}`);
+            const homePageHTML = await codeforcesLogin();
+            res.send(homePageHTML);
         } catch (error) {
-            console.log(error);
-            res.send('Login failed');
+            next(error);
         }
     })();
 });
 
-app.get('/codeforces/submit', (req, res) => {
+app.get('/codeforces/submit', (req, res, next) => {
     (async () => {
-        const info = {
-            contestID: '4',
-            problemIndex: 'A',
-            langID: 73,
-            sourceCode: `
+        try {
+            const info = {
+                contestID: '4',
+                problemIndex: 'A',
+                langID: 73,
+                sourceCode: `
 #include <bits/stdc++.h>
 using namespace std;
 int main() {
     int w; cin >> w;
-    if(w % 2 == 0 && w > 1){
+    if(w % 2 == 0 && w > 0){
         printf("YES");
     }else{
         cout <<"NO" <<endl;
     }
 }
             `,
-        };
-        const msg = await cfSubmit(info);
-        console.log('Submission successful');
-        res.send(msg);
+            };
+            const msg = await codeforcesSubmit(info);
+            console.log('Submission successful');
+            res.send(msg);
+        } catch (error) {
+            next(error);
+        }
     })();
 });
 
-app.get('/atcoder/login', (req, res) => {
+app.get('/atcoder/login', (req, res, next) => {
     (async () => {
-        const userName = await atcoderLogin();
-        console.log(`Atcoder Login Successful! Current User: ${userName}`);
-        res.send(`Logged in Atcoder as a ${userName}`);
+        try {
+            const homePageHTML = await (await atcoderLogin()).text;
+            res.send(homePageHTML);
+        } catch (err) {
+            next(err);
+        }
     })();
 });
 
@@ -362,6 +382,13 @@ int main() {
     })();
 });
 
-app.listen(process.env.PORT, () => {
-    console.log(`Listening on port ${process.env.PORT}`);
+app.use((err, req, res, next) => {
+    if (req.headersSent) {
+        next('There is a problem. Header already sent!');
+    }
+    if (err.message) {
+        res.status(500).send(err.message);
+    } else {
+        res.status(500).send('There is a server side error');
+    }
 });

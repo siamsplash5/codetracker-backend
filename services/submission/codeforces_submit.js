@@ -1,8 +1,23 @@
-/* eslint-disable object-curly-newline */
-const client = require('../data/client');
-const helper = require('../helpers/submitHelper');
+/*
 
-async function cfSubmit(info) {
+Title: Codeforces Submission System
+Description: Submit to the codeforces.com by sending post request to their server.
+Receive: contest id (ex: 1667), problemIndex (ex: a, b, c), langID, source code.
+Return: Verdict of that problem
+Author: Siam Ahmed
+Date: 24-04-2023
+
+*/
+
+// dependencies
+const client = require('../db_controllers/codeforces_client');
+
+// get verdict idea
+// after submit user html will contain the submission ID,
+// you can parse the website with that submission id
+
+// submit the received source code to the codeforces server
+async function codeforcesSubmit(info) {
     try {
         const { contestID, problemIndex, langID, sourceCode } = info;
         const superagent = client.getSuperAgent();
@@ -23,16 +38,15 @@ async function cfSubmit(info) {
             _tta: 104,
         };
 
-        const dashboard = await superagent
+        const res = await superagent
             .post(submitUrl)
             .send(submitData)
             .set('Content-Type', 'application/x-www-form-urlencoded');
 
-        const verdict = helper.getVerdict(dashboard.text);
-        return verdict;
+        return res;
     } catch (error) {
         return error;
     }
 }
 
-module.exports = { cfSubmit };
+module.exports = { codeforcesSubmit };
