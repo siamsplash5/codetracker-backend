@@ -8,12 +8,12 @@ const mongoose = require('mongoose');
 // const { codeforcesLogin } = require('./services/login/codeforces_login');
 // const { codeforcesSubmit } = require('./services/submit/codeforces_submit');
 // const { atcoderLogin } = require('./services/login/atcoder_login');
-// const { atcoderSubmit } = require('./services/submit/atcoder_submit');
+const { atcoderSubmit } = require('./services/submit/atcoder_submit');
 // const { lightojLogin } = require('../lightoj/handlers/loginHandler');
 // const { codechefLogin } = require('../codechef/handlers/loginHandler');
 // const { codechefSubmit } = require('../codechef/handlers/submitHandler');
-const { spojLogin } = require('./services/login/spoj_login');
-const { spojSubmit } = require('./services/submit/spoj_submit');
+// const { spojLogin } = require('./services/login/spoj_login');
+// const { spojSubmit } = require('./services/submit/spoj_submit');
 // const { uvaLogin } = require('../uva/handlers/loginHandler');
 // const { timusSubmit } = require('./services/submission/timus_submit');
 
@@ -34,30 +34,7 @@ mongoose
 // routes
 app.get('/check', (req, res) => {
     (async () => {
-        // const html = await superagent.get('https://www.spoj.com/submit/complete/');
-        // res.send(html.text);
-        const code = String.raw`
-#include <bits/stdc++.h>
-using namespace std;
-typedef long long int lld;
-#define test lld t; cin >>t; while(t--)
-
-#define m 100000007
-lld f[500005];
-int main() {
-    f[1] = 1;
-    f[2] = 1;
-    for (int i = 3; i <= 500000; i++) {
-        f[i] = (f[i - 1] % m + f[i - 2] % m) % m;
-    }
-    test{
-        lld n; scanf("%lld", &n);
-        printf("%lld\n", f[n]);
-    }
-    return 0;
-}`;
-        console.log(code);
-        res.send(code);
+        res.send('hello checker');
     })();
 });
 
@@ -79,13 +56,13 @@ app.get('/codeforces/submit', (req, res, next) => {
                 contestID: '4',
                 problemIndex: 'A',
                 langID: 73,
-                sourceCode: `
+                sourceCode: String.raw`
 #include <bits/stdc++.h>
 using namespace std;
 int main() {
     int w; cin >> w;
-    if(w % 2 == 0 && w > 0){
-        printf("YES");
+    if(w % 2 == 0 && w > 4){
+        printf("YES\n");
     }else{
         cout <<"NO" <<endl;
     }
@@ -104,7 +81,7 @@ int main() {
 app.get('/atcoder/login', (req, res, next) => {
     (async () => {
         try {
-            const homePageHTML = await (await atcoderLogin()).text;
+            const homePageHTML = await atcoderLogin();
             res.send(homePageHTML);
         } catch (err) {
             next(err);
@@ -118,7 +95,7 @@ app.get('/atcoder/submit', (req, res) => {
             contestID: 'abc065',
             problemIndex: 'b',
             langID: 4003,
-            sourceCode: `
+            sourceCode: String.raw`
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long int lld;
@@ -126,7 +103,7 @@ typedef long long int lld;
 int main() {
     lld n; cin >> n;
     lld a[n + 2];
-    bool mark[n + 2] = {false};
+    bool mark[n + 2] = {0};
     for (int i = 1; i <= n; i++) {
         cin >> a[i];
     }
@@ -137,7 +114,7 @@ int main() {
             op = -1;
             break;
         }
-        mark[pos] = true;
+        mark[pos] = 1;
         pos = a[pos];
         op++;
     }
