@@ -11,12 +11,24 @@ Date: 24-04-2023
 */
 
 // dependencies
-const client = require('../db_controllers/spoj_client');
+const superagent = require('superagent').agent();
+const bot = require('../db_controllers/queries/auth_data_query');
 const randomStringGenerator = require('../../lib/randomStringGenerator');
+const { spojLogin } = require('../login/spoj_login');
+
+async function isLogin(username) {
+    const url = 'https://www.spoj.com/';
+    const res = await superagent.get(url);
+    if (!res.status === 200) {
+        throw new Error('Atcoder Connection Error');
+    }
+    return res.text.includes(username);
+}
 
 // submit the received solution to the judge
 async function spojSubmit(info) {
     try {
+        const { problemIndex, langID, sourceCode } = info;
         const submitUrl = 'https://www.spoj.com/submit/complete/';
         const formToken = randomStringGenerator({
             lowerCase: true,
@@ -25,8 +37,24 @@ async function spojSubmit(info) {
             specialChar: false,
             stringLen: 16,
         });
-        const superagent = client.getSuperAgent();
-        const { problemIndex, langID, sourceCode } = info;
+
+        let botInfo = await bot.readInfo('bot_user_1', 'spoj');
+        const { username, password, spojCredentials } = botInfo;
+
+         // If cookie exist, set cookie, then we will check it is expired or not
+        if (spojCredentials.cookie.length >= 2) {
+            superagent.jar.setCookies(spojCredentials.cookie);
+        }
+
+        // check user login or not
+        if ((await isLogin(username)) === false) {
+            await spojLogin(username, password);
+            botInfo = await bot.readInfo(username, 'spoj');
+        }
+
+        const { cookie } = botInfo.spojCredentials;
+        superagent.jar.setCookies(cookie);
+
         const submitData = {
             subm_file: '(binary)',
             file: sourceCode,

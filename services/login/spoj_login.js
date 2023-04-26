@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /*
 
 Title: SPOJ Login System
@@ -9,17 +10,21 @@ Date: 24-04-2023
 
 // dependencies
 const superagent = require('superagent').agent();
-const client = require('../db_controllers/spoj_client');
+const { decryptPassword } = require('../../lib/encryption');
+const bot = require('../db_controllers/queries/auth_data_query');
 
 // login to spoj.com by sending required data
-async function spojLogin() {
+async function spojLogin(username, encryptedPassword) {
     try {
+        console.log('spoj login called');
         const loginUrl = 'https://www.spoj.com/login/';
+        const decryptedPassword = decryptPassword(encryptedPassword, process.env.SECRET_KEY);
+
         const loginData = {
             next_raw: '/',
             autologin: 1,
-            login_user: process.env.BOT_USERNAME,
-            password: process.env.BOT_PASSWORD,
+            login_user: username,
+            password: decryptedPassword,
         };
         const res = await superagent
             .post(loginUrl)
@@ -29,9 +34,16 @@ async function spojLogin() {
         if (res.status !== 200 && res.status !== 301 && res.status !== 302) {
             throw new Error(`SphereOJ login failed, status code ${res.status}`);
         }
-        client.setSuperAgent(superagent);
 
-        console.log(superagent.jar.getCookies(loginUrl).toString());
+        const cookieHeader = res.req._header
+            .split('\r\n')
+            .find((header) => header.startsWith('Cookie: '));
+        const newCookie = cookieHeader.split(': ')[1];
+
+        await bot.updateInfo(username, 'spoj', {
+            cookie: newCookie,
+        });
+
         return res;
     } catch (error) {
         throw new Error(error);

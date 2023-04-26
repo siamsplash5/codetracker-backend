@@ -13,6 +13,9 @@ Date: 24-04-2023
 // dependencies
 const superagent = require('superagent').agent();
 const randomStringGenerator = require('../../lib/randomStringGenerator');
+const { decryptPassword } = require('../../lib/encryption');
+const bot = require('../db_controllers/queries/auth_data_query');
+
 // const cheerio = require('cheerio');
 
 // async function sleep(ms) {
@@ -64,12 +67,15 @@ async function timusSubmit(info) {
             specialChar: false,
             stringLen: 16,
         });
+        const data = await bot.readInfo('bot_user_1', 'timus');
+        console.log(data.timusCredentials.judgeID);
+        const judgeID = decryptPassword(data.timusCredentials.judgeID, process.env.SECRET_KEY);
 
         const res = await superagent
             .post(submitUrl)
             .field('Action', 'submit')
             .field('SpaceID', 1)
-            .field('JudgeID', process.env.TIMUS_JUDGE_ID)
+            .field('JudgeID', judgeID)
             .field('Language', langID)
             .field('ProblemNum', problemIndex)
             .field('Source', sourceCode)

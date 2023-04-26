@@ -3,8 +3,9 @@ const express = require('express');
 const dotenv = require('dotenv').config();
 // const superagent = require('superagent').agent();
 const mongoose = require('mongoose');
+const { encryptPassword } = require('./lib/encryption');
 // const crypto = require('crypto');
-// const client = require('./services/db_controllers/cf');
+const client = require('./services/db_controllers/spoj_client');
 // const { codeforcesLogin } = require('./services/login/codeforces_login');
 const { codeforcesSubmit } = require('./services/submit/codeforces_submit');
 // const { atcoderLogin } = require('./services/login/atcoder_login');
@@ -12,10 +13,10 @@ const { atcoderSubmit } = require('./services/submit/atcoder_submit');
 // const { lightojLogin } = require('../lightoj/handlers/loginHandler');
 // const { codechefLogin } = require('../codechef/handlers/loginHandler');
 // const { codechefSubmit } = require('../codechef/handlers/submitHandler');
-// const { spojLogin } = require('./services/login/spoj_login');
-// const { spojSubmit } = require('./services/submit/spoj_submit');
+const { spojLogin } = require('./services/login/spoj_login');
+const { spojSubmit } = require('./services/submit/spoj_submit');
 // const { uvaLogin } = require('../uva/handlers/loginHandler');
-// const { timusSubmit } = require('./services/submission/timus_submit');
+const { timusSubmit } = require('./services/submit/timus_submit');
 
 const app = express();
 
@@ -34,7 +35,7 @@ mongoose
 app.get('/check', (req, res) => {
     (async () => {
         const superagent = client.getSuperAgent();
-        const html = await superagent.get('https://codeforces.com/');
+        const html = await superagent.get('https://www.spoj.com/');
         res.send(html.text);
     })();
 });
@@ -304,7 +305,6 @@ int main() {
 }
 `,
             });
-            console.log(verdict);
             res.send(verdict);
         } catch (error) {
             next(error);
@@ -316,6 +316,7 @@ app.get('/spoj/login', (req, res, next) => {
     (async () => {
         try {
             const homePageHTML = await spojLogin();
+            // console.log(homePageHTML);
             res.send(homePageHTML);
         } catch (error) {
             next(error);
