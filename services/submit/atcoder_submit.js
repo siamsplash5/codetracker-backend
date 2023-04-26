@@ -11,7 +11,7 @@ Date: 24-04-2023
 
 // dependencies
 const superagent = require('superagent').agent();
-const bot = require('../db_controllers/atcoder_bot');
+const bot = require('../db_controllers/queries/auth_data_query');
 const { atcoderLogin } = require('../login/atcoder_login');
 
 async function isLogin(username) {
@@ -34,27 +34,28 @@ async function atcoderSubmit(info) {
     try {
         const { contestID, problemIndex, langID, sourceCode } = info;
         const submitUrl = `https://atcoder.jp/contests/${contestID}/submit`;
-        let botInfo = await bot.getInfo('bot_user_1');
+        let botInfo = await bot.readInfo('bot_user_1', 'atcoder');
+        const { username, password, atcoderCredentials } = botInfo;
 
-        if (typeof botInfo.atcoderCookie !== 'undefined') {
-            superagent.jar.setCookies(botInfo.atcoderCookie);
+        // If cookie exist, set cookie, then we will check it is expired or not
+        if (atcoderCredentials.cookie.length >= 2) {
+            superagent.jar.setCookies(atcoderCredentials.cookie);
         }
 
         // check user login or not
-        if (typeof botInfo.username === 'undefined' || isLogin(botInfo.username) === false) {
-            await atcoderLogin(botInfo.username, botInfo.password);
-            botInfo = await bot.getInfo('bot_user_1');
-            superagent.jar.setCookies(botInfo.atcoderCookie);
+        if ((await isLogin(username)) === false) {
+            await atcoderLogin(username, password);
+            botInfo = await bot.readInfo(username, 'atcoder');
         }
+        const { csrf, cookie } = botInfo.atcoderCredentials;
+        superagent.jar.setCookies(cookie);
 
         const submitData = {
             'data.TaskScreenName': `${contestID}_${problemIndex}`,
             'data.LanguageId': langID,
             sourceCode,
-            csrf_token: botInfo.atcoderCsrf,
+            csrf_token: csrf,
         };
-
-        // console.log(submitData);
 
         const res = await superagent
             .post(submitUrl)
@@ -68,6 +69,7 @@ async function atcoderSubmit(info) {
         // const verdict = helper.getVerdict(dashboard.text);
         return res;
     } catch (error) {
+        console.log(error.message);
         throw new Error(error);
     }
 }

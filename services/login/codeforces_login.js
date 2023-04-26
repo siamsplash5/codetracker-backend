@@ -10,12 +10,13 @@ Date: 24-04-2023
 // dependencies
 const superagent = require('superagent').agent();
 const getRandomString = require('../../lib/randomStringGenerator');
-const client = require('../db_controllers/codeforces_client');
+const { decryptPassword } = require('../../lib/encryption');
+// const bot = require('../db_controllers/cf');
+const bot = require('../db_controllers/queries/auth_data_query');
 
 // get csrf, bfaa, ftaa tokens for getting authenticate
 async function getCsrfToken(url) {
     const res = await superagent.get(url);
-    client.setSuperAgent(superagent);
     if (!res.status === 200) {
         throw new Error('Codeforces server side error');
     }
@@ -48,23 +49,33 @@ function createBfaaToken() {
     });
 }
 
+function extractCookie(str) {
+    const regex = /"cookie":\s*"([^"]+)"/;
+    const match = str.match(regex);
+    return match ? match[1] : '';
+}
+
 // login to codeforces.com by sending necessary data
-async function codeforcesLogin() {
+async function codeforcesLogin(username, encryptedPassword) {
     try {
         const loginUrl = 'https://codeforces.com/enter?back=%2F';
+        console.log(167);
         const csrf = await getCsrfToken(loginUrl);
         const ftaa = createFtaaToken();
         const bfaa = createBfaaToken();
+        const decryptedPassword = decryptPassword(encryptedPassword, process.env.SECRET_KEY);
         const loginData = {
             csrf_token: csrf,
             action: 'enter',
             ftaa,
             bfaa,
-            handleOrEmail: process.env.BOT_USERNAME,
-            password: process.env.BOT_PASSWORD,
+            handleOrEmail: username,
+            password: decryptedPassword,
             remember: 'on',
             _tta: 104,
         };
+
+        console.log(loginData);
 
         const res = await superagent
             .post(loginUrl)
@@ -76,10 +87,16 @@ async function codeforcesLogin() {
         }
 
         // replace by db
-        client.setSuperAgent(superagent);
-        client.setCsrf(csrf);
-        client.setFtaa(ftaa);
-        client.setBfaa(bfaa);
+
+        const resString = JSON.stringify(res).substring(0, 200);
+        const cookie = extractCookie(resString);
+
+        await bot.updateInfo(username, 'codeforces', {
+            csrf,
+            ftaa,
+            bfaa,
+            cookie,
+        });
 
         return res;
     } catch (error) {

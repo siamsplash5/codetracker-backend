@@ -30,6 +30,8 @@ async function spojLogin() {
             throw new Error(`SphereOJ login failed, status code ${res.status}`);
         }
         client.setSuperAgent(superagent);
+
+        console.log(superagent.jar.getCookies(loginUrl).toString());
         return res;
     } catch (error) {
         throw new Error(error);

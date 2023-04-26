@@ -10,7 +10,7 @@ Date: 24-04-2023
 // dependencies
 const superagent = require('superagent').agent();
 const { decryptPassword } = require('../../lib/encryption');
-const bot = require('../db_controllers/atcoder_bot');
+const bot = require('../db_controllers/queries/auth_data_query');
 
 // get csrf token from the website to authenticate login process
 async function getCsrfToken(url) {
@@ -31,13 +31,13 @@ async function getCsrfToken(url) {
 async function atcoderLogin(username, encryptedPassword) {
     try {
         const loginUrl = 'https://atcoder.jp/login?continue=https%3A%2F%2Fatcoder.jp%2F';
-        const newCsrf = await getCsrfToken(loginUrl);
+        const csrf = await getCsrfToken(loginUrl);
         const decryptedPassword = decryptPassword(encryptedPassword, process.env.SECRET_KEY);
 
         const loginData = {
             username,
             password: decryptedPassword,
-            csrf_token: newCsrf,
+            csrf_token: csrf,
         };
 
         const res = await superagent
@@ -49,11 +49,10 @@ async function atcoderLogin(username, encryptedPassword) {
             throw new Error(`Atcoder login failed, status code ${res.status}`);
         }
 
-        const newCookie = res.headers['set-cookie'];
-        bot.updateBot({
-            username,
-            newCsrf,
-            newCookie,
+        const cookie = res.headers['set-cookie'];
+        await bot.updateInfo(username, 'atcoder', {
+            csrf,
+            cookie,
         });
 
         return res;

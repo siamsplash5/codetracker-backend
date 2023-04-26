@@ -1,14 +1,14 @@
 /* eslint-disable comma-dangle */
 const express = require('express');
-const dotenv = require('dotenv');
-const superagent = require('superagent').agent();
+const dotenv = require('dotenv').config();
+// const superagent = require('superagent').agent();
 const mongoose = require('mongoose');
-
-// const client = require('../uva/data/client');
-// const { codeforcesLogin } = require('./services/login/codeforces_login');
-// const { codeforcesSubmit } = require('./services/submit/codeforces_submit');
+// const crypto = require('crypto');
+// const client = require('./services/db_controllers/cf');
+const { codeforcesLogin } = require('./services/login/codeforces_login');
+const { codeforcesSubmit } = require('./services/submit/codeforces_submit');
 // const { atcoderLogin } = require('./services/login/atcoder_login');
-const { atcoderSubmit } = require('./services/submit/atcoder_submit');
+// const { atcoderSubmit } = require('./services/submit/atcoder_submit');
 // const { lightojLogin } = require('../lightoj/handlers/loginHandler');
 // const { codechefLogin } = require('../codechef/handlers/loginHandler');
 // const { codechefSubmit } = require('../codechef/handlers/submitHandler');
@@ -18,7 +18,6 @@ const { atcoderSubmit } = require('./services/submit/atcoder_submit');
 // const { timusSubmit } = require('./services/submission/timus_submit');
 
 const app = express();
-dotenv.config();
 
 // database connection with mongoose
 mongoose
@@ -34,7 +33,9 @@ mongoose
 // routes
 app.get('/check', (req, res) => {
     (async () => {
-        res.send('hello checker');
+        const superagent = client.getSuperAgent();
+        const html = await superagent.get('https://codeforces.com/');
+        res.send(html.text);
     })();
 });
 
@@ -53,19 +54,22 @@ app.get('/codeforces/submit', (req, res, next) => {
     (async () => {
         try {
             const info = {
-                contestID: '4',
+                contestID: '71',
                 problemIndex: 'A',
                 langID: 73,
                 sourceCode: String.raw`
-#include <bits/stdc++.h>
+#include <iostream>
 using namespace std;
 int main() {
-    int w; cin >> w;
-    if(w % 2 == 0 && w > 4){
-        printf("YES\n");
-    }else{
-        cout <<"NO" <<endl;
-    }
+    const int m = 10;
+    int test; cin >> test;
+    do {
+        string s; cin >> s;
+        int n = s.size();
+        if (n <= m) cout << s << endl;
+        else cout << s[0] << n - 2 << s[n - 1] << endl;
+    } while (--test);
+    return 0;
 }
             `,
             };
@@ -107,18 +111,18 @@ int main() {
     for (int i = 1; i <= n; i++) {
         cin >> a[i];
     }
-    lld op = 0, pos = 1;
+    lld c = 0, pos = 1;
     while (1) {
         if (pos == 2)break;
         if (mark[pos]) {
-            op = -1;
+            c = -1;
             break;
         }
         mark[pos] = 1;
         pos = a[pos];
-        op++;
+        c++;
     }
-    cout << op << endl;
+    cout << c << endl;
     return 0;
 }`,
         };
