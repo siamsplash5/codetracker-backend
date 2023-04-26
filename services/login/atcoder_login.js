@@ -30,6 +30,7 @@ async function getCsrfToken(url) {
 // login to the website sending post request to their server
 async function atcoderLogin(username, encryptedPassword) {
     try {
+        console.log('Atcoder Login called');
         const loginUrl = 'https://atcoder.jp/login?continue=https%3A%2F%2Fatcoder.jp%2F';
         const csrf = await getCsrfToken(loginUrl);
         const decryptedPassword = decryptPassword(encryptedPassword, process.env.SECRET_KEY);

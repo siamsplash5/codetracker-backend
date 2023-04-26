@@ -58,6 +58,7 @@ function extractCookie(str) {
 // login to codeforces.com by sending necessary data
 async function codeforcesLogin(username, encryptedPassword) {
     try {
+        console.log('Codeforces Login called');
         const loginUrl = 'https://codeforces.com/enter?back=%2F';
         console.log(167);
         const csrf = await getCsrfToken(loginUrl);

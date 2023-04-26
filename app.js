@@ -5,10 +5,10 @@ const dotenv = require('dotenv').config();
 const mongoose = require('mongoose');
 // const crypto = require('crypto');
 // const client = require('./services/db_controllers/cf');
-const { codeforcesLogin } = require('./services/login/codeforces_login');
+// const { codeforcesLogin } = require('./services/login/codeforces_login');
 const { codeforcesSubmit } = require('./services/submit/codeforces_submit');
 // const { atcoderLogin } = require('./services/login/atcoder_login');
-// const { atcoderSubmit } = require('./services/submit/atcoder_submit');
+const { atcoderSubmit } = require('./services/submit/atcoder_submit');
 // const { lightojLogin } = require('../lightoj/handlers/loginHandler');
 // const { codechefLogin } = require('../codechef/handlers/loginHandler');
 // const { codechefSubmit } = require('../codechef/handlers/submitHandler');
@@ -54,21 +54,20 @@ app.get('/codeforces/submit', (req, res, next) => {
     (async () => {
         try {
             const info = {
-                contestID: '71',
-                problemIndex: 'A',
+                contestID: '1822',
+                problemIndex: 'C',
                 langID: 73,
                 sourceCode: String.raw`
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
+typedef long long int ll;
+#define test int tt; scanf("%d", &tt); while(tt--)
 int main() {
-    const int m = 10;
-    int test; cin >> test;
-    do {
-        string s; cin >> s;
-        int n = s.size();
-        if (n <= m) cout << s << endl;
-        else cout << s[0] << n - 2 << s[n - 1] << endl;
-    } while (--test);
+    test{
+        ll n; cin >> n;
+        ll ans = (n + 1) * (n + 1) + 1;
+        cout << ans << endl;
+    }
     return 0;
 }
             `,

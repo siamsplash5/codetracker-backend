@@ -41,7 +41,7 @@ async function codeforcesSubmit(info) {
         const { contestID, problemIndex, langID, sourceCode } = info;
 
         let botInfo = await bot.readInfo('bot_user_1', 'codeforces');
-        console.log('45');
+
         const { username, password, codeforcesCredentials } = botInfo;
         // If cookie exist, set cookie, then we will check it is expired or not
         if (codeforcesCredentials.cookie.length > 2) {
@@ -51,12 +51,10 @@ async function codeforcesSubmit(info) {
 
         // check the user login or not
         if ((await isLogin(username)) === false) {
-            console.log(61);
             await codeforcesLogin(username, password);
-            console.log(63);
             botInfo = await bot.readInfo(username, 'codeforces');
         }
-        console.log(botInfo);
+
         const { csrf, ftaa, bfaa, cookie } = botInfo.codeforcesCredentials;
         superagent.jar.setCookies(cookie);
 
