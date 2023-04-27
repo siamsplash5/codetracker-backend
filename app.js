@@ -6,15 +6,16 @@ const mongoose = require('mongoose');
 // const { encryptPassword } = require('./lib/encryption');
 // const crypto = require('crypto');
 // const { codeforcesLogin } = require('./services/login/codeforces_login');
-const { codeforcesSubmit } = require('./services/submit/codeforces_submit');
-const watchCodeforcesVerdict = require('./services/watch-verdict/codeforces_verdict')
+// const { codeforcesSubmit } = require('./services/submit/codeforces_submit');
+// const watchCodeforcesVerdict = require('./services/watch-verdict/codeforces_verdict')
 // const { atcoderLogin } = require('./services/login/atcoder_login');
-const { atcoderSubmit } = require('./services/submit/atcoder_submit');
+// const { atcoderSubmit } = require('./services/submit/atcoder_submit');
 // const { lightojLogin } = require('../lightoj/handlers/loginHandler');
 // const { codechefLogin } = require('../codechef/handlers/loginHandler');
 // const { codechefSubmit } = require('../codechef/handlers/submitHandler');
 // const { spojLogin } = require('./services/login/spoj_login');
 const { spojSubmit } = require('./services/submit/spoj_submit');
+const watchSPOJVerdict = require('./services/watch-verdict/spoj_verditc');
 // const { uvaLogin } = require('../uva/handlers/loginHandler');
 const { timusSubmit } = require('./services/submit/timus_submit');
 
@@ -35,8 +36,8 @@ mongoose
 app.get('/check', (req, res) => {
     (async () => {
         // const superagent = client.getSuperAgent();
-        // const html = await superagent.get('https://www.spoj.com/');
-        res.send('hello');
+        // const html = await superagent.get('https://www.spoj.com/status/');
+        res.send(html.text);
     })();
 });
 
@@ -358,12 +359,15 @@ int main() {
     }
     return 0;
 }`;
-            const resp = await spojSubmit({
+            const watchInfo = await spojSubmit({
                 problemIndex: 'FIBEZ',
                 langID: 44,
                 sourceCode: code,
             });
-            res.send(resp);
+            console.log('Submission successful');
+            const status = await watchSPOJVerdict(watchInfo);
+            console.log(status);
+            res.send(status);
         } catch (error) {
             next(error);
         }

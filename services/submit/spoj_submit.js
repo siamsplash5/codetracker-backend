@@ -12,15 +12,30 @@ Date: 24-04-2023
 
 // dependencies
 const superagent = require('superagent').agent();
+const cheerio = require('cheerio');
 const bot = require('../db_controllers/queries/auth_data_query');
 const randomStringGenerator = require('../../lib/randomStringGenerator');
 const { spojLogin } = require('../login/spoj_login');
 
+function getSubmissionID(html) {
+    try {
+        const $ = cheerio.load(html);
+        const input = $('input[name="newSubmissionId"]');
+        const submissionID = input.attr('value');
+        if (submissionID !== null) {
+            return submissionID;
+        }
+        throw new Error('submission ID not found');
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
 async function isLogin(username) {
     const url = 'https://www.spoj.com/';
     const res = await superagent.get(url);
-    if (!res.status === 200) {
-        throw new Error('Atcoder Connection Error');
+    if (res.status !== 200) {
+        throw new Error('SPOJ Connection Error');
     }
     return res.text.includes(username);
 }
@@ -62,19 +77,21 @@ async function spojSubmit(info) {
             problemcode: problemIndex,
             submit: 'Submit!',
         };
-        const res = await superagent
-            .post(submitUrl)
-            .field(submitData)
-            .set(
-                'content-type',
-                `multipart/form-data; boundary=----WebKitFormBoundary${formToken}`,
-            );
+        // const res = await superagent
+        //     .post(submitUrl)
+        //     .field(submitData)
+        //     .set(
+        //         'content-type',
+        //         `multipart/form-data; boundary=----WebKitFormBoundary${formToken}`,
+        //     );
 
-        if (res.status !== 200 && res.status !== 301 && res.status !== 302) {
-            throw new Error(`SPOJ submit failed, status code ${res.status}`);
-        }
-        // const verdict = helper.getVerdict(dashboard.text);
-        return res;
+        // if (res.status !== 200 && res.status !== 301 && res.status !== 302) {
+        //     throw new Error(`SPOJ submit failed, status code ${res.status}`);
+        // }
+
+        // const submissionID = getSubmissionID(res.text);
+        const submissionID = '31246777';
+        return { superagent, username, submissionID };
     } catch (error) {
         throw new Error(error);
     }
