@@ -10,16 +10,16 @@ function getStatus(html, submissionID) {
     const $ = cheerio.load(html);
     const tr = $(`tr[data-submission-id=${submissionID}]`);
     if (tr.length) {
-        const info = {}; // object to store submission info
-        info.submissionId = tr.find('.id-cell a').text().trim();
-        info.timestamp = tr.find('.format-time').text().trim();
-        info.username = tr.find('.status-party-cell a').text().trim();
-        info.problem = tr.find('.status-small a').text().trim();
-        info.language = tr.find(':nth-child(5)').text().trim();
-        info.verdict = tr.find('.submissionVerdictWrapper').text().trim();
-        info.time = tr.find('.time-consumed-cell').text().trim();
-        info.memory = tr.find('.memory-consumed-cell').text().trim();
-        return info;
+        const status = {}; // object to store submission status
+        status.submissionId = tr.find('.id-cell a').text().trim();
+        status.timestamp = tr.find('.format-time').text().trim();
+        status.username = tr.find('.status-party-cell a').text().trim();
+        status.problem = tr.find('.status-small a').text().trim();
+        status.language = tr.find(':nth-child(5)').text().trim();
+        status.verdict = tr.find('.submissionVerdictWrapper').text().trim();
+        status.time = tr.find('.time-consumed-cell').text().trim();
+        status.memory = tr.find('.memory-consumed-cell').text().trim();
+        return status;
     }
     return null;
 }

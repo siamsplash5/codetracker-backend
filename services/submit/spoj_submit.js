@@ -77,20 +77,19 @@ async function spojSubmit(info) {
             problemcode: problemIndex,
             submit: 'Submit!',
         };
-        // const res = await superagent
-        //     .post(submitUrl)
-        //     .field(submitData)
-        //     .set(
-        //         'content-type',
-        //         `multipart/form-data; boundary=----WebKitFormBoundary${formToken}`,
-        //     );
+        const res = await superagent
+            .post(submitUrl)
+            .field(submitData)
+            .set(
+                'content-type',
+                `multipart/form-data; boundary=----WebKitFormBoundary${formToken}`,
+            );
 
-        // if (res.status !== 200 && res.status !== 301 && res.status !== 302) {
-        //     throw new Error(`SPOJ submit failed, status code ${res.status}`);
-        // }
+        if (res.status !== 200 && res.status !== 301 && res.status !== 302) {
+            throw new Error(`SPOJ submit failed, status code ${res.status}`);
+        }
 
-        // const submissionID = getSubmissionID(res.text);
-        const submissionID = '31246777';
+        const submissionID = getSubmissionID(res.text);
         return { superagent, username, submissionID };
     } catch (error) {
         throw new Error(error);
