@@ -82,6 +82,9 @@ async function codeforcesSubmit(info) {
             .send(submitData)
             .set('Content-Type', 'application/x-www-form-urlencoded');
 
+        if (res.status !== 200 && res.status !== 301 && res.status !== 302) {
+            throw new Error(`Codeforces submit failed, status code ${res.status}`);
+        }
         const submissionID = getSubmissionID(res.text);
         return { superagent, contestID, submissionID };
     } catch (error) {

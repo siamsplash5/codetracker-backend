@@ -18,6 +18,7 @@ const { spojSubmit } = require('./services/submit/spoj_submit');
 const watchSPOJVerdict = require('./services/watch-verdict/spoj_verditc');
 // const { uvaLogin } = require('../uva/handlers/loginHandler');
 const { timusSubmit } = require('./services/submit/timus_submit');
+const watchTimusVerdict = require('./services/watch-verdict/timus_verdict');
 
 const app = express();
 
@@ -222,102 +223,108 @@ app.get('/uva/dashboard', (req, res) => {
 app.get('/timus/submit', (req, res, next) => {
     (async () => {
         try {
-            const verdict = await timusSubmit({
-                problemIndex: 1848,
+            const submitInfo = {
+                problemIndex: 1005,
                 langID: 68,
-                sourceCode: `/******************************Templates***********************************/
+                sourceCode: `
+/*********************************Library Function*************************************/
 
 #include <bits/stdc++.h>
-using namespace std;
 
+/*******************************preprocessor directives********************************/
+
+#define faster                    ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
+#define initialize(ar, n, size)   for(int i = 0;  i<size; i++){ ar[i]=n; }
+#define strRevSort(s)             sort(s.begin(), s.end(), greater<char>());
+#define tab(n)                    for(int i = 0; i<n; i++){printf(" ");}
 #define test                      lld t; cin >>t; while(t--)
+#define strSort(s)                sort(s.begin(), s.end());
+#define cs(tst)                   printf("Case %d: ", tst);
 #define Y                         cout <<"YES" <<endl;
 #define N                         cout <<"NO" <<endl;
-#define dbug                      cout <<"dukse" <<endl;
-#define lcm(x, y)                 (x*y)/__gcd(x, y)
-#define pi                        acos(-1)
-#define fst                       first
-#define snd                       second
+#define noo                       cout <<"-1" <<endl;
+#define pi a                      cos(-1)
 #define cube(x)                   (x*x*x)
+#define sqr(x)                    (x*x)
 #define pb                        push_back
-#define mp                        make_pair
-#define bi                        binary_search()
-#define ms                        100005
+#define MAX                       1100
 #define GR                        1.61803398875
-#define eps                       1e-9
-#define mod                       1000000007
-#define eulerNumber               2.718281828
+#define EPS                       1e-9
 
-typedef unsigned long long        ull;
-typedef long long int             lld;
+/***********************************type definition***********************************/
 
-/*****************************----START----*******************************/
+typedef unsigned long long   ull;
+typedef long long int        lld;
+typedef long double          ld;
+using namespace std;
 
-lld tree[ms * 3];
-lld pos, num;
-void update(int node, int b, int e) {
-	if (pos<b or pos>e)
-		return;
-	if (b == e and b == pos) {
-		tree[node] = num;
+int i, j;
+
+/***********************************----START----************************************/
+
+int ara[25];
+int n, mn = 10e7 + 6;
+
+void backtrack(int pos, int sum, std::vector<bool> isTaken)
+{
+	if (pos == n)
+	{
+		int sum1 = 0;
+		for (int i = 0; i < n; i++)
+		{
+			if (isTaken[i])
+				sum1 += ara[i];
+		}
+
+		int sum2 = sum - sum1;
+
+		mn = min(mn, abs(sum1 - sum2));
 		return;
 	}
-	lld left = 2 * node;
-	lld right = 2 * node + 1;
-	lld mid = (b + e) / 2;
-	update(left, b, mid);
-	update(right, mid + 1, e);
-	tree[node] = __gcd(tree[left], tree[right]);
+
+	backtrack(pos + 1, sum, isTaken);
+	isTaken[pos] = true;
+	backtrack(pos + 1, sum, isTaken);
 }
 
-void solve() {
-	lld q; cin >> q;
-	lld add = 0, rmv = 0;
-	lld idx = 1;
-	std::map<lld, std::vector<lld> > umap;
-	memset(tree, 0, sizeof(tree));
-	while (q--) {
-		char ch;
-		cin >> ch >> num;
-		if (ch == '-') {
-			rmv++;
-			pos = umap[num].back();
-			umap[num].pop_back();
-			num = 0;
-		}
-		else {
-			add++;
-			umap[num].push_back(idx);
-			pos = idx;
-		}
-		if (add == rmv) {
-			cout << 1 << endl;
-			continue;
-		}
-		idx++;
-		update(1, 1, ms);
-		cout << tree[1] << endl;
+void solve()
+{
+	cin >> n;
+	lld sum = 0;
+	for (int i = 0; i < n; ++i)
+	{
+		cin >> ara[i];
+		sum += ara[i];
 	}
+	std::vector<bool> isTaken(n, false);
+	backtrack(0, sum, isTaken);
+	cout << mn << endl;
 }
 
-int main() {
+int main()
+{
+
 #ifndef ONLINE_JUDGE
 	clock_t tStart = clock();
 	freopen("input.txt", "r", stdin);
 	freopen("output.txt", "w", stdout);
 #endif
-	ios_base::sync_with_stdio(false); cin.tie(NULL); cout.tie(NULL);
 
 	solve();
 
 #ifndef ONLINE_JUDGE
 	fprintf(stderr, "\n>> Runtime: %.10fs\n", (double) (clock() - tStart) / CLOCKS_PER_SEC);
 #endif
+
 	return 0;
 }
+
 `,
-            });
-            res.send(verdict);
+            };
+            const watchInfo = await timusSubmit(submitInfo);
+            console.log('Submission successful');
+            const status = await watchTimusVerdict(watchInfo);
+            res.send(status);
         } catch (error) {
             next(error);
         }
