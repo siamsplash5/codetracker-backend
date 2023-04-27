@@ -15,11 +15,18 @@ const superagent = require('superagent').agent();
 const bot = require('../db_controllers/queries/auth_data_query');
 const { codeforcesLogin } = require('../login/codeforces_login');
 
-// get verdict idea
-// after submit user html will contain the submission ID,
-// you can parse the website with that submission id
-
-// submit the received source code to the codeforces server
+function getSubmissionID(html) {
+    try {
+        const regex = /data-submission-id="(\d+)"/;
+        const match = html.match(regex);
+        if (match) {
+            return match[1];
+        }
+        throw new Error('submission ID not found');
+    } catch (error) {
+        throw new Error(error);
+    }
+}
 
 async function isLogin(username) {
     const url = 'https://codeforces.com/';
@@ -45,7 +52,6 @@ async function codeforcesSubmit(info) {
         const { username, password, codeforcesCredentials } = botInfo;
         // If cookie exist, set cookie, then we will check it is expired or not
         if (codeforcesCredentials.cookie.length > 2) {
-            console.log('54');
             superagent.jar.setCookies(codeforcesCredentials.cookie);
         }
 
@@ -76,7 +82,8 @@ async function codeforcesSubmit(info) {
             .send(submitData)
             .set('Content-Type', 'application/x-www-form-urlencoded');
 
-        return res;
+        const submissionID = getSubmissionID(res.text);
+        return { superagent, contestID, submissionID };
     } catch (error) {
         return error;
     }

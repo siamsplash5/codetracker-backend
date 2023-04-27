@@ -3,17 +3,17 @@ const express = require('express');
 const dotenv = require('dotenv').config();
 // const superagent = require('superagent').agent();
 const mongoose = require('mongoose');
-const { encryptPassword } = require('./lib/encryption');
+// const { encryptPassword } = require('./lib/encryption');
 // const crypto = require('crypto');
-const client = require('./services/db_controllers/spoj_client');
 // const { codeforcesLogin } = require('./services/login/codeforces_login');
 const { codeforcesSubmit } = require('./services/submit/codeforces_submit');
+const watchCodeforcesVerdict = require('./services/watch-verdict/codeforces_verdict')
 // const { atcoderLogin } = require('./services/login/atcoder_login');
 const { atcoderSubmit } = require('./services/submit/atcoder_submit');
 // const { lightojLogin } = require('../lightoj/handlers/loginHandler');
 // const { codechefLogin } = require('../codechef/handlers/loginHandler');
 // const { codechefSubmit } = require('../codechef/handlers/submitHandler');
-const { spojLogin } = require('./services/login/spoj_login');
+// const { spojLogin } = require('./services/login/spoj_login');
 const { spojSubmit } = require('./services/submit/spoj_submit');
 // const { uvaLogin } = require('../uva/handlers/loginHandler');
 const { timusSubmit } = require('./services/submit/timus_submit');
@@ -34,9 +34,9 @@ mongoose
 // routes
 app.get('/check', (req, res) => {
     (async () => {
-        const superagent = client.getSuperAgent();
-        const html = await superagent.get('https://www.spoj.com/');
-        res.send(html.text);
+        // const superagent = client.getSuperAgent();
+        // const html = await superagent.get('https://www.spoj.com/');
+        res.send('hello');
     })();
 });
 
@@ -54,28 +54,39 @@ app.get('/codeforces/login', (req, res, next) => {
 app.get('/codeforces/submit', (req, res, next) => {
     (async () => {
         try {
-            const info = {
+            const submitInfo = {
                 contestID: '1822',
-                problemIndex: 'C',
+                problemIndex: 'B',
                 langID: 73,
                 sourceCode: String.raw`
 #include <bits/stdc++.h>
 using namespace std;
-typedef long long int ll;
-#define test int tt; scanf("%d", &tt); while(tt--)
-int main() {
-    test{
-        ll n; cin >> n;
-        ll ans = (n + 1) * (n + 1) + 1;
-        cout << ans << endl;
-    }
-    return 0;
+
+#define DIM 51
+
+int q;
+int n;
+long long a[DIM];
+
+void koo(){
+    sort(a,a+n);
+    cout << max(a[0]*a[1],a[n-1]*a[n-2]) << "\n";
 }
-            `,
+
+int main() {
+    ios_base::sync_with_stdio(0); cin.tie(0); cout.tie(0);
+    cin >> q;
+    while (q--) {
+        cin >> n;
+        for (int i = 0; i < n; i++) cin >> a[i];
+        koo();
+    }
+}`,
             };
-            const msg = await codeforcesSubmit(info);
+            const watchInfo = await codeforcesSubmit(submitInfo);
             console.log('Submission successful');
-            res.send(msg);
+            const status = await watchCodeforcesVerdict(watchInfo);
+            res.send(status);
         } catch (error) {
             next(error);
         }
