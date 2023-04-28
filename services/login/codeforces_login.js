@@ -105,4 +105,4 @@ async function codeforcesLogin(username, encryptedPassword) {
     }
 }
 
-module.exports = { codeforcesLogin };
+module.exports = codeforcesLogin;

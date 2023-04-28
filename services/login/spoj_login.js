@@ -50,4 +50,4 @@ async function spojLogin(username, encryptedPassword) {
     }
 }
 
-module.exports = { spojLogin };
+module.exports = spojLogin;

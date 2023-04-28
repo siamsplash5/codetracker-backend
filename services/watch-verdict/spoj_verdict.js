@@ -42,6 +42,7 @@ async function watchSPOJVerdict(submissionInfo) {
         }
         await sleep(2000);
     }
+    console.log(status);
     return status;
 }
 

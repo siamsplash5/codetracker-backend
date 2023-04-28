@@ -15,7 +15,7 @@ const superagent = require('superagent').agent();
 const cheerio = require('cheerio');
 const bot = require('../db_controllers/queries/auth_data_query');
 const randomStringGenerator = require('../../lib/randomStringGenerator');
-const { spojLogin } = require('../login/spoj_login');
+const spojLogin = require('../login/spoj_login');
 
 function getSubmissionID(html) {
     try {
@@ -96,4 +96,4 @@ async function spojSubmit(info) {
     }
 }
 
-module.exports = { spojSubmit };
+module.exports = spojSubmit;

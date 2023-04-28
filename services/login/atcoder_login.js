@@ -62,4 +62,4 @@ async function atcoderLogin(username, encryptedPassword) {
     }
 }
 
-module.exports = { atcoderLogin };
+module.exports = atcoderLogin;

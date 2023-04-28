@@ -75,4 +75,4 @@ async function timusSubmit(info) {
     }
 }
 
-module.exports = { timusSubmit };
+module.exports = timusSubmit;

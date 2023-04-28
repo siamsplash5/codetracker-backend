@@ -11,9 +11,8 @@ Date: 24-04-2023
 
 // dependencies
 const superagent = require('superagent').agent();
-// const bot = require('../db_controllers/cf');
 const bot = require('../db_controllers/queries/auth_data_query');
-const { codeforcesLogin } = require('../login/codeforces_login');
+const codeforcesLogin = require('../login/codeforces_login');
 
 function getSubmissionID(html) {
     try {
@@ -46,10 +45,9 @@ async function isLogin(username) {
 async function codeforcesSubmit(info) {
     try {
         const { contestID, problemIndex, langID, sourceCode } = info;
-
         let botInfo = await bot.readInfo('bot_user_1', 'codeforces');
-
         const { username, password, codeforcesCredentials } = botInfo;
+
         // If cookie exist, set cookie, then we will check it is expired or not
         if (codeforcesCredentials.cookie.length > 2) {
             superagent.jar.setCookies(codeforcesCredentials.cookie);
@@ -92,4 +90,4 @@ async function codeforcesSubmit(info) {
     }
 }
 
-module.exports = { codeforcesSubmit };
+module.exports = codeforcesSubmit;

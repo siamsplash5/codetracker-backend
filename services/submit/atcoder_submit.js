@@ -11,8 +11,23 @@ Date: 24-04-2023
 
 // dependencies
 const superagent = require('superagent').agent();
+const cheerio = require('cheerio');
 const bot = require('../db_controllers/queries/auth_data_query');
-const { atcoderLogin } = require('../login/atcoder_login');
+const atcoderLogin = require('../login/atcoder_login');
+
+function getSubmissionID(html) {
+    try {
+        const $ = cheerio.load(html);
+        const submissionScore = $('td.submission-score').first();
+        const submissionID = submissionScore.attr('data-id');
+        if (submissionID !== null) {
+            return submissionID;
+        }
+        throw new Error('submission ID not found');
+    } catch (error) {
+        throw new Error(error);
+    }
+}
 
 async function isLogin(username) {
     const url = 'https://atcoder.jp/';
@@ -66,12 +81,13 @@ async function atcoderSubmit(info) {
             throw new Error(`Atcoder submit failed, status code ${res.status}`);
         }
 
-        // const verdict = helper.getVerdict(dashboard.text);
-        return res;
+        const submissionID = getSubmissionID(res.text);
+        //const submissionID = '40989798';
+        return { superagent, contestID, submissionID };
     } catch (error) {
         console.log(error.message);
         throw new Error(error);
     }
 }
 
-module.exports = { atcoderSubmit };
+module.exports = atcoderSubmit;
