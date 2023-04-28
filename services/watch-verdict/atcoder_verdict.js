@@ -7,39 +7,45 @@ function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function verdictNames(verdict) {
+    const mp = {
+        AC: 'Accepted',
+        WA: 'Wrong Answer',
+        TLE: 'Time Limit Exceeded',
+        MLE: 'Memory Limit Exceeded',
+        RE: 'Runtime Error',
+        CE: 'Compilation Error',
+        QLE: 'Queued Limit Exceeded',
+        OLE: 'Output Limit Exceeded',
+        IE: 'Internal Error',
+        WJ: 'Waiting for Judge',
+        WR: 'Waiting for Rejudge',
+        Judging: 'Judging',
+    };
+    return mp[verdict];
+}
+
 function getStatus(html, contestID, submissionID) {
     const $ = cheerio.load(html);
-    const status = {};
-    status.submissionId = submissionID;
-    $('table tr').each((i, row) => {
-        const th = $(row).find('th').text().trim();
-        const td = $(row).find('td').text().trim();
-        switch (th) {
-            case 'Submission Time':
-                status.timestamp = td;
-                break;
-            case 'Task':
-                status.problem = `${contestID} ${td}`;
-                break;
-            case 'User':
-                status.username = td.split(' ')[0];
-                break;
-            case 'Language':
-                status.language = td;
-                break;
-            case 'Exec Time':
-                status.time = td;
-                break;
-            case 'Code Size':
-                status.memory = td;
-                break;
-            case 'Status':
-                status.verdict = $(row).find('.label').text().trim();
-                break;
-            default:
-                break;
-        }
-    });
+    const table = $('table.table-striped').eq(0);
+    const td = table
+        .find('td')
+        .map((index, element) => $(element).text().trim())
+        .get();
+
+    const status = {
+        submissionId: submissionID,
+        timestamp: td[0],
+        username: td[2],
+        problem: `${contestID.toUpperCase()} - ${td[1]}`,
+        language: td[3],
+        verdict: td[6].includes('/') ? td[6] : verdictNames(td[6]),
+    };
+    if (td.length === 9) {
+        status.time = td[7];
+        status.memeory = td[8];
+    }
+
     return status;
 }
 
@@ -47,16 +53,16 @@ async function watchAtcoderVerdict(watchInfo) {
     const { superagent, contestID, submissionID } = watchInfo;
     const watchUrl = `https://atcoder.jp/contests/${contestID}/submissions/${submissionID}`;
     let status;
-    for (let i = 0; i < 10000; i += 1) {
+    for (let i = 0; i < 20; i += 1) {
         const html = (await superagent.get(watchUrl)).text;
         status = getStatus(html, contestID, submissionID);
         console.log(status);
-        if (status.verdict.includes('WJ') === false) {
+        if (status.memeory !== undefined) {
             break;
         }
         await sleep(2000);
     }
-    console.log(status);
+
     return status;
 }
 

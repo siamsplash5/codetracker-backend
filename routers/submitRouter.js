@@ -14,96 +14,46 @@ submitRouter.get('/', async (req, res) => {
     try {
         const submitInfo = {
             judge: 'atcoder',
-            contestID: 'diverta2019',
+            contestID: 'abc032',
             problemIndex: 'c',
             langID: 4003,
-            sourceCode: String.raw`#include <bits/stdc++.h>
+            sourceCode: String.raw`#include <algorithm>
+#include <iostream>
+#include <vector>
 using namespace std;
-typedef long long int lld;
-#define test lld tt; scanf("%lld", &tt); while(tt--)
-#define dbug cout <<"dukse" <<endl;
+#define FOR(i, a, b) for (int i = (a); i < (b); ++i)
+#define REP(i, n) FOR(i, 0, n)
+
+int solve(vector<int> s, int k) {
+  auto it = find(s.begin(), s.end(), 0);
+  if (it != s.end())
+    return s.size();
+  int ans{};
+  for (int left = 0; left < s.size(); ++left) {
+    int sum = 1;
+    for (int right = left; right < s.size(); ++right) {
+      // cout << left << " " << right << endl;
+      sum *= s[right];
+      if (sum <= k) {
+        ans = max(ans, right - left + 1);
+      } else {
+        // cout << right - left + 1 << endl;
+        // cout << "break" << endl;
+        break;
+      }
+    }
+  }
+  return ans;
+}
 
 int main() {
-    lld n, x; cin >> n;
-    bool f = false;
-    lld ans = 0;
-    lld ba, aa, bb, bc, ca, a, b;
-    a = b = ba = aa = bb = bc = ca = 0;
-    while (n--) {
-        string s; cin >> s;
-        for (int i = 0; i < s.size() - 1; i++) {
-            ans += (s[i] == 'A' and s[i + 1] == 'B');
-        }
-        a += (s.size() == 1 and s[0] == 'A');
-        b += (s.size() == 1 and s[0] == 'B');
-        ba += (s[0] == 'B' and s.back() == 'A');
-        aa += (s[0] == 'A' and s.back() == 'A');
-        bb += (s[0] == 'B' and s.back() == 'B');
-        bc += (s[0] == 'B' and !(s.back() == 'A' or s.back() == 'B'));
-        ca += (!(s[0] == 'A' or s[0] == 'B') and s.back() == 'A');
-    }
-    if (ba > 1)f = true;
-    else if (a or aa or ca) {
-        f = true;
-    }
-    // cout << ans << endl;
-    // cout << "a" << " " << a << endl;
-    // cout << "b" << " " << b << endl;
-    // cout << "ba" << " " << ba << endl;
-    // cout << "aa" << " " << aa << endl;
-    // cout << "bb" << " " << bb << endl;
-    // cout << "bc" << " " << bc << endl;
-    // cout << "ca" << " " << ca << endl;
-
-    x = min(aa, bb);
-    ans += x; aa -= x; bb -= x;
-
-    x = min(aa, ba);
-    ans += x; aa -= x; ba -= x;
-
-    x = min(bb, ba);
-    ans += x; bb -= x; ba -= x;
-
-    x = min(ba, bc);
-    ans += x; ba -= x; bc -= x;
-
-    x = min(aa, bc);
-    ans += x; aa -= x; bc -= x;
-
-    x = min(ba, ca);
-    ans += x; ba -= x; ca -= x;
-
-    x = min(bb, ca);
-    ans += x; bb -= x; ca -= x;
-
-    x = min(bc, ca);
-    ans += x; bc -= x; ca -= x;
-
-    x = min(a, b);
-    ans += x; a -= x; b -= x;
-
-    x = min(a, ba);
-    ans += x; a -= x; ba -= x;
-
-    x = min(a, bb);
-    ans += x; a -= x; bb -= x;
-
-    x = min(a, bc);
-    ans += x; a -= x; bc -= x;
-
-    x = min(aa, b);
-    ans += x; aa -= x; b -= x;
-
-    x = min(ba, b);
-    ans += x; ba -= x; b -= x;
-
-    x = min(ca, b);
-    ans += x; ca -= x; b -= x;
-
-    if (ba)ans += f;
-    cout << ans  << endl;
-    return 0;
-}`,
+  int n, k;
+  cin >> n >> k;
+  vector<int> s(n);
+  REP(i, n) cin >> s[i];
+  cout << solve(s, k) << endl;
+}
+`,
         };
         let status;
         if (submitInfo.judge === 'atcoder') {

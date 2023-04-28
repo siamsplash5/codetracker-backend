@@ -82,7 +82,7 @@ async function atcoderSubmit(info) {
         }
 
         const submissionID = getSubmissionID(res.text);
-        //const submissionID = '40989798';
+        // const submissionID = '40989798';
         return { superagent, contestID, submissionID };
     } catch (error) {
         console.log(error.message);
