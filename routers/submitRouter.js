@@ -17,43 +17,7 @@ submitRouter.get('/', async (req, res) => {
             contestID: 'abc032',
             problemIndex: 'c',
             langID: 4003,
-            sourceCode: String.raw`#include <algorithm>
-#include <iostream>
-#include <vector>
-using namespace std;
-#define FOR(i, a, b) for (int i = (a); i < (b); ++i)
-#define REP(i, n) FOR(i, 0, n)
-
-int solve(vector<int> s, int k) {
-  auto it = find(s.begin(), s.end(), 0);
-  if (it != s.end())
-    return s.size();
-  int ans{};
-  for (int left = 0; left < s.size(); ++left) {
-    int sum = 1;
-    for (int right = left; right < s.size(); ++right) {
-      // cout << left << " " << right << endl;
-      sum *= s[right];
-      if (sum <= k) {
-        ans = max(ans, right - left + 1);
-      } else {
-        // cout << right - left + 1 << endl;
-        // cout << "break" << endl;
-        break;
-      }
-    }
-  }
-  return ans;
-}
-
-int main() {
-  int n, k;
-  cin >> n >> k;
-  vector<int> s(n);
-  REP(i, n) cin >> s[i];
-  cout << solve(s, k) << endl;
-}
-`,
+            sourceCode: String.raw`code`,
         };
         let status;
         if (submitInfo.judge === 'atcoder') {

@@ -5,6 +5,7 @@ const dotenv = require('dotenv').config();
 const mongoose = require('mongoose');
 const submitRouter = require('./routers/submitRouter');
 const checkRouter = require('./routers/checkRouter');
+const problemRouter = require('./routers/problemRouter');
 
 const app = express();
 
@@ -19,10 +20,16 @@ mongoose
     })
     .catch(console.error);
 
+// receiving data from user
+app.use(express.json());
+app.use(express.urlencoded());
+
 // routes
 app.use('/check', checkRouter);
 app.use('/submit', submitRouter);
+app.use('/problem', problemRouter);
 
+// default error handler
 app.use((err, req, res, next) => {
     if (req.headersSent) {
         next('There is a problem. Header already sent!');
@@ -30,6 +37,6 @@ app.use((err, req, res, next) => {
     if (err.message) {
         res.status(500).send(err.message);
     } else {
-        res.status(500).send('There is a server side error');
+        res.status(500).send('Internal Server Error');
     }
 });
