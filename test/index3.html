@@ -1,86 +1,268 @@
-<div class="problem-statement">
-    <div class="header">
-        <div class="title">A. Boredom</div>
-        <div class="time-limit">
-            <div class="property-title">time limit per test</div>1 second
+<div class="header">
+    <div class="title">F. Dasha and Nightmares</div>
+    <div class="time-limit">
+        <div class="property-title">time limit per test</div>4 seconds
+    </div>
+    <div class="memory-limit">
+        <div class="property-title">memory limit per test</div>512 megabytes
+    </div>
+    <div class="input-file">
+        <div class="property-title">input</div>standard input
+    </div>
+    <div class="output-file">
+        <div class="property-title">output</div>standard output
+    </div>
+</div>
+<div>
+    <p>Dasha, an excellent student, is studying at the best mathematical lyceum in the country. Recently, a mysterious
+        stranger brought
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-1"><span
+                    class="MJXp-mi MJXp-italic" id="MJXp-Span-2">n</span></span></span>
+        <script type="math/tex" id="MathJax-Element-1">n</script> words consisting of small latin letters
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-3"><span
+                    class="MJXp-msubsup" id="MJXp-Span-4"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-5"
+                        style="margin-right: 0.05em;">s</span><span class="MJXp-mn MJXp-script" id="MJXp-Span-6"
+                        style="vertical-align: -0.4em;">1</span></span><span class="MJXp-mo" id="MJXp-Span-7"
+                    style="margin-left: 0em; margin-right: 0.222em;">,</span><span class="MJXp-msubsup"
+                    id="MJXp-Span-8"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-9"
+                        style="margin-right: 0.05em;">s</span><span class="MJXp-mn MJXp-script" id="MJXp-Span-10"
+                        style="vertical-align: -0.4em;">2</span></span><span class="MJXp-mo" id="MJXp-Span-11"
+                    style="margin-left: 0em; margin-right: 0.222em;">,</span><span class="MJXp-mo" id="MJXp-Span-12"
+                    style="margin-left: 0em; margin-right: 0em;">…</span><span class="MJXp-mo" id="MJXp-Span-13"
+                    style="margin-left: 0em; margin-right: 0.222em;">,</span><span class="MJXp-msubsup"
+                    id="MJXp-Span-14"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-15"
+                        style="margin-right: 0.05em;">s</span><span class="MJXp-mi MJXp-italic MJXp-script"
+                        id="MJXp-Span-16" style="vertical-align: -0.4em;">n</span></span></span></span>
+        <script type="math/tex" id="MathJax-Element-2">s_1, s_2, \ldots, s_n</script> to the lyceum. Since that day,
+        Dasha has been tormented by <span class="tex-font-style-it">nightmares</span>.
+    </p>
+    <p>Consider some pair of integers
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-17"><span
+                    class="MJXp-mo" id="MJXp-Span-18" style="margin-left: 0em; margin-right: 0em;">⟨</span><span
+                    class="MJXp-mi MJXp-italic" id="MJXp-Span-19">i</span><span class="MJXp-mo" id="MJXp-Span-20"
+                    style="margin-left: 0em; margin-right: 0.222em;">,</span><span class="MJXp-mi MJXp-italic"
+                    id="MJXp-Span-21">j</span><span class="MJXp-mo" id="MJXp-Span-22"
+                    style="margin-left: 0em; margin-right: 0em;">⟩</span></span></span>
+        <script type="math/tex" id="MathJax-Element-3">\langle i, j \rangle</script>
+        (<span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-23"><span
+                    class="MJXp-mn" id="MJXp-Span-24">1</span><span class="MJXp-mo" id="MJXp-Span-25"
+                    style="margin-left: 0.333em; margin-right: 0.333em;">≤</span><span class="MJXp-mi MJXp-italic"
+                    id="MJXp-Span-26">i</span><span class="MJXp-mo" id="MJXp-Span-27"
+                    style="margin-left: 0.333em; margin-right: 0.333em;">≤</span><span class="MJXp-mi MJXp-italic"
+                    id="MJXp-Span-28">j</span><span class="MJXp-mo" id="MJXp-Span-29"
+                    style="margin-left: 0.333em; margin-right: 0.333em;">≤</span><span class="MJXp-mi MJXp-italic"
+                    id="MJXp-Span-30">n</span></span></span>
+        <script type="math/tex" id="MathJax-Element-4">1 \le i \le j \le n</script>).
+        <span class="tex-font-style-it">A nightmare</span> is a string for which it is true:
+    </p>
+    <ul>
+        <li> It is obtained by concatenation
+            <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-31"><span
+                        class="MJXp-msubsup" id="MJXp-Span-32"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-33"
+                            style="margin-right: 0.05em;">s</span><span class="MJXp-mrow MJXp-script" id="MJXp-Span-34"
+                            style="vertical-align: -0.4em;"><span class="MJXp-mi MJXp-italic"
+                                id="MJXp-Span-35">i</span></span></span><span class="MJXp-msubsup"
+                        id="MJXp-Span-36"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-37"
+                            style="margin-right: 0.05em;">s</span><span class="MJXp-mrow MJXp-script" id="MJXp-Span-38"
+                            style="vertical-align: -0.4em;"><span class="MJXp-mi MJXp-italic"
+                                id="MJXp-Span-39">j</span></span></span></span></span>
+            <script type="math/tex" id="MathJax-Element-5">s_{i}s_{j}</script>;
+        </li>
+        <li> Its length is <span class="tex-font-style-bf">odd</span>; </li>
+        <li> The number of different letters in it is <span class="tex-font-style-bf">exactly</span>
+            <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-40"><span
+                        class="MJXp-mn" id="MJXp-Span-41">25</span></span></span>
+            <script type="math/tex" id="MathJax-Element-6">25</script>;
+        </li>
+        <li> The number of occurrences of each letter that is in the word is <span class="tex-font-style-bf">odd</span>.
+        </li>
+    </ul>
+    <p>For example, if
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-42"><span
+                    class="MJXp-msubsup" id="MJXp-Span-43"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-44"
+                        style="margin-right: 0.05em;">s</span><span class="MJXp-mi MJXp-italic MJXp-script"
+                        id="MJXp-Span-45" style="vertical-align: -0.4em;">i</span></span><span class="MJXp-mo"
+                    id="MJXp-Span-46" style="margin-left: 0.333em; margin-right: 0.333em;">=</span></span></span>
+        <script type="math/tex" id="MathJax-Element-7">s_i=</script> "abcdefg" and
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-47"><span
+                    class="MJXp-msubsup" id="MJXp-Span-48"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-49"
+                        style="margin-right: 0.05em;">s</span><span class="MJXp-mi MJXp-italic MJXp-script"
+                        id="MJXp-Span-50" style="vertical-align: -0.4em;">j</span></span><span class="MJXp-mo"
+                    id="MJXp-Span-51" style="margin-left: 0.333em; margin-right: 0.333em;">=</span></span></span>
+        <script type="math/tex" id="MathJax-Element-8">s_j=</script> "ijklmnopqrstuvwxyz", the pair
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-52"><span
+                    class="MJXp-mo" id="MJXp-Span-53" style="margin-left: 0em; margin-right: 0em;">⟨</span><span
+                    class="MJXp-mi MJXp-italic" id="MJXp-Span-54">i</span><span class="MJXp-mo" id="MJXp-Span-55"
+                    style="margin-left: 0em; margin-right: 0.222em;">,</span><span class="MJXp-mi MJXp-italic"
+                    id="MJXp-Span-56">j</span><span class="MJXp-mo" id="MJXp-Span-57"
+                    style="margin-left: 0em; margin-right: 0em;">⟩</span></span></span>
+        <script type="math/tex" id="MathJax-Element-9">\langle i, j \rangle</script> creates a
+        <span class="tex-font-style-it">nightmare</span>.
+    </p>
+    <p>Dasha will stop having <span class="tex-font-style-it">nightmares</span> if she counts their number. There are
+        too many <span class="tex-font-style-it">nightmares</span>, so Dasha needs your help. Count the number of
+        different <span class="tex-font-style-it">nightmares</span>.</p>
+    <p><span class="tex-font-style-it">Nightmares</span> are called different if the corresponding pairs
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-58"><span
+                    class="MJXp-mo" id="MJXp-Span-59" style="margin-left: 0em; margin-right: 0em;">⟨</span><span
+                    class="MJXp-mi MJXp-italic" id="MJXp-Span-60">i</span><span class="MJXp-mo" id="MJXp-Span-61"
+                    style="margin-left: 0em; margin-right: 0.222em;">,</span><span class="MJXp-mi MJXp-italic"
+                    id="MJXp-Span-62">j</span><span class="MJXp-mo" id="MJXp-Span-63"
+                    style="margin-left: 0em; margin-right: 0em;">⟩</span></span></span>
+        <script type="math/tex" id="MathJax-Element-10">\langle i, j \rangle</script> are different. The pairs
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-64"><span
+                    class="MJXp-mo" id="MJXp-Span-65" style="margin-left: 0em; margin-right: 0em;">⟨</span><span
+                    class="MJXp-msubsup" id="MJXp-Span-66"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-67"
+                        style="margin-right: 0.05em;">i</span><span class="MJXp-mn MJXp-script" id="MJXp-Span-68"
+                        style="vertical-align: -0.4em;">1</span></span><span class="MJXp-mo" id="MJXp-Span-69"
+                    style="margin-left: 0em; margin-right: 0.222em;">,</span><span class="MJXp-msubsup"
+                    id="MJXp-Span-70"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-71"
+                        style="margin-right: 0.05em;">j</span><span class="MJXp-mn MJXp-script" id="MJXp-Span-72"
+                        style="vertical-align: -0.4em;">1</span></span><span class="MJXp-mo" id="MJXp-Span-73"
+                    style="margin-left: 0em; margin-right: 0em;">⟩</span></span></span>
+        <script type="math/tex" id="MathJax-Element-11">\langle i_1, j_1 \rangle</script> and
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-74"><span
+                    class="MJXp-mo" id="MJXp-Span-75" style="margin-left: 0em; margin-right: 0em;">⟨</span><span
+                    class="MJXp-msubsup" id="MJXp-Span-76"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-77"
+                        style="margin-right: 0.05em;">i</span><span class="MJXp-mn MJXp-script" id="MJXp-Span-78"
+                        style="vertical-align: -0.4em;">2</span></span><span class="MJXp-mo" id="MJXp-Span-79"
+                    style="margin-left: 0em; margin-right: 0.222em;">,</span><span class="MJXp-msubsup"
+                    id="MJXp-Span-80"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-81"
+                        style="margin-right: 0.05em;">j</span><span class="MJXp-mn MJXp-script" id="MJXp-Span-82"
+                        style="vertical-align: -0.4em;">2</span></span><span class="MJXp-mo" id="MJXp-Span-83"
+                    style="margin-left: 0em; margin-right: 0em;">⟩</span></span></span>
+        <script type="math/tex" id="MathJax-Element-12">\langle i_2, j_2 \rangle</script> are called different if
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-84"><span
+                    class="MJXp-msubsup" id="MJXp-Span-85"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-86"
+                        style="margin-right: 0.05em;">i</span><span class="MJXp-mn MJXp-script" id="MJXp-Span-87"
+                        style="vertical-align: -0.4em;">1</span></span><span class="MJXp-mo" id="MJXp-Span-88"
+                    style="margin-left: 0.333em; margin-right: 0.333em;">≠</span><span class="MJXp-msubsup"
+                    id="MJXp-Span-89"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-90"
+                        style="margin-right: 0.05em;">i</span><span class="MJXp-mn MJXp-script" id="MJXp-Span-91"
+                        style="vertical-align: -0.4em;">2</span></span></span></span>
+        <script type="math/tex" id="MathJax-Element-13">i_1 \neq i_2</script> <span class="tex-font-style-bf">or</span>
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-92"><span
+                    class="MJXp-msubsup" id="MJXp-Span-93"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-94"
+                        style="margin-right: 0.05em;">j</span><span class="MJXp-mn MJXp-script" id="MJXp-Span-95"
+                        style="vertical-align: -0.4em;">1</span></span><span class="MJXp-mo" id="MJXp-Span-96"
+                    style="margin-left: 0.333em; margin-right: 0.333em;">≠</span><span class="MJXp-msubsup"
+                    id="MJXp-Span-97"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-98"
+                        style="margin-right: 0.05em;">j</span><span class="MJXp-mn MJXp-script" id="MJXp-Span-99"
+                        style="vertical-align: -0.4em;">2</span></span></span></span>
+        <script type="math/tex" id="MathJax-Element-14">j_1 \neq j_2</script>.
+    </p>
+</div>
+<div class="input-specification">
+    <div class="section-title">Input</div>
+    <p>The first line contains a single integer
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-100"><span
+                    class="MJXp-mi MJXp-italic" id="MJXp-Span-101">n</span></span></span>
+        <script type="math/tex" id="MathJax-Element-15">n</script>
+        (<span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-102"><span
+                    class="MJXp-mn" id="MJXp-Span-103">1</span><span class="MJXp-mo" id="MJXp-Span-104"
+                    style="margin-left: 0.333em; margin-right: 0.333em;">≤</span><span class="MJXp-mi MJXp-italic"
+                    id="MJXp-Span-105">n</span><span class="MJXp-mo" id="MJXp-Span-106"
+                    style="margin-left: 0.333em; margin-right: 0.333em;">≤</span><span class="MJXp-mn"
+                    id="MJXp-Span-107">2</span><span class="MJXp-mo" id="MJXp-Span-108"
+                    style="margin-left: 0.267em; margin-right: 0.267em;">⋅</span><span class="MJXp-msubsup"
+                    id="MJXp-Span-109"><span class="MJXp-mn" id="MJXp-Span-110"
+                        style="margin-right: 0.05em;">10</span><span class="MJXp-mn MJXp-script" id="MJXp-Span-111"
+                        style="vertical-align: 0.5em;">5</span></span></span></span>
+        <script type="math/tex" id="MathJax-Element-16">1 \le n \le 2 \cdot 10^5</script>)&nbsp;— the number of words.
+    </p>
+    <p>The following
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-112"><span
+                    class="MJXp-mi MJXp-italic" id="MJXp-Span-113">n</span></span></span>
+        <script type="math/tex" id="MathJax-Element-17">n</script> lines contain the words
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-114"><span
+                    class="MJXp-msubsup" id="MJXp-Span-115"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-116"
+                        style="margin-right: 0.05em;">s</span><span class="MJXp-mn MJXp-script" id="MJXp-Span-117"
+                        style="vertical-align: -0.4em;">1</span></span><span class="MJXp-mo" id="MJXp-Span-118"
+                    style="margin-left: 0em; margin-right: 0.222em;">,</span><span class="MJXp-msubsup"
+                    id="MJXp-Span-119"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-120"
+                        style="margin-right: 0.05em;">s</span><span class="MJXp-mn MJXp-script" id="MJXp-Span-121"
+                        style="vertical-align: -0.4em;">2</span></span><span class="MJXp-mo" id="MJXp-Span-122"
+                    style="margin-left: 0em; margin-right: 0.222em;">,</span><span class="MJXp-mo" id="MJXp-Span-123"
+                    style="margin-left: 0em; margin-right: 0em;">…</span><span class="MJXp-mo" id="MJXp-Span-124"
+                    style="margin-left: 0em; margin-right: 0.222em;">,</span><span class="MJXp-msubsup"
+                    id="MJXp-Span-125"><span class="MJXp-mi MJXp-italic" id="MJXp-Span-126"
+                        style="margin-right: 0.05em;">s</span><span class="MJXp-mi MJXp-italic MJXp-script"
+                        id="MJXp-Span-127" style="vertical-align: -0.4em;">n</span></span></span></span>
+        <script type="math/tex" id="MathJax-Element-18">s_1, s_2, \ldots, s_n</script>, consisting of small latin
+        letters.
+    </p>
+    <p>It is guaranteed that the total length of words does not exceed
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-128"><span
+                    class="MJXp-mn" id="MJXp-Span-129">5</span><span class="MJXp-mo" id="MJXp-Span-130"
+                    style="margin-left: 0.267em; margin-right: 0.267em;">⋅</span><span class="MJXp-msubsup"
+                    id="MJXp-Span-131"><span class="MJXp-mn" id="MJXp-Span-132"
+                        style="margin-right: 0.05em;">10</span><span class="MJXp-mn MJXp-script" id="MJXp-Span-133"
+                        style="vertical-align: 0.5em;">6</span></span></span></span>
+        <script type="math/tex" id="MathJax-Element-19">5 \cdot 10^6</script>.
+    </p>
+</div>
+<div class="output-specification">
+    <div class="section-title">Output</div>
+    <p>Print a single integer&nbsp;— the number of different <span class="tex-font-style-it">nightmares</span>.</p>
+</div>
+<div class="sample-tests">
+    <div class="section-title">Example</div>
+    <div class="sample-test">
+        <div class="input">
+            <div class="title">Input<div title="Copy" data-clipboard-target="#id004336124064426128"
+                    id="id006631831686188101" class="input-output-copier">Copy</div>
+            </div>
+            <pre
+                id="id004336124064426128"><div class="test-example-line test-example-line-even test-example-line-0">10</div>
+                <div class="test-example-line test-example-line-even test-example-line-0">ftl</div>
+                <div class="test-example-line test-example-line-even test-example-line-0">abcdefghijklmnopqrstuvwxy</div><div class="test-example-line test-example-line-even test-example-line-0">abcdeffghijkllmnopqrsttuvwxy</div><div class="test-example-line test-example-line-even test-example-line-0">ffftl</div><div class="test-example-line test-example-line-even test-example-line-0">aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyy</div><div class="test-example-line test-example-line-even test-example-line-0">thedevid</div><div class="test-example-line test-example-line-even test-example-line-0">bcdefghhiiiijklmnopqrsuwxyz</div><div class="test-example-line test-example-line-even test-example-line-0">gorillasilverback</div><div class="test-example-line test-example-line-even test-example-line-0">abcdefg</div><div class="test-example-line test-example-line-even test-example-line-0">ijklmnopqrstuvwxyz</div></pre>
         </div>
-        <div class="memory-limit">
-            <div class="property-title">memory limit per test</div>256 megabytes
-        </div>
-        <div class="input-file">
-            <div class="property-title">input</div>standard input
-        </div>
-        <div class="output-file">
-            <div class="property-title">output</div>standard output
+        <div class="output">
+            <div class="title">Output<div title="Copy" data-clipboard-target="#id007913529930248804"
+                    id="id0015878311356653052" class="input-output-copier">Copy</div>
+            </div>
+            <pre id="id007913529930248804">5
+</pre>
         </div>
     </div>
-    <div>
-        <p>Alex doesn't like boredom. That's why whenever he gets bored, he comes up with games.
-            One long winter evening he came up with a game and decided to play it.</p>
-        <p>Given a sequence <span class="tex-span"><i>a</i></span> consisting of <span class="tex-span"><i>n</i></span>
-            integers. The player can make several steps. In
-            a single step he can choose an element of the sequence (let's denote it <span class="tex-span"><i>a</i><sub
-                    class="lower-index"><i>k</i></sub></span>) and
-            delete it, at that all elements equal to <span class="tex-span"><i>a</i><sub
-                    class="lower-index"><i>k</i></sub> + 1</span> and <span class="tex-span"><i>a</i><sub
-                    class="lower-index"><i>k</i></sub> - 1</span> also
-            must be deleted from the sequence. That step brings <span class="tex-span"><i>a</i><sub
-                    class="lower-index"><i>k</i></sub></span> points
-            to the player. </p>
-        <p>Alex is a perfectionist, so he decided to get as many points as possible. Help him.
-        </p>
-    </div>
-    <div class="input-specification">
-        <div class="section-title">Input</div>
-        <p>The first line contains integer <span class="tex-span"><i>n</i></span> (<span
-                class="tex-span">1 ≤ <i>n</i> ≤ 10<sup class="upper-index">5</sup></span>) that
-            shows how many numbers are in Alex's sequence. </p>
-        <p>The second line contains <span class="tex-span"><i>n</i></span> integers <span class="tex-span"><i>a</i><sub
-                    class="lower-index">1</sub></span>, <span class="tex-span"><i>a</i><sub
-                    class="lower-index">2</sub></span>, ..., <span class="tex-span"><i>a</i><sub
-                    class="lower-index"><i>n</i></sub></span> (<span class="tex-span">1 ≤ <i>a</i><sub
-                    class="lower-index"><i>i</i></sub> ≤ 10<sup class="upper-index">5</sup></span>).</p>
-    </div>
-    <div class="output-specification">
-        <div class="section-title">Output</div>
-        <p>Print a single integer — the maximum number of points that Alex can earn.</p>
-    </div>
-    <div class="sample-tests">
-        <div class="section-title">Examples</div>
-        <div class="sample-test">
-            <div class="input">
-                <div class="title">Input</div>
-                <pre>2<br />1 2<br /></pre>
-            </div>
-            <div class="output">
-                <div class="title">Output</div>
-                <pre>2<br /></pre>
-            </div>
-            <div class="input">
-                <div class="title">Input</div>
-                <pre>3<br />1 2 3<br /></pre>
-            </div>
-            <div class="output">
-                <div class="title">Output</div>
-                <pre>4<br /></pre>
-            </div>
-            <div class="input">
-                <div class="title">Input</div>
-                <pre>9<br />1 2 1 3 2 2 2 2 3<br /></pre>
-            </div>
-            <div class="output">
-                <div class="title">Output</div>
-                <pre>10<br /></pre>
-            </div>
-        </div>
-    </div>
-    <div class="note">
-        <div class="section-title">Note</div>
-        <p>Consider the third test example. At first step we need to choose any element equal to
-            <span class="tex-span">2</span>. After that step our sequence looks like this <span
-                class="tex-span">[2, 2, 2, 2]</span>. Then we do <span class="tex-span">4</span>
-            steps, on each step we choose any element equals to <span class="tex-span">2</span>.
-            In total we earn <span class="tex-span">10</span> points.
-        </p>
-    </div>
+</div>
+<div class="note">
+    <div class="section-title">Note</div>
+    <p>In the first test, <span class="tex-font-style-it">nightmares</span> are created by pairs
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-134"><span
+                    class="MJXp-mo" id="MJXp-Span-135" style="margin-left: 0em; margin-right: 0em;">⟨</span><span
+                    class="MJXp-mn" id="MJXp-Span-136">1</span><span class="MJXp-mo" id="MJXp-Span-137"
+                    style="margin-left: 0em; margin-right: 0.222em;">,</span><span class="MJXp-mn"
+                    id="MJXp-Span-138">3</span><span class="MJXp-mo" id="MJXp-Span-139"
+                    style="margin-left: 0em; margin-right: 0em;">⟩</span></span></span>
+        <script type="math/tex" id="MathJax-Element-20">\langle 1, 3 \rangle</script>,
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-140"><span
+                    class="MJXp-mo" id="MJXp-Span-141" style="margin-left: 0em; margin-right: 0em;">⟨</span><span
+                    class="MJXp-mn" id="MJXp-Span-142">2</span><span class="MJXp-mo" id="MJXp-Span-143"
+                    style="margin-left: 0em; margin-right: 0.222em;">,</span><span class="MJXp-mn"
+                    id="MJXp-Span-144">5</span><span class="MJXp-mo" id="MJXp-Span-145"
+                    style="margin-left: 0em; margin-right: 0em;">⟩</span></span></span>
+        <script type="math/tex" id="MathJax-Element-21">\langle 2, 5 \rangle</script>,
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-146"><span
+                    class="MJXp-mo" id="MJXp-Span-147" style="margin-left: 0em; margin-right: 0em;">⟨</span><span
+                    class="MJXp-mn" id="MJXp-Span-148">3</span><span class="MJXp-mo" id="MJXp-Span-149"
+                    style="margin-left: 0em; margin-right: 0.222em;">,</span><span class="MJXp-mn"
+                    id="MJXp-Span-150">4</span><span class="MJXp-mo" id="MJXp-Span-151"
+                    style="margin-left: 0em; margin-right: 0em;">⟩</span></span></span>
+        <script type="math/tex" id="MathJax-Element-22">\langle 3, 4 \rangle</script>,
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-152"><span
+                    class="MJXp-mo" id="MJXp-Span-153" style="margin-left: 0em; margin-right: 0em;">⟨</span><span
+                    class="MJXp-mn" id="MJXp-Span-154">6</span><span class="MJXp-mo" id="MJXp-Span-155"
+                    style="margin-left: 0em; margin-right: 0.222em;">,</span><span class="MJXp-mn"
+                    id="MJXp-Span-156">7</span><span class="MJXp-mo" id="MJXp-Span-157"
+                    style="margin-left: 0em; margin-right: 0em;">⟩</span></span></span>
+        <script type="math/tex" id="MathJax-Element-23">\langle 6, 7 \rangle</script>,
+        <span class="MathJax_Preview" style="color: inherit;"><span class="MJXp-math" id="MJXp-Span-158"><span
+                    class="MJXp-mo" id="MJXp-Span-159" style="margin-left: 0em; margin-right: 0em;">⟨</span><span
+                    class="MJXp-mn" id="MJXp-Span-160">9</span><span class="MJXp-mo" id="MJXp-Span-161"
+                    style="margin-left: 0em; margin-right: 0.222em;">,</span><span class="MJXp-mn"
+                    id="MJXp-Span-162">10</span><span class="MJXp-mo" id="MJXp-Span-163"
+                    style="margin-left: 0em; margin-right: 0em;">⟩</span></span></span>
+        <script type="math/tex" id="MathJax-Element-24">\langle 9, 10 \rangle</script>.
+    </p>
 </div>
