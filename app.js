@@ -3,10 +3,16 @@ const express = require('express');
 // eslint-disable-next-line no-unused-vars
 const dotenv = require('dotenv').config();
 const mongoose = require('mongoose');
+
+// routes
 const submitRouter = require('./routers/submitRouter');
 const checkRouter = require('./routers/checkRouter');
 const problemRouter = require('./routers/problemRouter');
 
+// middlewares
+const parseRequestValidator = require('./middlewares/parseRequestValidator');
+
+// App Object - module scaffodling
 const app = express();
 
 // database connection with mongoose
@@ -22,21 +28,17 @@ mongoose
 
 // receiving data from user
 app.use(express.json());
-app.use(express.urlencoded());
 
-// routes
+// use routes
 app.use('/check', checkRouter);
 app.use('/submit', submitRouter);
-app.use('/problem', problemRouter);
+app.use('/problem', parseRequestValidator, problemRouter);
 
 // default error handler
 app.use((err, req, res, next) => {
     if (req.headersSent) {
         next('There is a problem. Header already sent!');
-    }
-    if (err.message) {
-        res.status(500).send(err.message);
     } else {
-        res.status(500).send('Internal Server Error');
+        res.status(500).send(err);
     }
 });
