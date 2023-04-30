@@ -12,13 +12,7 @@ const submitRouter = express.Router();
 
 submitRouter.get('/', async (req, res) => {
     try {
-        const submitInfo = {
-            judge: 'atcoder',
-            contestID: 'abc032',
-            problemIndex: 'c',
-            langID: 4003,
-            sourceCode: String.raw`code`,
-        };
+        const submitInfo = req.body;
         let status;
         if (submitInfo.judge === 'atcoder') {
             const watchInfo = await atcoderSubmit(submitInfo);
@@ -46,3 +40,14 @@ submitRouter.get('/', async (req, res) => {
     }
 });
 module.exports = submitRouter;
+/*
+
+{
+    judge: 'atcoder',
+    contestID: 'abc032',
+    problemIndex: 'c',
+    langID: 4003,
+    sourceCode: String.raw`code`,
+}
+
+*/
