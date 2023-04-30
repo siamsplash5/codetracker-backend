@@ -11,7 +11,7 @@ Date: 24-04-2023
 // dependencies
 const superagent = require('superagent').agent();
 const { decryptPassword } = require('../../lib/encryption');
-const bot = require('../../database/queries/auth_data_query');
+const bot = require('../../database/queries/bot_auth_query');
 
 // login to spoj.com by sending required data
 async function spojLogin(username, encryptedPassword) {

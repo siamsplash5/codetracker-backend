@@ -12,7 +12,7 @@ const superagent = require('superagent').agent();
 const getRandomString = require('../../lib/randomStringGenerator');
 const { decryptPassword } = require('../../lib/encryption');
 // const bot = require('../db_controllers/cf');
-const bot = require('../../database/queries/auth_data_query');
+const bot = require('../../database/queries/bot_auth_query');
 
 // get csrf, bfaa, ftaa tokens for getting authenticate
 async function getCsrfToken(url) {

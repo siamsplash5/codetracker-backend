@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 
 // dependencies
-const mongoose = require('mongoose');
+const mongoose = require('mongoose').connection.useDb('bots');
 const botSchema = require('../schemas/bot_schema');
 
 // create model for documents
-const Bot = new mongoose.model('Bot', botSchema);
+const Bot = mongoose.model('Bot', botSchema);
 
 // module scaffolding
 const helper = {};

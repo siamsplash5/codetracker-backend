@@ -1,24 +1,34 @@
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
+const { readProblem, createProblem } = require('../../database/queries/cf_problem_query');
 
-async function parseProblem(url, problemID) {
+async function parseProblem(problemID) {
+    const matches = problemID.match(/^(\d+)([a-zA-Z0-9]+)$/);
+    const contestID = matches[1];
+    const problemIndex = matches[2];
+    const url = `https://codeforces.com/problemset/problem/${contestID}/${problemIndex}/`;
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto(url);
-    const currentUrl = page.url();
-    if (currentUrl !== url) {
+    if (page.url() !== url) {
         throw new Error('Invalid parsing information');
+    }
+    if (page.title() !== 'Codeforces') {
+        throw new Error('Codeforces server error');
     }
     const problemStatementHTML = await page.$eval('.problem-statement', (el) => el.innerHTML);
     // eslint-disable-next-line prettier/prettier
     const tags = await page.$$eval('span.tag-box', (els) => els.map((el) => el.innerHTML.toString().trim().replace(/\n\s*/g, '')));
-    const rating = tags.pop();
     const $ = cheerio.load(problemStatementHTML);
-
     const inputDivs = $('div.sample-test .input');
     const outputDivs = $('div.sample-test .output');
-    const inputs = [];
-    const outputs = [];
+    const sampleInputs = [];
+    const sampleOutputs = [];
+    let rating = null;
+
+    if (tags[tags.length - 1][0] === '*') {
+        rating = tags.pop();
+    }
 
     inputDivs.each((index, element) => {
         const inputDivHTML = $.html(element);
@@ -28,12 +38,12 @@ async function parseProblem(url, problemID) {
             testExampleLineClass.each((index2, element2) => {
                 inputData += `${$(element2).text().trim()}\n`;
             });
-            inputs.push(inputData);
+            sampleInputs.push(inputData);
         } else {
             const preTag = $(inputDivHTML).find('pre');
             const preTagInnerHTML = preTag.html();
             const modifiedSampleTest = preTagInnerHTML.replace(/<br>/g, '\n');
-            inputs.push(modifiedSampleTest);
+            sampleInputs.push(modifiedSampleTest);
         }
     });
     outputDivs.each((index, element) => {
@@ -41,22 +51,23 @@ async function parseProblem(url, problemID) {
         const preTag = $(outputDivHTML).find('pre');
         const preTagInnerHTML = preTag.html();
         const modifiedSampleTest = preTagInnerHTML.replace(/<br>/g, '\n');
-        outputs.push(modifiedSampleTest);
+        sampleOutputs.push(modifiedSampleTest);
     });
 
     const problem = {
-        problemId: problemID,
+        problemID,
         title: $('.header .title').text().trim(),
         timeLimit: $('.header .time-limit').text().replace('time limit per test', '').trim(),
         memoryLimit: $('.header .memory-limit').text().replace('memory limit per test', '').trim(),
         problemStatement: {
-            bodyStatement: $('div:not([class]):not([id])').html(),
-            inputStatement: $('div.input-specification').html(),
-            outputStatement: $('div.output-specification').html(),
+            body: $('div:not([class]):not([id])').html(),
+            input: $('div.input-specification').html(),
+            interaction: $('div.section-title:contains("Interaction")').parent().html(),
+            output: $('div.output-specification').html(),
         },
         sampleTestCase: {
-            inputs,
-            outputs,
+            sampleInputs,
+            sampleOutputs,
         },
         notes: $('div.note').html(),
         tags,
@@ -78,12 +89,11 @@ async function parseProblem(url, problemID) {
 
 async function parseCodeforcesProblem(problemID) {
     try {
-        const matches = problemID.match(/^(\d+)([a-zA-Z0-9]+)$/);
-        const contestID = matches[1];
-        const problemIndex = matches[2];
-        const url = `https://codeforces.com/problemset/problem/${contestID}/${problemIndex}/`;
-        const problem = await parseProblem(url, problemID);
-
+        let problem = await readProblem(problemID);
+        if (problem === 'not found') {
+            problem = await parseProblem(problemID);
+            await createProblem(problem);
+        }
         return problem;
     } catch (error) {
         console.error(error);
