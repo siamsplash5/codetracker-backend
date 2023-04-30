@@ -2,12 +2,47 @@ const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 
 async function parseProblem(url, problemID) {
-    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+    const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto(url);
+    const currentUrl = page.url();
+    if (currentUrl !== url) {
+        throw new Error('Invalid parsing information');
+    }
     const problemStatementHTML = await page.$eval('.problem-statement', (el) => el.innerHTML);
+    // eslint-disable-next-line prettier/prettier
+    const tags = await page.$$eval('span.tag-box', (els) => els.map((el) => el.innerHTML.toString().trim().replace(/\n\s*/g, '')));
+    const rating = tags.pop();
     const $ = cheerio.load(problemStatementHTML);
-    const sampleTestHTML = $('div.sample-test').html();
+
+    const inputDivs = $('div.sample-test .input');
+    const outputDivs = $('div.sample-test .output');
+    const inputs = [];
+    const outputs = [];
+
+    inputDivs.each((index, element) => {
+        const inputDivHTML = $.html(element);
+        if ($('.test-example-line').length > 0) {
+            const testExampleLineClass = $(inputDivHTML).find('.test-example-line');
+            let inputData = '';
+            testExampleLineClass.each((index2, element2) => {
+                inputData += `${$(element2).text().trim()}\n`;
+            });
+            inputs.push(inputData);
+        } else {
+            const preTag = $(inputDivHTML).find('pre');
+            const preTagInnerHTML = preTag.html();
+            const modifiedSampleTest = preTagInnerHTML.replace(/<br>/g, '\n');
+            inputs.push(modifiedSampleTest);
+        }
+    });
+    outputDivs.each((index, element) => {
+        const outputDivHTML = $.html(element);
+        const preTag = $(outputDivHTML).find('pre');
+        const preTagInnerHTML = preTag.html();
+        const modifiedSampleTest = preTagInnerHTML.replace(/<br>/g, '\n');
+        outputs.push(modifiedSampleTest);
+    });
 
     const problem = {
         problemId: problemID,
@@ -19,13 +54,13 @@ async function parseProblem(url, problemID) {
             inputStatement: $('div.input-specification').html(),
             outputStatement: $('div.output-specification').html(),
         },
+        sampleTestCase: {
+            inputs,
+            outputs,
+        },
         notes: $('div.note').html(),
-        sampleTestCase: [
-            { input: '0', output: '5' },
-            { input: '3 7', output: '9' },
-        ],
-        tags: ['dp', 'combinatorics'],
-        rating: '1500',
+        tags,
+        rating,
         source: url,
         parsedAt: new Date().toLocaleString('en-US', {
             timeZone: 'Asia/Dhaka',
@@ -46,7 +81,7 @@ async function parseCodeforcesProblem(problemID) {
         const matches = problemID.match(/^(\d+)([a-zA-Z0-9]+)$/);
         const contestID = matches[1];
         const problemIndex = matches[2];
-        const url = `https://codeforces.com/problemset/problem/${contestID}/${problemIndex}`;
+        const url = `https://codeforces.com/problemset/problem/${contestID}/${problemIndex}/`;
         const problem = await parseProblem(url, problemID);
 
         return problem;
