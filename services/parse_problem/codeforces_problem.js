@@ -19,8 +19,8 @@ async function parseProblem(problemID) {
     const $ = cheerio.load(problemStatementHTML);
     const inputDivs = $('div.sample-test .input');
     const outputDivs = $('div.sample-test .output');
-    const sampleInputs = [];
-    const sampleOutputs = [];
+    const inputs = [];
+    const outputs = [];
     let rating = null;
 
     if (tags[tags.length - 1][0] === '*') {
@@ -35,12 +35,12 @@ async function parseProblem(problemID) {
             testExampleLineClass.each((index2, element2) => {
                 inputData += `${$(element2).text().trim()}\n`;
             });
-            sampleInputs.push(inputData);
+            inputs.push(inputData);
         } else {
             const preTag = $(inputDivHTML).find('pre');
             const preTagInnerHTML = preTag.html();
             const modifiedSampleTest = preTagInnerHTML.replace(/<br>/g, '\n');
-            sampleInputs.push(modifiedSampleTest);
+            inputs.push(modifiedSampleTest);
         }
     });
     outputDivs.each((index, element) => {
@@ -48,7 +48,7 @@ async function parseProblem(problemID) {
         const preTag = $(outputDivHTML).find('pre');
         const preTagInnerHTML = preTag.html();
         const modifiedSampleTest = preTagInnerHTML.replace(/<br>/g, '\n');
-        sampleOutputs.push(modifiedSampleTest);
+        outputs.push(modifiedSampleTest);
     });
 
     const problem = {
@@ -63,8 +63,8 @@ async function parseProblem(problemID) {
             output: $('div.output-specification').html(),
         },
         sampleTestCase: {
-            sampleInputs,
-            sampleOutputs,
+            inputs,
+            outputs,
         },
         notes: $('div.note').html(),
         tags,

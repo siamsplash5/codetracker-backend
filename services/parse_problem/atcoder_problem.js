@@ -32,9 +32,15 @@ async function parseProblem(_url) {
     memoryLimit = `${memoryLimit} megabytes`;
     const inputs = [];
     const outputs = [];
-    const totalPreTag = (len / 2 - 4) / 2;
+    const totalPreTag = len / 2 - 4;
+    console.log(totalPreTag);
     for (let i = totalPreTag; i <= 2 * totalPreTag - 1; i += 1) {
-
+        const data = $(`#pre-sample${i}`).text().trim();
+        if (i % 2 === 0) {
+            inputs.push(data);
+        } else {
+            outputs.push(data);
+        }
     }
 
     // const problem = {

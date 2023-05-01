@@ -5,7 +5,7 @@ const mongoose = require('mongoose').connection.useDb('problems');
 const problemSchema = require('../schemas/cf_problem_schema');
 
 // create model for documents
-const Problem = mongoose.model('Codeforces', problemSchema);
+const Problem = mongoose.model('codeforces', problemSchema);
 
 // module scaffolding
 const helper = {};
@@ -27,7 +27,7 @@ function getVolume(problemID) {
 helper.readProblem = async (problemID) => {
     try {
         const volume = getVolume(problemID);
-        const data = await Problem.findOne({ volume, 'problems.problemID': problemID }, { _id: 0, volume: 0, __v: 0 });
+        const data = await Problem.findOne({ volume, 'problems.problemID': problemID }, { 'problems.$': 1 });
         if (data === null) return 'not found';
         return data.problems[0];
     } catch (error) {
