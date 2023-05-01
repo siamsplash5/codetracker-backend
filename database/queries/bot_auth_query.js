@@ -38,8 +38,7 @@ helper.readInfo = async (_userName, _judge) => {
 // create the bot data for in the beginning phase
 helper.createInfo = async (info) => {
     try {
-        const newBot = new Bot(info);
-        await newBot.save();
+        Bot.create(info);
     } catch (error) {
         throw new Error('Error when create bot info in database');
     }

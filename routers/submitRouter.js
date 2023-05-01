@@ -10,7 +10,7 @@ const watchTimusVerdict = require('../services/watch-verdict/timus_verdict');
 
 const submitRouter = express.Router();
 
-submitRouter.get('/', async (req, res) => {
+submitRouter.post('/', async (req, res) => {
     try {
         const submitInfo = req.body;
         let status;

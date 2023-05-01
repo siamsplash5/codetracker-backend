@@ -11,7 +11,6 @@ Date: 24-04-2023
 const superagent = require('superagent').agent();
 const getRandomString = require('../../lib/randomStringGenerator');
 const { decryptPassword } = require('../../lib/encryption');
-// const bot = require('../db_controllers/cf');
 const bot = require('../../database/queries/bot_auth_query');
 
 // get csrf, bfaa, ftaa tokens for getting authenticate
@@ -60,7 +59,6 @@ async function codeforcesLogin(username, encryptedPassword) {
     try {
         console.log('Codeforces Login called');
         const loginUrl = 'https://codeforces.com/enter?back=%2F';
-        console.log(167);
         const csrf = await getCsrfToken(loginUrl);
         const ftaa = createFtaaToken();
         const bfaa = createBfaaToken();
@@ -75,8 +73,6 @@ async function codeforcesLogin(username, encryptedPassword) {
             remember: 'on',
             _tta: 104,
         };
-
-        console.log(loginData);
 
         const res = await superagent
             .post(loginUrl)

@@ -6,7 +6,7 @@ const parseTimusProblem = require('../services/parse_problem/timus_problem');
 
 const problemRouter = express.Router();
 
-problemRouter.get('/', async (req, res) => {
+problemRouter.post('/', async (req, res) => {
     try {
         const { judge, problemID } = req.body;
         let problem;

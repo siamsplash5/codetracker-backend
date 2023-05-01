@@ -13,9 +13,6 @@ async function parseProblem(problemID) {
     if (page.url() !== url) {
         throw new Error('Invalid parsing information');
     }
-    if (page.title() !== 'Codeforces') {
-        throw new Error('Codeforces server error');
-    }
     const problemStatementHTML = await page.$eval('.problem-statement', (el) => el.innerHTML);
     // eslint-disable-next-line prettier/prettier
     const tags = await page.$$eval('span.tag-box', (els) => els.map((el) => el.innerHTML.toString().trim().replace(/\n\s*/g, '')));

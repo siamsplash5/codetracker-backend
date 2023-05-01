@@ -41,13 +41,12 @@ helper.createProblem = async (problem) => {
         console.log('Create problem called');
         const { problemID } = problem;
         const volume = getVolume(problemID);
-        const volumeDocument = Problem.findOne({ volume });
+        const volumeDocument = await Problem.findOne({ volume });
         if (volumeDocument !== null) {
             await Problem.updateOne({ volume }, { $push: { problems: problem } });
         } else {
             const data = { volume, problems: [problem], };
-            const newProblem = new Problem(data);
-            await newProblem.save();
+            Problem.create(data);
         }
     } catch (error) {
         console.log(error);
