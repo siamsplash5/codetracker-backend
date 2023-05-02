@@ -97,10 +97,10 @@ async function parseProblem(url, problemID) {
 }
 
 function extractProblemID(url) {
-    const regex = /\/(\d+)\/([A-Z])$/;
+    const regex = /\/(\d+)\/([a-z])$/;
     const match = url.match(regex);
     if (match) {
-        const problemCode = match[1] + match[2];
+        const problemCode = match[1] + match[2].toUpperCase();
         return problemCode;
     }
     throw new Error('Invalid Url');
