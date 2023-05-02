@@ -2,6 +2,7 @@
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const { readProblem, createProblem } = require('../../database/queries/timus_problem_query');
+const getCurrentDateTime = require('../../lib/getCurrentDateTime');
 
 async function parseProblem(url, problemID) {
     const browser = await puppeteer.launch({ headless: true });
@@ -40,7 +41,7 @@ async function parseProblem(url, problemID) {
     const bg = $('h3.problem_subtitle:contains("Background")').length;
     if (bg > 0) count -= 1;
     let background = '';
-    let problemStat = '';
+    let body = '';
     let input = '';
     let output = '';
     for (let i = 0; i <= 300; i += 1) {
@@ -51,7 +52,7 @@ async function parseProblem(url, problemID) {
         if (count === -1) {
             background += `${data}\n\n`;
         } else if (count === 0) {
-            problemStat += `${data}\n\n`;
+            body += `${data}\n\n`;
         } else if (count === 1) {
             input += `${data}\n\n`;
         } else if (count === 2) {
@@ -95,6 +96,9 @@ async function parseProblem(url, problemID) {
         .trim()
         .replace('Problem Source', '\nProblem Source');
 
+    // get the current date and time
+    const currentDateTime = getCurrentDateTime();
+
     const problem = {
         problemID,
         title,
@@ -102,7 +106,7 @@ async function parseProblem(url, problemID) {
         memoryLimit,
         problemStatement: {
             background,
-            problem: problemStat,
+            body,
             input,
             output,
         },
@@ -115,30 +119,24 @@ async function parseProblem(url, problemID) {
         difficulty,
         source: url,
         author,
-        parsedAt: new Date().toLocaleString('en-US', {
-            timeZone: 'Asia/Dhaka',
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-            hour12: true,
-        }),
+        parsedAt: currentDateTime,
     };
     return problem;
 }
 
-async function parseTimusProblem(_url) {
+function extractProblemID(url) {
+    const pattern = /num=(\d+)/;
+    const match = url.match(pattern);
+    if (!match) {
+        throw new Error('Invalid Url');
+    }
+    return match[1];
+}
+
+async function parseTimusProblem(url) {
     try {
-        const url = _url.toLowerCase();
-        const pattern = /num=(\d+)/;
-        const match = url.match(pattern);
-        if (!match) {
-            throw new Error('Invalid Url');
-        }
-        const problemID = match[1];
-        let problem = await readProblem(url, problemID);
+        const problemID = extractProblemID(url);
+        let problem = await readProblem(problemID);
         if (problem === 'not found') {
             problem = await parseProblem(url, problemID);
             await createProblem(problem);

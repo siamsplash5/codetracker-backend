@@ -24,7 +24,7 @@ const problemSchema = new mongoose.Schema({
                 required: true,
             },
             problemStatement: {
-                problem: {
+                body: {
                     type: String,
                     default: null,
                 },

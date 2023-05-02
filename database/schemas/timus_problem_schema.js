@@ -28,7 +28,7 @@ const problemSchema = new mongoose.Schema({
                     type: String,
                     default: null,
                 },
-                problem: {
+                body: {
                     type: String,
                     default: null,
                 },

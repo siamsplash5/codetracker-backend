@@ -2,6 +2,7 @@
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const { readProblem, createProblem } = require('../../database/queries/atcoder_problem_query');
+const getCurrentDateTime = require('../../lib/getCurrentDateTime');
 
 async function parseProblem(url, problemID) {
     const browser = await puppeteer.launch({ headless: true });
@@ -10,20 +11,45 @@ async function parseProblem(url, problemID) {
     if ((await page.title()) === '404 Not Found - AtCoder') {
         throw new Error('Invalid Url');
     }
+
+    // grab problem statement from the webpage
     const problemStatementHTML = await page.$eval(
         '#task-statement',
         (el) => el.parentElement.innerHTML
     );
 
+    // load the problem statement html to cheerio
     const $ = cheerio.load(problemStatementHTML);
-    const len = $('.part').length;
+
+    // parse the title of the problem
     const title = $('span.h2').text().trim().replace('\n\t\t\tEditorial', '');
+
+    // parsing the score of the problem
     const score = $('span.lang-en p').find('mn').eq(0).text();
+
+    // parsing the time and memory limit of the problem
     const timeAndMemoryLimit = $('p').eq(0).text().trim();
     let timeLimit = timeAndMemoryLimit.match(/Time Limit: (\d+) sec/)[1];
     let memoryLimit = timeAndMemoryLimit.match(/Memory Limit: (\d+) MB/)[1];
     timeLimit = timeLimit === '1' ? `${timeLimit} second` : `${timeLimit} seconds`;
     memoryLimit = `${memoryLimit} megabytes`;
+
+    // parse the problem statement
+    const len = $('.part').length;
+    const body = $('div.part')
+        .eq(len / 2)
+        .html();
+    const constraint = $('div.part')
+        .eq(len / 2 + 1)
+        .html();
+    const input = $('div.part')
+        .eq(len / 2 + 2)
+        .html();
+    const output = $('div.part')
+        .eq(len / 2 + 3)
+        .html();
+
+    // parse the sample inputs and outputs and relavent notes
     const inputs = [];
     const outputs = [];
     const notes = [];
@@ -36,7 +62,7 @@ async function parseProblem(url, problemID) {
             outputs.push(data);
             const notesInnerHtml = $(`#pre-sample${i}`)
                 .nextAll()
-                .map((idx, el) => $.html(el))
+                .map((index, el) => $.html(el))
                 .get()
 
                 .join('');
@@ -45,6 +71,8 @@ async function parseProblem(url, problemID) {
             }
         }
     }
+    // get current date and time
+    const currentDateTime = getCurrentDateTime();
 
     const problem = {
         problemID,
@@ -52,18 +80,10 @@ async function parseProblem(url, problemID) {
         timeLimit,
         memoryLimit,
         problemStatement: {
-            problem: $('div.part')
-                .eq(len / 2)
-                .html(),
-            constraint: $('div.part')
-                .eq(len / 2 + 1)
-                .html(),
-            input: $('div.part')
-                .eq(len / 2 + 2)
-                .html(),
-            output: $('div.part')
-                .eq(len / 2 + 3)
-                .html(),
+            body,
+            constraint,
+            input,
+            output,
         },
         sampleTestCase: {
             inputs,
@@ -72,37 +92,29 @@ async function parseProblem(url, problemID) {
         notes,
         score,
         source: url,
-        parsedAt: new Date().toLocaleString('en-US', {
-            timeZone: 'Asia/Dhaka',
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            second: 'numeric',
-            hour12: true,
-        }),
+        parsedAt: currentDateTime,
     };
     return problem;
 }
 
-async function parseAtcoderProblem(_url) {
+function extractProblemID(url) {
+    const pattern = /\/tasks\/([a-z0-9_]+)/i;
+    const match = url.match(pattern);
+    if (!(match && match.length > 1)) {
+        throw new Error('Invalid Url');
+    }
+    return match[1];
+}
+
+async function parseAtcoderProblem(url) {
     try {
-        const url = _url.toLowerCase();
-        const pattern = /\/tasks\/([a-z0-9_]+)/i;
-        const match = url.match(pattern);
-        if (!(match && match.length > 1)) {
-            throw new Error('Invalid Url');
-        }
-        const problemID = match[1];
-        let problem = await readProblem(url, problemID);
+        const problemID = extractProblemID(url);
+        let problem = await readProblem(problemID);
         if (problem === 'not found') {
             problem = await parseProblem(url, problemID);
             await createProblem(problem);
         }
         return problem;
-        // const problem = await parseProblem(url);
-        // return problem;
     } catch (error) {
         console.error(error);
         throw new Error(error);

@@ -1,20 +1,18 @@
 function parseRequestValidator(req, res, next) {
     const judges = ['codeforces', 'spoj', 'atcoder', 'timus'];
-    let { judge, problemID } = req.body;
+    let { judge, url } = req.body;
 
-    if (judge === undefined || problemID === undefined || judge === '' || problemID === '') {
+    if (judge === undefined || url === undefined || judge === '' || url === '') {
         next('Invalid parsing information');
     }
 
     judge = judge.toLowerCase();
-    problemID = problemID.toUpperCase();
 
     if (!judges.includes(judge)) {
         next('Invalid parsing information');
     }
 
     req.body.judge = judge;
-    req.body.problemID = problemID;
     next();
 }
 

@@ -29,7 +29,7 @@ function getVolume(problemID) {
 }
 
 // get the problem object from database
-helper.readProblem = async (url, problemID) => {
+helper.readProblem = async (problemID) => {
     try {
         const volume = getVolume(problemID);
         const data = await Problem.findOne({ volume, 'problems.problemID': problemID }, { 'problems.$': 1 });
