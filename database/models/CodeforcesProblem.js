@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const codeforcesDb = mongoose.connection.useDb('problems');
+
 const problemSchema = new mongoose.Schema({
     volume: {
         type: Number,
@@ -24,15 +26,15 @@ const problemSchema = new mongoose.Schema({
                 required: true,
             },
             problemStatement: {
-                background: {
-                    type: String,
-                    default: null,
-                },
                 body: {
                     type: String,
                     default: null,
                 },
                 input: {
+                    type: String,
+                    default: null,
+                },
+                interaction: {
                     type: String,
                     default: null,
                 },
@@ -65,7 +67,7 @@ const problemSchema = new mongoose.Schema({
                     default: null,
                 },
             ],
-            difficulty: {
+            rating: {
                 type: String,
                 default: null,
             },
@@ -73,13 +75,10 @@ const problemSchema = new mongoose.Schema({
                 type: String,
                 required: true,
             },
-            author: {
-                type: String,
-                required: null,
-            },
             parsedAt: Date,
         },
     ],
 });
 
-module.exports = problemSchema;
+const model = codeforcesDb.model('codeforces', problemSchema);
+module.exports = model;

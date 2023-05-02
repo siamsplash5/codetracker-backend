@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const spojDb = mongoose.connection.useDb('problems');
+
 const problemSchema = new mongoose.Schema({
     volume: {
         type: Number,
@@ -52,4 +54,5 @@ const problemSchema = new mongoose.Schema({
     ],
 });
 
-module.exports = problemSchema;
+const model = spojDb.model('spoj', problemSchema);
+module.exports = model;

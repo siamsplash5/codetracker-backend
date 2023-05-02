@@ -1,13 +1,13 @@
 /* eslint-disable max-len */
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
-const { readProblem, createProblem } = require('../../database/queries/atcoder_problem_query');
+const { readProblem, createProblem } = require('../../database/queries/problem_query');
 const getCurrentDateTime = require('../../lib/getCurrentDateTime');
 
 async function parseProblem(url, problemID) {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
-    await page.goto(url);
+    await page.goto(url, { timeout: 60000 });
     if ((await page.title()) === '404 Not Found - AtCoder') {
         throw new Error('Invalid Url');
     }
@@ -106,13 +106,13 @@ function extractProblemID(url) {
     return match[1];
 }
 
-async function parseAtcoderProblem(url) {
+async function parseAtcoderProblem(judge, url) {
     try {
         const problemID = extractProblemID(url);
-        let problem = await readProblem(problemID);
+        let problem = await readProblem(judge, problemID);
         if (problem === 'not found') {
             problem = await parseProblem(url, problemID);
-            await createProblem(problem);
+            await createProblem(judge, problem);
         }
         return problem;
     } catch (error) {

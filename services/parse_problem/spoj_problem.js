@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
-const { readProblem, createProblem } = require('../../database/queries/spoj_problem_query');
+const { readProblem, createProblem } = require('../../database/queries/problem_query');
 const getCurrentDateTime = require('../../lib/getCurrentDateTime');
 
 async function parseProblem(url, problemID) {
@@ -86,13 +86,13 @@ function extractProblemID(url) {
     return problemID;
 }
 
-async function parseSpojProblem(url) {
+async function parseSpojProblem(judge, url) {
     try {
         const problemID = extractProblemID(url);
-        let problem = await readProblem(problemID);
+        let problem = await readProblem(judge, problemID);
         if (problem === 'not found') {
             problem = await parseProblem(url, problemID);
-            await createProblem(problem);
+            await createProblem(judge, problem);
         }
         return problem;
     } catch (error) {

@@ -52,7 +52,6 @@ function parseRequestValidator(req, res, next) {
 
     req.body.judge = judge;
     req.body.url = url;
-    console.log({ judge, url });
     next();
 }
 

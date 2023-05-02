@@ -1,13 +1,13 @@
 /* eslint-disable max-len */
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
-const { readProblem, createProblem } = require('../../database/queries/timus_problem_query');
+const { readProblem, createProblem } = require('../../database/queries/problem_query');
 const getCurrentDateTime = require('../../lib/getCurrentDateTime');
 
 async function parseProblem(url, problemID) {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
-    await page.goto(url);
+    await page.goto(url, { timeout: 60000 });
     if ((await page.title()) === 'Timus Online Judge') {
         throw new Error('Invalid Url');
     }
@@ -133,13 +133,13 @@ function extractProblemID(url) {
     return match[1];
 }
 
-async function parseTimusProblem(url) {
+async function parseTimusProblem(judge, url) {
     try {
         const problemID = extractProblemID(url);
-        let problem = await readProblem(problemID);
+        let problem = await readProblem(judge, problemID);
         if (problem === 'not found') {
             problem = await parseProblem(url, problemID);
-            await createProblem(problem);
+            await createProblem(judge, problem);
         }
         return problem;
     } catch (error) {

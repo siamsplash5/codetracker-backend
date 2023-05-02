@@ -1,8 +1,10 @@
 // dependencies
 const mongoose = require('mongoose');
 
+const botsDb = mongoose.connection.useDb('bots');
+
 // schema defination for the bot document
-const botSchema = mongoose.Schema({
+const botSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
@@ -29,4 +31,5 @@ const botSchema = mongoose.Schema({
     },
 });
 
-module.exports = botSchema;
+const model = botsDb.model('bot', botSchema);
+module.exports = model;

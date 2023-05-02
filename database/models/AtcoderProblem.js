@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const atcoderDb = mongoose.connection.useDb('problems');
+
 const problemSchema = new mongoose.Schema({
     volume: {
         type: Number,
@@ -74,4 +76,5 @@ const problemSchema = new mongoose.Schema({
     ],
 });
 
-module.exports = problemSchema;
+const model = atcoderDb.model('atcoder', problemSchema);
+module.exports = model;

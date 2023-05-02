@@ -1,12 +1,12 @@
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
-const { readProblem, createProblem } = require('../../database/queries/cf_problem_query');
+const { readProblem, createProblem } = require('../../database/queries/problem_query');
 const getCurrentDateTime = require('../../lib/getCurrentDateTime');
 
 async function parseProblem(url, problemID) {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
-    await page.goto(url);
+    await page.goto(url, { timeout: 60000 });
     if (page.url() !== url) {
         throw new Error('Invalid parsing information');
     }
@@ -106,13 +106,13 @@ function extractProblemID(url) {
     throw new Error('Invalid Url');
 }
 
-async function parseCodeforcesProblem(url) {
+async function parseCodeforcesProblem(judge, url) {
     try {
         const problemID = extractProblemID(url);
-        let problem = await readProblem(problemID);
+        let problem = await readProblem(judge, problemID);
         if (problem === 'not found') {
             problem = await parseProblem(url, problemID);
-            await createProblem(problem);
+            await createProblem(judge, problem);
         }
         return problem;
     } catch (error) {

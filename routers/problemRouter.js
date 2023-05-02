@@ -11,16 +11,16 @@ problemRouter.post('/', async (req, res) => {
         const { judge, url } = req.body;
         let problem;
         if (judge === 'atcoder') {
-            problem = await parseAtcoderProblem(url);
+            problem = await parseAtcoderProblem(judge, url);
         }
         if (judge === 'codeforces') {
-            problem = await parseCodeforcesProblem(url);
+            problem = await parseCodeforcesProblem(judge, url);
         }
         if (judge === 'spoj') {
-            problem = await parseSpojProblem(url);
+            problem = await parseSpojProblem(judge, url);
         }
         if (judge === 'timus') {
-            problem = await parseTimusProblem(url);
+            problem = await parseTimusProblem(judge, url);
         }
         res.send(problem);
     } catch (error) {
