@@ -7,7 +7,7 @@ async function parseProblem(url, problemID) {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto(url);
-    if (page.title() === '404 Not Found - AtCoder') {
+    if ((await page.title()) === '404 Not Found - AtCoder') {
         throw new Error('Invalid Url');
     }
     const problemStatementHTML = await page.$eval(
