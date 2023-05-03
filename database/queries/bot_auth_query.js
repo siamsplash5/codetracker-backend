@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 
 // dependencies
-const Bot = require('../models/Bot');
+const botModel = require('../models/Bot');
 
 // module scaffolding
 const helper = {};
@@ -21,7 +21,7 @@ helper.readInfo = async (_userName, _judge) => {
         projection.password = 1;
         projection[`${judge}Credentials`] = 1;
 
-        const data = await Bot.findOne({ username: userName }, projection);
+        const data = await botModel.findOne({ username: userName }, projection);
         if (data === null) {
             throw new Error('Data not found');
         }
@@ -34,7 +34,7 @@ helper.readInfo = async (_userName, _judge) => {
 // create the bot data for in the beginning phase
 helper.createInfo = async (info) => {
     try {
-        Bot.create(info);
+        botModel.create(info);
     } catch (error) {
         throw new Error('Error when create bot info in database');
     }
@@ -47,7 +47,7 @@ helper.updateInfo = async (userName, _judge, info) => {
         if (allowedJudges.includes(judge) === false) {
             throw new Error('Invalid judge name');
         }
-        await Bot.updateOne(
+        await botModel.updateOne(
             { username: userName },
             {
                 $set: {

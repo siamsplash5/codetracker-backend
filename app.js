@@ -1,7 +1,5 @@
-/* eslint-disable comma-dangle */
 const express = require('express');
-// eslint-disable-next-line no-unused-vars
-const dotenv = require('dotenv').config();
+require('dotenv').config();
 const mongoose = require('mongoose');
 
 // routes
@@ -14,6 +12,10 @@ const parseRequestValidator = require('./middlewares/parseRequestValidator');
 
 // App Object - module scaffodling
 const app = express();
+
+// parsing the incoming data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // database connection with mongoose
 mongoose
@@ -28,9 +30,6 @@ mongoose
         });
     })
     .catch(console.error);
-
-// receiving data from user
-app.use(express.json());
 
 // use routes
 app.use('/check', checkRouter);

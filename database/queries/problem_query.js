@@ -57,23 +57,23 @@ function getTimusVolume(problemID) {
 function getModelAndVolume(judge, problemID) {
     if (judge === 'atcoder') {
         const volume = getAtcoderVolume(problemID);
-        const Problem = Atcoder;
-        return { volume, Problem };
+        const problemModel = Atcoder;
+        return { volume, problemModel };
     }
     if (judge === 'codeforces') {
         const volume = getCodeforcesVolume(problemID);
-        const Problem = Codeforces;
-        return { volume, Problem };
+        const problemModel = Codeforces;
+        return { volume, problemModel };
     }
     if (judge === 'spoj') {
         const volume = getSpojVolume(problemID);
-        const Problem = Spoj;
-        return { volume, Problem };
+        const problemModel = Spoj;
+        return { volume, problemModel };
     }
     if (judge === 'timus') {
         const volume = getTimusVolume(problemID);
-        const Problem = Timus;
-        return { volume, Problem };
+        const problemModel = Timus;
+        return { volume, problemModel };
     }
     return null;
 }
@@ -81,8 +81,8 @@ function getModelAndVolume(judge, problemID) {
 // get the problem object from database
 helper.readProblem = async (judge, problemID) => {
     try {
-        const { volume, Problem } = getModelAndVolume(judge, problemID);
-        const data = await Problem.findOne({ volume, 'problems.problemID': problemID }, { 'problems.$': 1 });
+        const { volume, problemModel } = getModelAndVolume(judge, problemID);
+        const data = await problemModel.findOne({ volume, 'problems.problemID': problemID }, { 'problems.$': 1 });
         if (data === null) return 'not found';
         return data.problems[0];
     } catch (error) {
@@ -96,13 +96,13 @@ helper.createProblem = async (judge, problem) => {
     try {
         console.log('Create problem called');
         const { problemID } = problem;
-        const { volume, Problem } = getModelAndVolume(judge, problemID);
-        const volumeDocument = await Problem.findOne({ volume });
+        const { volume, problemModel } = getModelAndVolume(judge, problemID);
+        const volumeDocument = await problemModel.findOne({ volume });
         if (volumeDocument !== null) {
-            await Problem.updateOne({ volume }, { $push: { problems: problem } });
+            await problemModel.updateOne({ volume }, { $push: { problems: problem } });
         } else {
             const data = { volume, problems: [problem], };
-            Problem.create(data);
+            problemModel.create(data);
         }
     } catch (error) {
         console.log(error);
