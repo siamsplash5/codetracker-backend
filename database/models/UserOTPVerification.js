@@ -34,6 +34,7 @@ const UserOTPVerficationSchema = new mongoose.Schema(
         expiresAt: {
             type: Date,
             default: Date.now() + 3600000,
+            index: { expires: '1h' },
         },
     },
     { timestamps: true }
