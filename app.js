@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const submitRouter = require('./routers/submitRouter');
 const checkRouter = require('./routers/checkRouter');
 const problemRouter = require('./routers/problemRouter');
+const registerRouter = require('./routers/registerRouter');
+// const loginRouter = require('./routers/loginRouter');
 
 // middlewares
 const parseRequestValidator = require('./middlewares/parseRequestValidator');
@@ -32,6 +34,8 @@ mongoose
     .catch(console.error);
 
 // use routes
+// app.use('/login', loginRouter);
+app.use('/register', registerRouter);
 app.use('/check', checkRouter);
 app.use('/submit', submitRouter);
 app.use('/problem', parseRequestValidator, problemRouter);
