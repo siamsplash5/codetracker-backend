@@ -55,10 +55,10 @@ registerRouter.post('/', async (req, res) => {
         }
         // encrypt the password
         const saltRounds = 10;
-        password = await bcrypt.hash(password, saltRounds);
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
         // getting the otp, this function will genereate otp and will store it on database
         // this will return the non-hashed otp and the database object id
-        const { _id, otp, message } = await getOTP({ username, email, password });
+        const { _id, otp, message } = await getOTP({ username, email, hashedPassword });
         if (message === 'otp already exist') {
             res.send('OTP already send.');
             return;
@@ -82,7 +82,7 @@ registerRouter.post('/verify', async (req, res) => {
     try {
         let { userID, otp } = req.body;
         if (userID === null || otp === null || userID === undefined || otp === undefined) {
-            res.status(400).send('Bad Request/Internal Server Error');
+            res.status(400).send('Bad Request');
             return;
         }
         userID = userID.trim();
@@ -117,7 +117,6 @@ registerRouter.post('/verify', async (req, res) => {
             );
             return;
         }
-
         await userModel.create({ username, email, password });
         await userOTPVerificationModel.findByIdAndDelete({ _id: userID });
         res.send('Registration succesful! Now log in to your account.');
