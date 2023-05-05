@@ -1,10 +1,9 @@
 const express = require('express');
-const superagent = require('superagent');
 
 const checkRouter = express.Router();
 
-checkRouter.get('/', async (req, res) => {
-    res.redirect('/verify');
+checkRouter.get('/', (req, res) => {
+    res.send('Heehe boi');
 });
 
 module.exports = checkRouter;

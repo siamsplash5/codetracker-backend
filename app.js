@@ -11,6 +11,7 @@ const registerRouter = require('./routers/registerRouter');
 const loginRouter = require('./routers/loginRouter');
 
 // middlewares
+const authGuard = require('./middlewares/authGuard');
 const parseRequestValidator = require('./middlewares/parseRequestValidator');
 
 // App Object - module scaffodling
@@ -38,7 +39,7 @@ mongoose
 // use routes
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);
-app.use('/check', checkRouter);
+app.use('/check', authGuard, checkRouter);
 app.use('/submit', submitRouter);
 app.use('/problem', parseRequestValidator, problemRouter);
 

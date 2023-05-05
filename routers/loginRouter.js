@@ -1,12 +1,13 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const userModel = require('../database/models/User');
 const { passwordRecoveryMail } = require('../lib/sendMailer');
 const userOTPVerificationModel = require('../database/models/UserOTPVerification');
 const { getOTP } = require('../lib/getOTP');
 
 const loginRouter = express.Router();
-
+const maxAge = 24 * 60 * 60;
 // creating a login router
 loginRouter.post('/', async (req, res) => {
     try {
@@ -28,13 +29,17 @@ loginRouter.post('/', async (req, res) => {
             res.send('Invalid Username/Password');
             return;
         }
-        const { password } = result;
+        const { _id, username, password } = result;
         const isMatched = await bcrypt.compare(loginPassword, password);
         if (!isMatched) {
             console.log('User password did not matched');
             res.send('Invalid Username/Password');
             return;
         }
+        const token = jwt.sign({ id: _id, user: username }, process.env.JWT_SECRET, {
+            expiresIn: maxAge,
+        });
+        res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
         res.send('Login Successful');
     } catch (error) {
         console.log(error);
