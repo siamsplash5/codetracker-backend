@@ -1,58 +1,11 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const nodemailer = require('nodemailer');
 const userModel = require('../database/models/User');
-const randomStringGenerator = require('../lib/randomStringGenerator');
+const { sendOTPVerificationMail } = require('../lib/sendMailer');
+const { getOTP } = require('../lib/getOTP');
 const userOTPVerificationModel = require('../database/models/UserOTPVerification');
 
 const registerRouter = express.Router();
-
-// nodemailer transporter
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: process.env.AUTH_EMAIL,
-        pass: process.env.AUTH_PASS,
-    },
-});
-
-// mail sender function powered by nodemailer
-async function sendOTPVerificationMail(otp, username, email) {
-    try {
-        const mailOptions = {
-            from: process.env.AUTH_EMAIL,
-            to: email,
-            subject: 'CodeTracker - Email Verfication',
-            html: `<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Welcome to CodeTracker!</title>
-  </head>
-  <body>
-    <p>Hello, ${username}.</p>
-
-    <p>Your email was provided for registration on CodeTracker. To confirm your registration, enter the following code in this <a href="https://localhost:5000/register/verify">link</a>.</p>
-
-    <p><b>Code:<b> ${otp}</p>
-
-    <p>After that, you will able to login into the system.</p>
-
-    <p>This code is only valid for 1 hour only. Thank you for your choosing CodeTracker.</p>
-
-    <p>If it was not you, just ignore this letter.</p>
-
-    <p>With best regards,<br>
-    CodeTracker Team.</p>
-  </body>
-</html>`,
-        };
-        await transporter.sendMail(mailOptions);
-    } catch (error) {
-        console.log(error);
-        throw new Error(error);
-    }
-}
 
 registerRouter.post('/', async (req, res) => {
     try {
@@ -103,22 +56,13 @@ registerRouter.post('/', async (req, res) => {
         // encrypt the password
         const saltRounds = 10;
         password = await bcrypt.hash(password, saltRounds);
-        const otp = randomStringGenerator({
-            lowerCase: true,
-            upperCase: true,
-            numbers: true,
-            specialChar: false,
-            stringLen: 6,
-        });
-        // encrypt the otp
-        const hashedOTP = await bcrypt.hash(otp, saltRounds);
-        // store the registration credentials temporarily in database
-        const { _id } = await userOTPVerificationModel.create({
-            username,
-            email,
-            password,
-            hashedOTP,
-        });
+        // getting the otp, this function will genereate otp and will store it on database
+        // this will return the non-hashed otp and the database object id
+        const { _id, otp, message } = await getOTP({ username, email, password });
+        if (message === 'otp already exist') {
+            res.send('OTP already send.');
+            return;
+        }
         // send verifcation mail
         await sendOTPVerificationMail(otp, username, email);
         res.send({
