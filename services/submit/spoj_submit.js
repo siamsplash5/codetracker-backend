@@ -15,7 +15,7 @@ const superagent = require('superagent').agent();
 const cheerio = require('cheerio');
 const bot = require('../../database/queries/bot_auth_query');
 const randomStringGenerator = require('../../lib/randomStringGenerator');
-const spojLogin = require('../login/spoj_login');
+const spojLogin = require('../bot_login/spoj_login');
 
 function getSubmissionID(html) {
     try {

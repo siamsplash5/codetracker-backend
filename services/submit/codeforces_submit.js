@@ -12,7 +12,7 @@ Date: 24-04-2023
 // dependencies
 const superagent = require('superagent').agent();
 const bot = require('../../database/queries/bot_auth_query');
-const codeforcesLogin = require('../login/codeforces_login');
+const codeforcesLogin = require('../bot_login/codeforces_login');
 
 function getSubmissionID(html) {
     try {

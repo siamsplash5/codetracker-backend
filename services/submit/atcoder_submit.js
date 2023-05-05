@@ -13,7 +13,7 @@ Date: 24-04-2023
 const superagent = require('superagent').agent();
 const cheerio = require('cheerio');
 const bot = require('../../database/queries/bot_auth_query');
-const atcoderLogin = require('../login/atcoder_login');
+const atcoderLogin = require('../bot_login/atcoder_login');
 
 function getSubmissionID(html) {
     try {
