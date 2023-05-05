@@ -60,11 +60,11 @@ loginRouter.post('/passwordRecovery', async (req, res) => {
         const { email, password } = result;
         const { otp, _id } = await getOTP(username, email, password);
         await passwordRecoveryMail(otp, username, email);
+        res.cookie('uid', _id);
         res.send({
             status: 'PENDING',
             message:
                 'A verification code has sent to your email. Enter the verification code here for procced.',
-            userID: _id,
         });
     } catch (error) {
         console.log(error);
@@ -74,20 +74,18 @@ loginRouter.post('/passwordRecovery', async (req, res) => {
 
 loginRouter.post('/passwordRecovery/verify', async (req, res) => {
     try {
-        let { userID, otp, newPassword } = req.body;
+        let { otp, newPassword } = req.body;
         if (
-            userID === null ||
             otp === null ||
             newPassword === null ||
-            userID === undefined ||
             otp === undefined ||
             newPassword === undefined
         ) {
             res.status(400).send('Bad Request');
             return;
         }
-        userID = userID.trim();
         otp = otp.trim();
+        const userID = req.cookies.uid;
         newPassword = newPassword.trim();
         // get the registration info from database
         const result = await userOTPVerificationModel.findById({ _id: userID });
@@ -117,7 +115,7 @@ loginRouter.post('/passwordRecovery/verify', async (req, res) => {
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
         await userModel.updateOne({ username }, { password: hashedPassword });
-
+        res.clearCookie('uid');
         res.send('Password recovery succesful! Now log in to your account.');
     } catch (error) {
         console.log(error);

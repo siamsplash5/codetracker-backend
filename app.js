@@ -1,6 +1,7 @@
 const express = require('express');
 require('dotenv').config();
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 
 // routes
 const submitRouter = require('./routers/submitRouter');
@@ -18,6 +19,7 @@ const app = express();
 // parsing the incoming data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // database connection with mongoose
 mongoose

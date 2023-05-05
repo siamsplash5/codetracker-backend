@@ -58,18 +58,18 @@ registerRouter.post('/', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         // getting the otp, this function will genereate otp and will store it on database
         // this will return the non-hashed otp and the database object id
-        const { _id, otp, message } = await getOTP({ username, email, hashedPassword });
+        const { _id, otp, message } = await getOTP(username, email, hashedPassword);
         if (message === 'otp already exist') {
             res.send('OTP already send.');
             return;
         }
         // send verifcation mail
         await sendOTPVerificationMail(otp, username, email);
+        res.cookie('uid', _id, { maxAge: 1000 * 60 * 60, httpOnly: true });
         res.send({
             status: 'PENDING',
             message:
                 'A verification code has sent to your email. Enter the verification code here for login.',
-            userID: _id,
         });
     } catch (error) {
         console.log(error);
@@ -80,13 +80,13 @@ registerRouter.post('/', async (req, res) => {
 // verify the user with otp
 registerRouter.post('/verify', async (req, res) => {
     try {
-        let { userID, otp } = req.body;
-        if (userID === null || otp === null || userID === undefined || otp === undefined) {
+        let { otp } = req.body;
+        if (otp === null || otp === undefined) {
             res.status(400).send('Bad Request');
             return;
         }
-        userID = userID.trim();
         otp = otp.trim();
+        const userID = req.cookies.uid;
         // get the registration info from database
         const result = await userOTPVerificationModel.findById({ _id: userID });
         // check if the registration data found or not
@@ -119,6 +119,7 @@ registerRouter.post('/verify', async (req, res) => {
         }
         await userModel.create({ username, email, password });
         await userOTPVerificationModel.findByIdAndDelete({ _id: userID });
+        res.clearCookie('uid');
         res.send('Registration succesful! Now log in to your account.');
     } catch (error) {
         console.log(error);
