@@ -5,9 +5,14 @@ const blackListedJWTDb = mongoose.connection.useDb('blacklistedJWT');
 
 // schema defination for the bot document
 const blackListedJWTSchema = new mongoose.Schema({
-    jwt: {
+    token: {
         type: String,
         required: true,
+    },
+    expiresAt: {
+        type: Date,
+        required: true,
+        index: { expires: 0 },
     },
 });
 
