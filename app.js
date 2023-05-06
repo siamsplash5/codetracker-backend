@@ -9,6 +9,7 @@ const checkRouter = require('./routers/checkRouter');
 const problemRouter = require('./routers/problemRouter');
 const registerRouter = require('./routers/registerRouter');
 const loginRouter = require('./routers/loginRouter');
+const logoutRouter = require('./routers/logoutRouter');
 
 // middlewares
 const authGuard = require('./middlewares/authGuard');
@@ -39,8 +40,9 @@ mongoose
 // use routes
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);
+app.use('/logout', authGuard, logoutRouter);
 app.use('/check', authGuard, checkRouter);
-app.use('/submit', submitRouter);
+app.use('/submit', authGuard, submitRouter);
 app.use('/problem', parseRequestValidator, problemRouter);
 
 // default error handler
