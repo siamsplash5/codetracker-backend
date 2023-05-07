@@ -4,16 +4,24 @@ const blacklistedJWT = require('../database/models/BlackListedJWT');
 
 const logoutRouter = express.Router();
 
-logoutRouter.get('/', (req, res) => {
-    const token = req.cookies.jwt;
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    const { exp } = decodedToken;
-    blacklistedJWT.create({
-        token,
-        expiresAt: exp,
-    });
-    res.clearCookie('jwt');
-    res.send('Logout succesful');
+logoutRouter.get('/', async (req, res) => {
+    try {
+        const token = req.cookies.jwt;
+        res.clearCookie('jwt');
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const { exp } = decodedToken;
+        await blacklistedJWT.create({
+            token,
+            expiresAt: exp * 1000,
+        });
+        res.send('Logout succesful');
+    } catch (error) {
+        if (error instanceof jwt.JsonWebTokenError) {
+            res.send('Logout succesful');
+            return;
+        }
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 module.exports = logoutRouter;

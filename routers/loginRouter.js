@@ -39,6 +39,7 @@ loginRouter.post('/', async (req, res) => {
         const token = jwt.sign({ id: _id, user: username }, process.env.JWT_SECRET, {
             expiresIn: maxAge,
         });
+        res.clearCookie('jwt');
         res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
         res.send('Login Successful');
     } catch (error) {
