@@ -1,4 +1,5 @@
 const express = require('express');
+const { updateSubmission } = require('../database/queries/submission_query');
 const atcoderSubmit = require('../services/submit/atcoder_submit');
 const watchAtcoderVerdict = require('../services/watch-verdict/atcoder_verdict');
 const codeforcesSubmit = require('../services/submit/codeforces_submit');
@@ -10,9 +11,19 @@ const watchTimusVerdict = require('../services/watch-verdict/timus_verdict');
 
 const submitRouter = express.Router();
 
+const createProblemID = (judge, contestID, problemIndex) => {
+    if (judge === 'codeforces') return `${contestID}${problemIndex}`;
+    if (judge === 'atcoder') return `${contestID}_${problemIndex}`;
+    return problemIndex;
+};
+
 submitRouter.post('/', async (req, res) => {
     try {
         const submitInfo = req.body;
+        const { judge, contestID, problemIndex, sourceCode } = submitInfo;
+        const { username, userDatabaseID } = req;
+        const problemID = createProblemID(judge, contestID, problemIndex);
+
         let status;
         if (submitInfo.judge === 'atcoder') {
             const watchInfo = await atcoderSubmit(submitInfo);
@@ -34,6 +45,27 @@ submitRouter.post('/', async (req, res) => {
             console.log('submitted');
             status = await watchTimusVerdict(watchInfo);
         }
+        let myContestID = 0;
+        if (req.contestID !== undefined && req.contestID !== null) {
+            myContestID = req.contestID;
+        }
+        const { submissionID, botUsername, problemName, language, verdict, time, memory } = status;
+
+        const submission = {
+            realJudgesSubmissionID: submissionID,
+            submittedBy: username,
+            botWhoSubmitted: botUsername,
+            judge,
+            contestID: myContestID,
+            problemID,
+            problemName,
+            sourceCode: String.raw`${sourceCode}`,
+            verdict,
+            language,
+            time,
+            memory,
+        };
+        await updateSubmission(submission);
         res.send(status);
     } catch (error) {
         throw new Error(error);

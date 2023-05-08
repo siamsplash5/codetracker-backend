@@ -7,21 +7,30 @@ function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function getStatus(html, submissionID, username) {
+function getStatus(html, spojSubmissionID, botUsername) {
     const $ = cheerio.load(html);
-    const tr = $(`tr:has(a:contains(${submissionID}))`);
+    const tr = $(`tr:has(a:contains(${spojSubmissionID}))`);
     if (tr.length) {
-        const status = {}; // object to store submission status
-        status.submissionId = submissionID;
-        status.timestamp = tr.find('.status_sm span').text().trim();
-        status.username = username;
+        const submissionID = spojSubmissionID;
+        const timestamp = tr.find('.status_sm span').text().trim();
         const td = $('td.sproblem');
         const title = td.find('a').attr('title');
-        status.problem = `${tr.find('.sproblem a').text().trim()} - (${title})`;
-        status.language = tr.find('.slang span').text().trim();
-        status.verdict = tr.find('.statusres').text().trim().split('\n')[0];
-        status.time = tr.find('.stime a').text().trim();
-        status.memory = tr.find('.smemory').text().trim();
+        const problemName = `${tr.find('.sproblem a').text().trim()} - (${title})`;
+        const language = tr.find('.slang span').text().trim();
+        const verdict = tr.find('.statusres').text().trim().split('\n')[0];
+        const time = tr.find('.stime a').text().trim();
+        const memory = tr.find('.smemory').text().trim();
+
+        const status = {
+            submissionID,
+            timestamp,
+            botUsername,
+            problemName,
+            language,
+            verdict,
+            time,
+            memory,
+        };
         return status;
     }
     throw new Error('Invalid submission status');

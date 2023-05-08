@@ -9,6 +9,7 @@
     },
     "rules": {
         "operator-linebreak": 0,
+        "func-names": 0,
         "comma-dangle": 0,
         "no-console": 0,
         "indent": 0,

@@ -36,6 +36,8 @@ const authGuard = async (req, res, next) => {
             return;
         }
         // everything is fine, so called the next middleware
+        req.userDatabaseID = id;
+        req.username = user;
         next();
     } catch (error) {
         console.log(error);

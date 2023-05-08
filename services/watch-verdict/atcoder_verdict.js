@@ -25,27 +25,35 @@ function verdictNames(verdict) {
     return mp[verdict];
 }
 
-function getStatus(html, contestID, submissionID) {
+function getStatus(html, contestID, atcSubmissionID) {
     const $ = cheerio.load(html);
     const table = $('table.table-striped').eq(0);
     const td = table
         .find('td')
         .map((index, element) => $(element).text().trim())
         .get();
-
-    const status = {
-        submissionId: submissionID,
-        timestamp: td[0],
-        username: td[2],
-        problem: `${contestID.toUpperCase()} - ${td[1]}`,
-        language: td[3],
-        verdict: td[6].includes('/') ? td[6] : verdictNames(td[6]),
-    };
+    const submissionID = atcSubmissionID;
+    const timestamp = td[0];
+    const botUsername = td[2];
+    const problemName = `${contestID.toUpperCase()} - ${td[1]}`;
+    const language = td[3];
+    const verdict = td[6].includes('/') ? td[6] : verdictNames(td[6]);
+    let time;
+    let memory;
     if (td.length === 9) {
-        status.time = td[7];
-        status.memeory = td[8];
+        time = td[7];
+        memory = td[8];
     }
-
+    const status = {
+        submissionID,
+        timestamp,
+        botUsername,
+        problemName,
+        language,
+        verdict,
+        time,
+        memory,
+    };
     return status;
 }
 
@@ -62,7 +70,7 @@ async function watchAtcoderVerdict(watchInfo) {
         }
         await sleep(2000);
     }
-
+    console.log(status);
     return status;
 }
 

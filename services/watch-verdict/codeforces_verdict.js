@@ -6,19 +6,29 @@ function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function getStatus(html, submissionID) {
+function getStatus(html, cfSubmissionID) {
     const $ = cheerio.load(html);
-    const tr = $(`tr[data-submission-id=${submissionID}]`);
+    const tr = $(`tr[data-submission-id=${cfSubmissionID}]`);
     if (tr.length) {
-        const status = {}; // object to store submission status
-        status.submissionId = tr.find('.id-cell a').text().trim();
-        status.timestamp = tr.find('.format-time').text().trim();
-        status.username = tr.find('.status-party-cell a').text().trim();
-        status.problem = tr.find('.status-small a').text().trim();
-        status.language = tr.find(':nth-child(5)').text().trim();
-        status.verdict = tr.find('.submissionVerdictWrapper').text().trim();
-        status.time = tr.find('.time-consumed-cell').text().trim();
-        status.memory = tr.find('.memory-consumed-cell').text().trim();
+        const submissionID = tr.find('.id-cell a').text().trim();
+        const timestamp = tr.find('.format-time').text().trim();
+        const botUsername = tr.find('.status-party-cell a').text().trim();
+        const problemName = tr.find('.status-small a').text().trim();
+        const language = tr.find(':nth-child(5)').text().trim();
+        const verdict = tr.find('.submissionVerdictWrapper').text().trim();
+        const time = tr.find('.time-consumed-cell').text().trim();
+        const memory = tr.find('.memory-consumed-cell').text().trim();
+
+        const status = {
+            submissionID,
+            timestamp,
+            botUsername,
+            problemName,
+            language,
+            verdict,
+            time,
+            memory,
+        };
         return status;
     }
     return null;
@@ -37,6 +47,7 @@ async function watchCodeforcesVerdict(submissionInfo) {
         }
         await sleep(3000);
     }
+    console.log(status);
     return status;
 }
 
