@@ -42,7 +42,11 @@ async function watchCodeforcesVerdict(submissionInfo) {
         const html = (await superagent.get(watchUrl)).text;
         status = getStatus(html, submissionID);
         console.log(status.verdict);
-        if ((status.verdict.includes('Running') || status.verdict.includes('queue')) === false) {
+        if (
+            (status.verdict === '' ||
+                status.verdict.includes('Running') ||
+                status.verdict.includes('queue')) === false
+        ) {
             break;
         }
         await sleep(3000);
