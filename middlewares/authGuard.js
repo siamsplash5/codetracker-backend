@@ -7,7 +7,7 @@ const authGuard = async (req, res, next) => {
     try {
         // check the token is in the cookie
         const token = req.cookies.jwt;
-        if (token === null) {
+        if (token === null || token === undefined) {
             console.log('token not found');
             res.send("You're logged out. Please login.");
             return;
