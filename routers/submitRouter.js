@@ -65,20 +65,37 @@ submitRouter.post('/', async (req, res) => {
             time,
             memory,
         };
-        await updateSubmission(submission);
+        // const { userDatabaseID } = req;
+        // const submission = {
+        //     realJudgesSubmissionID: 123,
+        //     submittedBy: 'username',
+        //     botWhoSubmitted: 'botUsername',
+        //     judge: 'codeforces',
+        //     contestID: 0,
+        //     problemID: 'problemID',
+        //     problemName: 'problemName',
+        //     sourceCode: 'sourceCode',
+        //     verdict: 'verdict',
+        //     language: 'language',
+        //     time: 'time',
+        //     memory: 'memory',
+        // };
+        await updateSubmission(userDatabaseID, submission);
+        // res.send('done');
         res.send(status);
     } catch (error) {
-        throw new Error(error);
+        console.log(error);
+        res.status(500).send('Internal server error');
     }
 });
 module.exports = submitRouter;
 /*
 
 {
-    judge: 'atcoder',
-    contestID: 'abc032',
-    problemIndex: 'c',
-    langID: 4003,
+    judge: 'codeforces',
+    contestID: '1825',
+    problemIndex: 'A',
+    langID: 73,
     sourceCode: String.raw`code`,
 }
 

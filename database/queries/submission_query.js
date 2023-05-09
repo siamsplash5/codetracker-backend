@@ -1,31 +1,40 @@
-/* eslint-disable prettier/prettier */
-
-// dependencies
+const mongoose = require('mongoose');
+const userModel = require('../models/User');
 const submisionModel = require('../models/Submission');
 
 // module scaffolding
 const helper = {};
 
-// get the problem object from database
-// helper.readProblem = async (judge, problemID) => {
-//     try {
-//         if (data === null) return 'not found';
-//         return data.problems[0];
-//     } catch (error) {
-//         console.log(error);
-//         throw new Error('Error when read problem info from database');
-//     }
-// };
+// update problem object in database
+helper.updateSubmission = async (userDatabaseID, submission) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-// create problem object in database
-helper.updateSubmission = async (submission) => {
     try {
-        // console.log('Create problem called');
-        const submissionData = new submisionModel();
-        await submissionData.save();
+        const result = await submisionModel.findOneAndUpdate(
+            { volume: 1 },
+            { $push: { submissions: submission } },
+            { new: true, upsert: true, session }
+        );
+
+        const { _id } = result.submissions.pop();
+
+        await userModel.updateOne(
+            { _id: userDatabaseID },
+            { $push: { submissionID: _id } },
+            { session }
+        );
+
+        await session.commitTransaction();
+        session.endSession();
+
+        return result; // Return the created or updated object
     } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+
         console.log(error);
-        throw new Error('Error when create problem info in database');
+        throw new Error(error);
     }
 };
 
