@@ -10,6 +10,7 @@ const problemRouter = require('./routers/problemRouter');
 const registerRouter = require('./routers/registerRouter');
 const loginRouter = require('./routers/loginRouter');
 const logoutRouter = require('./routers/logoutRouter');
+const contestRouter = require('./routers/contestRouter');
 
 // middlewares
 const authGuard = require('./middlewares/authGuard');
@@ -44,6 +45,7 @@ app.use('/logout', authGuard, logoutRouter);
 app.use('/check', authGuard, checkRouter);
 app.use('/submit', authGuard, submitRouter);
 app.use('/problem', parseRequestValidator, problemRouter);
+app.use('/contest', authGuard, contestRouter);
 
 // default error handler
 app.use((err, req, res, next) => {
