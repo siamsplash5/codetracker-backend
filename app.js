@@ -14,6 +14,7 @@ const contestRouter = require('./routers/contestRouter');
 
 // middlewares
 const authGuard = require('./middlewares/authGuard');
+const contestValidator = require('./middlewares/contestValidator');
 const parseRequestValidator = require('./middlewares/parseRequestValidator');
 
 // App Object - module scaffodling
@@ -45,7 +46,7 @@ app.use('/logout', authGuard, logoutRouter);
 app.use('/check', authGuard, checkRouter);
 app.use('/submit', authGuard, submitRouter);
 app.use('/problem', parseRequestValidator, problemRouter);
-app.use('/contest', authGuard, contestRouter);
+app.use('/contest', authGuard, contestValidator, contestRouter);
 
 // default error handler
 app.use((err, req, res, next) => {
