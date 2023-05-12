@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const timusDb = mongoose.connection.useDb('problems');
 
+// Define the schema for the problem document
 const problemSchema = new mongoose.Schema({
     volume: {
         type: Number,
@@ -77,12 +78,13 @@ const problemSchema = new mongoose.Schema({
             },
             author: {
                 type: String,
-                required: null,
+                default: null,
             },
             parsedAt: Date,
         },
     ],
 });
 
-const model = timusDb.model('timus', problemSchema);
-module.exports = model;
+// Create and export the timus model
+const Timus = timusDb.model('Timus', problemSchema);
+module.exports = Timus;

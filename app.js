@@ -17,15 +17,20 @@ const authGuard = require('./middlewares/authGuard');
 const contestValidator = require('./middlewares/contestValidator');
 const parseRequestValidator = require('./middlewares/parseRequestValidator');
 
-// App Object - module scaffodling
+// App Object - module scaffolding
 const app = express();
 
-// parsing the incoming data
+/**
+ * Middleware
+ * Parsing the incoming data
+ */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// database connection with mongoose
+/**
+ * Connect to the database and start the server
+ */
 mongoose
     .connect(process.env.MONGO_CONNECTION_STRING, {
         useNewUrlParser: true,
@@ -37,9 +42,13 @@ mongoose
             console.log(`Listening on port ${process.env.PORT}`);
         });
     })
-    .catch(console.error);
+    .catch((error) => {
+        console.error('Failed to connect to the database:', error);
+    });
 
-// use routes
+/**
+ * Register routes
+ */
 app.use('/login', loginRouter);
 app.use('/register', registerRouter);
 app.use('/logout', authGuard, logoutRouter);
@@ -48,12 +57,17 @@ app.use('/submit', authGuard, submitRouter);
 app.use('/problem', parseRequestValidator, problemRouter);
 app.use('/contest', authGuard, contestValidator, contestRouter);
 
-// default error handler
+/**
+ * Error Handling Middleware
+ */
 app.use((err, req, res, next) => {
-    if (req.headersSent) {
-        next('There is a problem. Header already sent!');
+    if (res.headersSent) {
+        // If headers already sent, pass the error to the default error handler
+        next(err);
     } else {
-        console.log(err);
-        res.status(500).send(err);
+        console.error(err);
+        res.status(500).send('Internal Server Error');
     }
 });
+
+module.exports = app;

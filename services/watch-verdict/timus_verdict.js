@@ -1,13 +1,26 @@
-/* eslint-disable operator-linebreak */
-/* eslint-disable prefer-destructuring */
+/* eslint-disable no-promise-executor-return */
 /* eslint-disable no-await-in-loop */
+
 const cheerio = require('cheerio');
 
+/**
+ * Pauses the execution for a specified amount of time.
+ *
+ * @param {number} ms - Time in milliseconds.
+ * @returns {Promise<void>} - A promise that resolves after the specified time.
+ */
 function sleep(ms) {
-    // eslint-disable-next-line no-promise-executor-return
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/**
+ * Retrieves the submission status from the HTML content.
+ *
+ * @param {string} html - HTML content.
+ * @param {string} timusSubmissionID - Timus submission ID.
+ * @returns {Object} - Submission status.
+ * @throws {Error} - If the submission status cannot be retrieved.
+ */
 function getStatus(html, timusSubmissionID) {
     const $ = cheerio.load(html);
     const tbody = $(`table.status:has(tr:contains(${timusSubmissionID}))`);
@@ -21,10 +34,12 @@ function getStatus(html, timusSubmissionID) {
         const problemName = tr.find('.problem a').text().trim();
         const language = tr.find('.language').text().trim();
         let verdict = tr.find(':nth-child(6)').text().trim().split('\n')[0];
+
         if (!(verdict === 'Accepted' || verdict === 'Running' || verdict === 'Compiling')) {
             const test = tr.find('.test').text().trim();
             verdict = `${verdict} on test case ${test}`;
         }
+
         const time = `${tr.find('.runtime').text().trim()}s`;
         const memory = tr.find('.memory').text().trim();
 
@@ -38,27 +53,46 @@ function getStatus(html, timusSubmissionID) {
             time,
             memory,
         };
+
         return status;
     }
+
     throw new Error('Invalid submission status');
 }
+
+/**
+ * Retrieves the status of a Timus submission by watching for the verdict.
+ *
+ * @param {Object} submissionInfo - Submission information.
+ * @param {Object} submissionInfo.superagent - Superagent instance for making HTTP requests.
+ * @param {string} submissionInfo.timusSubmissionID - Timus submission ID.
+ * @returns {Promise<Object>} - Submission status.
+ * @throws {Error} - If the submission status cannot be retrieved.
+ */
 async function watchTimusVerdict(submissionInfo) {
     const { superagent, timusSubmissionID } = submissionInfo;
     const watchUrl = 'https://acm.timus.ru/status.aspx?space=1&count=100';
-    let status;
-    for (let i = 0; i < 10000; i += 1) {
-        const html = (await superagent.get(watchUrl)).text;
-        status = getStatus(html, timusSubmissionID);
-        console.log(status.verdict);
-        if (
-            (status.verdict.includes('Running') || status.verdict.includes('Compiling')) === false
-        ) {
-            break;
+
+    try {
+        let status;
+
+        for (let i = 0; i < 10000; i += 1) {
+            const { text } = await superagent.get(watchUrl);
+            status = getStatus(text, timusSubmissionID);
+            console.log(status.verdict);
+
+            if (!(status.verdict.includes('Running') || status.verdict.includes('Compiling'))) {
+                break;
+            }
+
+            await sleep(1000);
         }
-        await sleep(1000);
+
+        console.log(status);
+        return status;
+    } catch (error) {
+        throw new Error(error.message || 'Failed to watch Timus verdict');
     }
-    console.log(status);
-    return status;
 }
 
 module.exports = watchTimusVerdict;

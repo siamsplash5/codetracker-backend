@@ -5,25 +5,32 @@ const cheerio = require('cheerio');
 const { readProblem, createProblem } = require('../../database/queries/problem_query');
 const getCurrentDateTime = require('../../lib/getCurrentDateTime');
 
+/**
+ * Parses a problem from a given URL and problem ID.
+ * @param {string} url - The URL of the problem.
+ * @param {string} problemID - The ID of the problem.
+ * @returns {Promise<object>} A promise that resolves to the parsed problem object.
+ * @throws {Error} If there is an error parsing the problem or the URL is invalid.
+ */
 async function parseProblem(url, problemID) {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto(url, { timeout: 60000 });
     if ((await page.title()) === '404 Not Found') {
-        throw new Error('Invalid Url');
+        throw new Error('Invalid URL');
     }
-    // grab the div element which contain the problem statement
+    // Grab the div element which contains the problem statement
     const problemStatementHTML = await page.$eval('body', (el) => el.innerHTML);
 
-    // load the div element in cheerio
+    // Load the div element in Cheerio
     const $ = cheerio.load(problemStatementHTML);
 
-    // parsing the problem title
+    // Parsing the problem title
     let title = $('h2#problem-name').text().trim();
     title = title.replace(`${problemID} - `, '');
     const problemBody = $('#problem-body');
 
-    // parsing full problem statement
+    // Parsing the full problem statement
     let problemFullBody = '';
     problemBody
         .find('h3:contains("Example")')
@@ -32,7 +39,7 @@ async function parseProblem(url, problemID) {
             problemFullBody = `${$(element)}\n${problemFullBody}`;
         });
 
-    // parsing sample input and output
+    // Parsing sample input and output
     let inputAndOutput = '';
     problemBody
         .find('h3:contains("Example")')
@@ -41,10 +48,10 @@ async function parseProblem(url, problemID) {
             inputAndOutput += `${$(element)}\n`;
         });
 
-    // parsing author info
+    // Parsing author info
     const author = $('.probleminfo').find('td').eq(1).text();
 
-    // parsing time, source and memory limit
+    // Parsing time, source, and memory limit
     const timeLimit = $('.probleminfo')
         .find('td')
         .eq(5)
@@ -58,7 +65,7 @@ async function parseProblem(url, problemID) {
         .replace(/(\d+)B/, '$1 bytes');
     const memoryLimit = $('.probleminfo').find('td').eq(9).text().replace('MB', ' megabytes');
 
-    // parsing current Date and Time
+    // Parsing current date and time
     const currentDateTime = getCurrentDateTime();
 
     const problem = {
@@ -80,12 +87,24 @@ async function parseProblem(url, problemID) {
     return problem;
 }
 
+/**
+ * Extracts the problem ID from the SPOJ problem URL.
+ * @param {string} url - The URL of the problem.
+ * @returns {string} The extracted problem ID.
+ */
 function extractProblemID(url) {
     let problemID = url.replace('https://www.spoj.com/problems/', '');
     if (problemID.slice(-1) === '/') problemID = problemID.slice(0, -1);
     return problemID;
 }
 
+/**
+ * Parses a problem from SPOJ website.
+ * @param {string} judge - The judge name (SPOJ).
+ * @param {string} url - The URL of the problem.
+ * @returns {Promise<object>} A promise that resolves to the parsed problem object.
+ * @throws {Error} If there is an error parsing the problem or the URL is invalid.
+ */
 async function parseSpojProblem(judge, url) {
     try {
         const problemID = extractProblemID(url);

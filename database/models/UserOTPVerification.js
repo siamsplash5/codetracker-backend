@@ -3,7 +3,8 @@ const uniqueValidator = require('mongoose-unique-validator');
 
 const userOTPVerificationModel = mongoose.connection.useDb('users');
 
-const UserOTPVerficationSchema = new mongoose.Schema(
+// Define the schema for the user OTP verification document
+const UserOTPVerificationSchema = new mongoose.Schema(
     {
         username: {
             type: String,
@@ -39,8 +40,11 @@ const UserOTPVerficationSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-UserOTPVerficationSchema.plugin(uniqueValidator, { message: 'is already taken.' });
+UserOTPVerificationSchema.plugin(uniqueValidator, { message: 'is already taken.' });
 
-const model = userOTPVerificationModel.model('users_verification', UserOTPVerficationSchema);
-
-module.exports = model;
+// Create and export the user OTP verification model
+const UserOTPVerification = userOTPVerificationModel.model(
+    'UserOTPVerification',
+    UserOTPVerificationSchema
+);
+module.exports = UserOTPVerification;

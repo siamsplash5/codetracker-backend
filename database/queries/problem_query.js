@@ -1,36 +1,50 @@
-/* eslint-disable prettier/prettier */
-
-// dependencies
+// Import dependencies
 const Atcoder = require('../models/AtcoderProblem');
 const Codeforces = require('../models/CodeforcesProblem');
 const Spoj = require('../models/SpojProblem');
 const Timus = require('../models/TimusProblem');
 
-// module scaffolding
+// Create module scaffolding
 const helper = {};
 
+/**
+ * Get the volume of Atcoder problem based on problem ID
+ *
+ * @param {string} problemID - Problem ID
+ * @returns {number} - Problem volume
+ * @throws {Error} - If an error occurs or invalid input is provided
+ */
 function getAtcoderVolume(problemID) {
     try {
         const regex = /^(abc|arc)\d{3}_[a-zA-Z\d]+$/;
-        if (regex.test(problemID) === false) {
+        if (!regex.test(problemID)) {
             return 0;
         }
+
         const regex2 = /(abc|arc)(\d+)/;
         const match = regex2.exec(problemID);
         if (match) {
-            const contestID = match[2];
+            const contestID = parseInt(match[2], 10);
             return Math.ceil(contestID / 50);
         }
+
         return null;
     } catch (error) {
         throw new Error('Invalid Parsing Information');
     }
 }
 
+/**
+ * Get the volume of Codeforces problem based on problem ID
+ *
+ * @param {string} problemID - Problem ID
+ * @returns {number} - Problem volume
+ * @throws {Error} - If an error occurs or invalid input is provided
+ */
 function getCodeforcesVolume(problemID) {
     try {
         const matches = problemID.match(/^(\d+)([a-zA-Z0-9]+)$/);
-        const contestID = Number(matches[1]);
+        const contestID = parseInt(matches[1], 10);
         if (Number.isNaN(contestID)) {
             throw new Error();
         }
@@ -78,20 +92,40 @@ function getModelAndVolume(judge, problemID) {
     return null;
 }
 
-// get the problem object from database
+/**
+ * Get the problem object from the database
+ *
+ * @param {string} judge - Judge name
+ * @param {string} problemID - Problem ID
+ * @returns {Promise<object|string|null>} - Problem object or 'not found' string if not found,
+ * or null if invalid judge name
+ * @throws {Error} - If an error occurs
+ */
 helper.readProblem = async (judge, problemID) => {
     try {
         const { volume, problemModel } = getModelAndVolume(judge, problemID);
-        const data = await problemModel.findOne({ volume, 'problems.problemID': problemID }, { 'problems.$': 1 });
-        if (data === null) return 'not found';
+        const data = await problemModel.findOne(
+            { volume, 'problems.problemID': problemID },
+            { 'problems.$': 1 }
+        );
+        if (data === null) {
+            return 'not found';
+        }
         return data.problems[0];
     } catch (error) {
-        console.log(error);
-        throw new Error('Error when read problem info from database');
+        console.error(error);
+        throw new Error('Error when reading problem info from the database');
     }
 };
 
-// create problem object in database
+/**
+ * Create a problem object in the database
+ *
+ * @param {string} judge - Judge name
+ * @param {object} problem - Problem object
+ * @returns {Promise<void>}
+ * @throws {Error} - If an error occurs
+ */
 helper.createProblem = async (judge, problem) => {
     try {
         console.log('Create problem called');
@@ -101,12 +135,12 @@ helper.createProblem = async (judge, problem) => {
         if (volumeDocument !== null) {
             await problemModel.updateOne({ volume }, { $push: { problems: problem } });
         } else {
-            const data = { volume, problems: [problem], };
-            problemModel.create(data);
+            const data = { volume, problems: [problem] };
+            await problemModel.create(data);
         }
     } catch (error) {
-        console.log(error);
-        throw new Error('Error when create problem info in database');
+        console.error(error);
+        throw new Error('Error when creating problem info in the database');
     }
 };
 

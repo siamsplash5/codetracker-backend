@@ -3,11 +3,16 @@ const contestModel = require('../database/models/Contest');
 
 const contestRouter = express.Router();
 
+/**
+ * POST /contest
+ * Create a new contest
+ */
 contestRouter.post('/', async (req, res) => {
     try {
         const contest = req.body;
         contest.setter = req.username;
-        const { _id } = await contestModel.create(contest);
+        const createdContest = await contestModel.create(contest);
+        const { _id } = createdContest;
         res.send(`Contest created successfully. ID: ${_id}`);
     } catch (error) {
         console.log(error);
@@ -15,10 +20,14 @@ contestRouter.post('/', async (req, res) => {
     }
 });
 
+/**
+ * PUT /contest
+ * Update an existing contest
+ */
 contestRouter.put('/', async (req, res) => {
     try {
-        const { contestID } = req.body;
-        await contestModel.findOneAndUpdate({ _id: contestID }, req.body);
+        const { contestID, ...contestData } = req.body;
+        await contestModel.findByIdAndUpdate(contestID, contestData);
         res.send('Contest updated successfully');
     } catch (error) {
         console.log(error);
@@ -26,14 +35,18 @@ contestRouter.put('/', async (req, res) => {
     }
 });
 
+/**
+ * DELETE /contest
+ * Delete a contest
+ */
 contestRouter.delete('/', async (req, res) => {
     try {
         const { contestID } = req.body;
-        await contestModel.deleteOne({ _id: contestID });
+        await contestModel.findByIdAndDelete(contestID);
         res.send('Contest deleted successfully');
     } catch (error) {
         console.log(error);
-        res.status(500).send('Internal server error');74568
+        res.status(500).send('Internal server error');
     }
 });
 

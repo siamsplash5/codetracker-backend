@@ -1,9 +1,8 @@
-// dependencies
 const mongoose = require('mongoose');
 
 const blackListedJWTDb = mongoose.connection.useDb('blacklistedJWT');
 
-// schema defination for the bot document
+// Define the schema for the blacklisted JWT document
 const blackListedJWTSchema = new mongoose.Schema({
     token: {
         type: String,
@@ -16,5 +15,6 @@ const blackListedJWTSchema = new mongoose.Schema({
     },
 });
 
-const model = blackListedJWTDb.model('blacklistedJWT', blackListedJWTSchema);
-module.exports = model;
+// Create and export the blacklisted JWT model
+const BlacklistedJWT = blackListedJWTDb.model('BlacklistedJWT', blackListedJWTSchema);
+module.exports = BlacklistedJWT;

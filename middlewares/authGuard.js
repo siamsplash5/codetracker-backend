@@ -1,51 +1,57 @@
+/* eslint-disable consistent-return */
 const jwt = require('jsonwebtoken');
 const userModel = require('../database/models/User');
 const blackListedJWT = require('../database/models/BlackListedJWT');
 
-// check json web token exists & is verified
+// Middleware to check if the JSON Web Token is valid and authenticated
 const authGuard = async (req, res, next) => {
     try {
-        // check the token is in the cookie
+        // Check if the token exists in the cookie
         const token = req.cookies.jwt;
-        if (token === null || token === undefined) {
-            console.log('token not found');
-            res.send("You're logged out. Please login.");
-            return;
+        if (!token) {
+            console.log('Token not found');
+            return res.send("You're logged out. Please login.");
         }
-        // check the token is in the blacklist
-        const result = await blackListedJWT.findOne({ token });
-        if (result !== null) {
-            console.log('token in the blacklist');
-            res.send("You're logged out. Please login.");
-            return;
+
+        // Check if the token is blacklisted
+        const isBlacklisted = await blackListedJWT.findOne({ token });
+        if (isBlacklisted) {
+            console.log('Token is blacklisted');
+            return res.send("You're logged out. Please login.");
         }
-        // check the token info in the database
+
+        // Verify the token and extract the user information
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         const { id, user } = decodedToken;
-        const result2 = await userModel.findById({ _id: id });
-        if (result2 === null) {
-            console.log('token id not found in db');
-            res.send("You're logged out. Please login.");
-            return;
+
+        // Check if the token's user ID exists in the database
+        const foundUser = await userModel.findById(id);
+        if (!foundUser) {
+            console.log('Token user ID not found in the database');
+            return res.send("You're logged out. Please login.");
         }
-        // check the token username valid
-        const { username } = result2;
-        if (username !== user) {
-            console.log('token username invalid');
-            res.send("You're logged out. Please login.");
-            return;
+
+        // Check if the token's username is valid
+        if (foundUser.username !== user) {
+            console.log('Token username is invalid');
+            return res.send("You're logged out. Please login.");
         }
-        // everything is fine, so called the next middleware
+
+        // Set user information in the request object for further use
         req.userDatabaseID = id;
         req.username = user;
+
+        // Call the next middleware
         next();
     } catch (error) {
-        console.log(error);
+        console.error(error);
+
         if (error instanceof jwt.TokenExpiredError) {
-            console.log('token expired');
-            res.send("You're logged out. Please login.");
-            return;
+            console.log('Token expired');
+            return res.send("You're logged out. Please login.");
         }
+
+        // Handle other errors
         res.status(500).send('Internal Server Error');
     }
 };

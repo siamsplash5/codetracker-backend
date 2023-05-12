@@ -17,6 +17,12 @@ const bot = require('../../database/queries/bot_auth_query');
 const randomStringGenerator = require('../../lib/randomStringGenerator');
 const spojLogin = require('../bot_login/spoj_login');
 
+/**
+ * Extracts the submission ID from the HTML response.
+ * @param {string} html - HTML content.
+ * @returns {string} - Submission ID.
+ * @throws {Error} - If the submission ID is not found.
+ */
 function getSubmissionID(html) {
     try {
         const $ = cheerio.load(html);
@@ -25,12 +31,18 @@ function getSubmissionID(html) {
         if (submissionID !== null) {
             return submissionID;
         }
-        throw new Error('submission ID not found');
+        throw new Error('Submission ID not found');
     } catch (error) {
         throw new Error(error);
     }
 }
 
+/**
+ * Checks if the user is logged in to SPOJ.
+ * @param {string} username - User's username.
+ * @returns {Promise<boolean>} - Whether the user is logged in or not.
+ * @throws {Error} - If there is a connection error or login status check fails.
+ */
 async function isLogin(username) {
     const url = 'https://www.spoj.com/';
     const res = await superagent.get(url);
@@ -40,7 +52,17 @@ async function isLogin(username) {
     return res.text.includes(username);
 }
 
-// submit the received solution to the judge
+/**
+ * Submits a solution to SPOJ.
+ *
+ * @param {Object} info - Submission information.
+ * @param {string} info.problemIndex - Problem index.
+ * @param {string} info.langID - Language ID.
+ * @param {string} info.sourceCode - Source code of the solution.
+ * @returns {Promise<Object>} - Submission details.
+ * @throws {Error} - If the submission fails.
+ */
+
 async function spojSubmit(info) {
     try {
         const { problemIndex, langID, sourceCode } = info;
@@ -56,13 +78,13 @@ async function spojSubmit(info) {
         let botInfo = await bot.readInfo('bot_user_1', 'spoj');
         const { username, password, spojCredentials } = botInfo;
 
-         // If cookie exist, set cookie, then we will check it is expired or not
+         // If cookie exists, set the cookie and check if it is expired or not
         if (spojCredentials.cookie.length >= 2) {
             superagent.jar.setCookies(spojCredentials.cookie);
         }
 
         // check user login or not
-        if ((await isLogin(username)) === false) {
+        if (!(await isLogin(username))) {
             await spojLogin(username, password);
             botInfo = await bot.readInfo(username, 'spoj');
         }
@@ -85,14 +107,15 @@ async function spojSubmit(info) {
                 `multipart/form-data; boundary=----WebKitFormBoundary${formToken}`,
             );
 
-        if (res.status !== 200 && res.status !== 301 && res.status !== 302) {
+        if (![200, 301, 302].includes(res.status)) {
             throw new Error(`SPOJ submit failed, status code ${res.status}`);
         }
 
         const submissionID = getSubmissionID(res.text);
         return { superagent, username, submissionID };
     } catch (error) {
-        throw new Error(error);
+        console.error('An error occurred during Spoj submission:', error);
+        throw new Error('Failed to submit to Spoj. Please try again.');
     }
 }
 

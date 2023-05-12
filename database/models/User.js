@@ -3,6 +3,7 @@ const uniqueValidator = require('mongoose-unique-validator');
 
 const userModel = mongoose.connection.useDb('users');
 
+// Define the schema for the user document
 const UserSchema = new mongoose.Schema(
     {
         username: {
@@ -35,19 +36,27 @@ const UserSchema = new mongoose.Schema(
             trim: true,
             default: '',
         },
-        Inistitution: {
+        institution: {
             type: String,
             trim: true,
             default: '',
         },
-        contestID: [String],
-        submissionID: [String],
+        contestID: [
+            {
+                type: String,
+            },
+        ],
+        submissionID: [
+            {
+                type: String,
+            },
+        ],
     },
     { timestamps: true }
 );
 
 UserSchema.plugin(uniqueValidator, { message: 'is already taken.' });
 
-const model = userModel.model('user', UserSchema);
-
-module.exports = model;
+// Create and export the user model
+const User = userModel.model('User', UserSchema);
+module.exports = User;

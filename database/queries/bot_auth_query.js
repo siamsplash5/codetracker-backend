@@ -1,62 +1,93 @@
-/* eslint-disable prettier/prettier */
+// Import dependencies
+const BotModel = require('../models/Bot');
 
-// dependencies
-const botModel = require('../models/Bot');
-
-// module scaffolding
+// Create module scaffolding
 const helper = {};
+
+// List of allowed judges
 const allowedJudges = ['atcoder', 'codeforces', 'spoj', 'timus'];
 
-// get the bot account info from database
-helper.readInfo = async (_userName, _judge) => {
+/**
+ * Read the bot account info from the database
+ *
+ * @param {string} userName - User name
+ * @param {string} judgeName - Judge name
+ * @returns {Promise<object>} - Bot account info
+ * @throws {Error} - If an error occurs or invalid input is provided
+ */
+helper.readInfo = async (userName, judgeName) => {
     try {
-        const judge = _judge.toLowerCase();
-        const userName = _userName.toLowerCase();
+        // Convert inputs to lowercase
+        const judge = judgeName.toLowerCase();
+        const username = userName.toLowerCase();
 
-        if (allowedJudges.includes(judge) === false) {
+        // Validate judge name
+        if (!allowedJudges.includes(judge)) {
             throw new Error('Invalid judge name');
         }
-        const projection = {};
-        projection.username = 1;
-        projection.password = 1;
+
+        // Define projection for MongoDB query
+        const projection = {
+            username: 1,
+            password: 1,
+        };
         projection[`${judge}Credentials`] = 1;
 
-        const data = await botModel.findOne({ username: userName }, projection);
-        if (data === null) {
+        // Fetch data from the database
+        const data = await BotModel.findOne({ username }, projection);
+
+        // Check if data exists
+        if (!data) {
             throw new Error('Data not found');
         }
+
         return data;
     } catch (error) {
-        throw new Error(error);
+        console.error('Error occurred while reading bot info:', error);
+        throw new Error('Error when reading bot info from the database');
     }
 };
 
-// create the bot data for in the beginning phase
+// Create the bot data in the database
 helper.createInfo = async (info) => {
     try {
-        botModel.create(info);
+        await BotModel.create(info);
     } catch (error) {
-        throw new Error('Error when create bot info in database');
+        console.error('Error occurred while creating bot info:', error);
+        throw new Error('Error when creating bot info in the database');
     }
 };
 
-// update data with new cookies if old one get expired or bot account get log out
-helper.updateInfo = async (userName, _judge, info) => {
+/**
+ * Update data with new cookies if the old ones expire or the bot account gets logged out
+ *
+ * @param {string} userName - User name
+ * @param {string} judgeName - Judge name
+ * @param {object} info - New cookies information
+ * @returns {Promise<void>}
+ * @throws {Error} - If an error occurs or invalid input is provided
+ */
+helper.updateInfo = async (userName, judgeName, info) => {
     try {
-        const judge = _judge.toLowerCase();
-        if (allowedJudges.includes(judge) === false) {
+        // Convert judge name to lowercase
+        const judge = judgeName.toLowerCase();
+
+        // Validate judge name
+        if (!allowedJudges.includes(judge)) {
             throw new Error('Invalid judge name');
         }
-        await botModel.updateOne(
+
+        await BotModel.updateOne(
             { username: userName },
             {
                 $set: {
                     [`${judge}Credentials`]: info,
                 },
-            },
+            }
         );
-    } catch {
-        throw new Error('Error when update bot info in database');
+    } catch (error) {
+        console.error('Error occurred while updating bot info:', error);
+        throw new Error('Error when updating bot info in the database');
     }
 };
 

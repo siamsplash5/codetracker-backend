@@ -76,5 +76,5 @@ const problemSchema = new mongoose.Schema({
     ],
 });
 
-const model = atcoderDb.model('atcoder', problemSchema);
-module.exports = model;
+const AtcoderProblem = atcoderDb.model('AtcoderProblem', problemSchema);
+module.exports = AtcoderProblem;

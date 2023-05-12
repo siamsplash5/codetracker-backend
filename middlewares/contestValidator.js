@@ -3,7 +3,7 @@ const contestValidator = (req, res, next) => {
     try {
         if (req.method === 'DELETE') {
             const { contestID } = req.body;
-            if (contestID === null || contestID === undefined || contestID === '') {
+            if (!contestID) {
                 res.send('Invalid contest ID');
                 return;
             }
@@ -15,13 +15,13 @@ const contestValidator = (req, res, next) => {
             req.body;
 
         if (req.method === 'PUT' || req.method === 'DELETE') {
-            if (contestID === null || contestID === undefined) {
+            if (!contestID) {
                 res.send('Enter the contest ID');
                 return;
             }
         }
 
-        if (privacy === null || privacy === undefined) {
+        if (!privacy) {
             res.send('Invalid privacy');
             return;
         }
@@ -30,16 +30,15 @@ const contestValidator = (req, res, next) => {
             res.send('Invalid privacy');
             return;
         }
-        if (
-            privacy !== 'public' &&
-            (password === null || password === undefined || password === '')
-        ) {
+        if (privacy !== 'public' && (!password || password === '')) {
             res.send("Password field can't be empty");
             return;
         }
-        if (privacy !== 'public') password = password.trim();
+        if (privacy !== 'public') {
+            password = password.trim();
+        }
 
-        if (title === null || title === undefined) {
+        if (!title) {
             res.send("Title can't be empty");
             return;
         }
@@ -51,6 +50,7 @@ const contestValidator = (req, res, next) => {
                 return;
             }
         }
+
         if (beginTime) {
             beginTime = beginTime.trim();
             if (Number.isNaN(Date.parse(beginTime))) {
@@ -58,14 +58,17 @@ const contestValidator = (req, res, next) => {
                 return;
             }
         }
-        if (duration === null || duration === undefined) {
+
+        if (!duration) {
             res.send("Contest duration can't be empty");
             return;
         }
-        if (problemSet === null || problemSet === undefined || problemSet.length === 0) {
+
+        if (!problemSet || problemSet.length === 0) {
             res.send("Problem set can't be empty");
             return;
         }
+
         next();
     } catch (error) {
         console.log(error);

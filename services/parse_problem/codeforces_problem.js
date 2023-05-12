@@ -3,40 +3,41 @@ const cheerio = require('cheerio');
 const { readProblem, createProblem } = require('../../database/queries/problem_query');
 const getCurrentDateTime = require('../../lib/getCurrentDateTime');
 
+/**
+ * Parses an AtCoder problem from the given URL and returns the parsed problem object.
+ * @param {string} url - The URL of the problem.
+ * @param {string} problemID - The ID of the problem.
+ * @returns {Promise<object>} The parsed problem object.
+ * @throws {Error} If there is an error during parsing or database operations.
+ */
 async function parseProblem(url, problemID) {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto(url, { timeout: 60000 });
+
     if (page.url() !== url) {
         throw new Error('Invalid parsing information');
     }
-    // parsing the problem statement container from the webpage
-    const problemStatementHTML = await page.$eval('.problem-statement', (el) => el.innerHTML);
 
-    // load problem statement html to cheerio for queries
+    const problemStatementHTML = await page.$eval('.problem-statement', (el) => el.innerHTML);
     const $ = cheerio.load(problemStatementHTML);
 
-    // parsing title of the problem
     const title = $('.header .title').text().trim();
-
-    // parsing time and memory limit of the problem
     const timeLimit = $('.header .time-limit').text().replace('time limit per test', '').trim();
     const memoryLimit = $('.header .memory-limit')
         .text()
         .replace('memory limit per test', '')
         .trim();
-
-    // parsing problem body, input, output statements
     const body = $('div:not([class]):not([id])').html();
     const input = $('div.input-specification').html();
     const output = $('div.output-specification').html();
     const interaction = $('div.section-title:contains("Interaction")').parent().html();
 
-    // parsing sample input and output
     const inputDivs = $('div.sample-test .input');
     const outputDivs = $('div.sample-test .output');
     const inputs = [];
     const outputs = [];
+
     inputDivs.each((index, element) => {
         const inputDivHTML = $.html(element);
         if ($('.test-example-line').length > 0) {
@@ -53,6 +54,7 @@ async function parseProblem(url, problemID) {
             inputs.push(modifiedSampleTest);
         }
     });
+
     outputDivs.each((index, element) => {
         const outputDivHTML = $.html(element);
         const preTag = $(outputDivHTML).find('pre');
@@ -61,15 +63,14 @@ async function parseProblem(url, problemID) {
         outputs.push(modifiedSampleTest);
     });
 
-    // parsing tags and problem ratings
     // eslint-disable-next-line prettier/prettier
     const tags = await page.$$eval('span.tag-box', (els) => els.map((el) => el.innerHTML.toString().trim().replace(/\n\s*/g, '')));
+
     let rating = null;
     if (tags[tags.length - 1][0] === '*') {
         rating = tags.pop();
     }
 
-    // get the current date and time
     const currentDateTime = getCurrentDateTime();
 
     const problem = {
@@ -96,6 +97,12 @@ async function parseProblem(url, problemID) {
     return problem;
 }
 
+/**
+ * Extracts the problem ID from the given Codeforces problem URL.
+ * @param {string} url - The Codeforces problem URL.
+ * @returns {string} The extracted problem ID.
+ * @throws {Error} If the URL is invalid.
+ */
 function extractProblemID(url) {
     const regex = /\/(\d+)\/([a-z])$/;
     const match = url.match(regex);
@@ -106,6 +113,13 @@ function extractProblemID(url) {
     throw new Error('Invalid Url');
 }
 
+/**
+ * Parses a Codeforces problem.
+ * @param {string} judge - The judge identifier.
+ * @param {string} url - The Codeforces problem URL.
+ * @returns {Promise<object>} A promise that resolves to the parsed problem object.
+ * @throws {Error} If there is an error parsing the problem.
+ */
 async function parseCodeforcesProblem(judge, url) {
     try {
         const problemID = extractProblemID(url);

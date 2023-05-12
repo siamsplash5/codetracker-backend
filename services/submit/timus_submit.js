@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /*
 
 Title: Timus Submission System
@@ -17,6 +16,13 @@ const randomStringGenerator = require('../../lib/randomStringGenerator');
 const { decryptPassword } = require('../../lib/encryption');
 const bot = require('../../database/queries/bot_auth_query');
 
+/**
+ * Extracts the submission ID from the HTML response.
+ *
+ * @param {string} html - HTML content.
+ * @returns {string} - Submission ID.
+ * @throws {Error} - If the submission ID is not found.
+ */
 function getSubmissionID(html) {
     try {
         const $ = cheerio.load(html);
@@ -24,12 +30,22 @@ function getSubmissionID(html) {
         if (td !== null) {
             return td.text();
         }
-        throw new Error('submission ID not found');
+        throw new Error('Submission ID not found');
     } catch (error) {
-        throw new Error(error);
+        throw new Error(error.message || 'Failed to extract submission ID');
     }
 }
 
+/**
+ * Submits a solution to the Timus Online Judge.
+ *
+ * @param {Object} info - Submission information.
+ * @param {string} info.problemIndex - Problem index.
+ * @param {string} info.langID - Language ID.
+ * @param {string} info.sourceCode - Source code of the solution.
+ * @returns {Promise<Object>} - Submission details.
+ * @throws {Error} - If the submission fails.
+ */
 async function timusSubmit(info) {
     try {
         const { problemIndex, langID, sourceCode } = info;
@@ -41,8 +57,10 @@ async function timusSubmit(info) {
             specialChar: false,
             stringLen: 16,
         });
+
         const data = await bot.readInfo('bot_user_1', 'timus');
         const judgeID = decryptPassword(data.timusCredentials.judgeID, process.env.SECRET_KEY);
+
         const submitData = {
             Action: 'submit',
             SpaceID: 1,
@@ -58,20 +76,18 @@ async function timusSubmit(info) {
             .field(submitData)
             .set(
                 'content-type',
-                `multipart/form-data; boundary=----WebKitFormBoundary${formToken}`,
+                `multipart/form-data; boundary=----WebKitFormBoundary${formToken}`
             );
 
-        if (res.status !== 200 && res.status !== 301 && res.status !== 302) {
+        if (![200, 301, 302].includes(res.status)) {
             throw new Error(`Timus submit failed, status code ${res.status}`);
         }
 
         const submissionID = getSubmissionID(res.text);
 
-        // const submissionID = '10259376';
-
         return { superagent, submissionID };
     } catch (error) {
-        throw new Error(error);
+        throw new Error(error.message || 'Timus submit failed');
     }
 }
 

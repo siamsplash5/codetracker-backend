@@ -1,33 +1,45 @@
 /*
-
 Title: Atcoder Login System
-Description: Login to the atocder.jp by sending post request to their server.
+Description: Login to the atcoder.jp by sending post request to their server.
 Author: Siam Ahmed
 Date: 24-04-2023
-
 */
 
-// dependencies
 const superagent = require('superagent').agent();
 const { decryptPassword } = require('../../lib/encryption');
 const bot = require('../../database/queries/bot_auth_query');
 
-// get csrf token from the website to authenticate login process
+/**
+ * Retrieves the CSRF token from the Atcoder website.
+ * @param {string} url - The URL of the login page.
+ * @returns {Promise<string>} The CSRF token.
+ * @throws {Error} If the connection to Atcoder fails or the CSRF token cannot be found.
+ */
 async function getCsrfToken(url) {
-    const res = await superagent.get(url);
-    if (!res.status === 200) {
-        return new Error('Atcoder Connection Error');
+    try {
+        const res = await superagent.get(url);
+        if (!res.status === 200) {
+            throw new Error('Atcoder Connection Error');
+        }
+        const html = res.text;
+        const regex = /var csrfToken = "(.*?)"/;
+        const tmp = regex.exec(html);
+        if (tmp === null || tmp.length < 2) {
+            throw new Error('Cannot find CSRF token');
+        }
+        return tmp[1];
+    } catch (error) {
+        throw new Error(error);
     }
-    const html = res.text;
-    const regex = /var csrfToken = "(.*?)"/;
-    const tmp = regex.exec(html);
-    if (tmp === null || tmp.length < 2) {
-        throw new Error('Cannot find csrf token');
-    }
-    return tmp[1];
 }
 
-// login to the website sending post request to their server
+/**
+ * Logs in to the Atcoder website by sending a POST request to their server.
+ * @param {string} username - The username for the login.
+ * @param {string} encryptedPassword - The encrypted password for the login.
+ * @returns {Promise<object>} The response object from the login request.
+ * @throws {Error} If the login fails.
+ */
 async function atcoderLogin(username, encryptedPassword) {
     try {
         console.log('Atcoder Login called');
@@ -46,7 +58,7 @@ async function atcoderLogin(username, encryptedPassword) {
             .send(loginData)
             .set('Content-Type', 'application/x-www-form-urlencoded');
 
-        if (res.status !== 200 && res.status !== 301 && res.status !== 302) {
+        if (![200, 301, 302].includes(res.status)) {
             throw new Error(`Atcoder login failed, status code ${res.status}`);
         }
 

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const codeforcesDb = mongoose.connection.useDb('problems');
 
+// Define the schema for the problem document
 const problemSchema = new mongoose.Schema({
     volume: {
         type: Number,
@@ -80,5 +81,6 @@ const problemSchema = new mongoose.Schema({
     ],
 });
 
-const model = codeforcesDb.model('codeforces', problemSchema);
-module.exports = model;
+// Create and export the problem model
+const Problem = codeforcesDb.model('Problem', problemSchema);
+module.exports = Problem;

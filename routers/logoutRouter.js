@@ -14,12 +14,13 @@ logoutRouter.get('/', async (req, res) => {
             token,
             expiresAt: exp * 1000,
         });
-        res.send('Logout succesful');
+        res.send('Logout successful');
     } catch (error) {
         if (error instanceof jwt.JsonWebTokenError) {
-            res.send('Logout succesful');
+            res.send('Logout successful');
             return;
         }
+        console.log(error);
         res.status(500).send('Internal Server Error');
     }
 });

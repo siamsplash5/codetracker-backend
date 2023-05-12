@@ -1,20 +1,24 @@
-/*
+/* eslint-disable max-len */
+/**
+ * Title: Atcoder Submission System
+ * Description: Submit to Atcoder.jp by sending a POST request to their server.
+ * Receive: contest ID (ex: abc065), problemIndex (ex: a, b, c), langID, source code.
+ * Return: Verdict of that problem
+ * Author: Siam Ahmed
+ * Date: 24-04-2023
+ */
 
-Title: Atcoder Submission System
-Description: Submit to the atocder.jp by sending post request to their server.
-Receive: contest id (ex: abc065), problemIndex (ex: a, b, c), langID, source code.
-Return: Verdict of that problem
-Author: Siam Ahmed
-Date: 24-04-2023
-
-*/
-
-// dependencies
 const superagent = require('superagent').agent();
 const cheerio = require('cheerio');
 const bot = require('../../database/queries/bot_auth_query');
 const atcoderLogin = require('../bot_login/atcoder_login');
 
+/**
+ * Extracts the submission ID from the HTML response.
+ * @param {string} html - The HTML response from the server.
+ * @returns {string} The submission ID.
+ * @throws {Error} If the submission ID is not found in the HTML.
+ */
 function getSubmissionID(html) {
     try {
         const $ = cheerio.load(html);
@@ -23,28 +27,47 @@ function getSubmissionID(html) {
         if (submissionID !== null) {
             return submissionID;
         }
-        throw new Error('submission ID not found');
+        throw new Error('Submission ID not found');
     } catch (error) {
-        throw new Error(error);
+        throw new Error(error.message);
     }
 }
 
+/**
+ * Checks if the user is logged in to Atcoder.
+ * @param {string} username - The username to check.
+ * @returns {boolean} True if the user is logged in, false otherwise.
+ * @throws {Error} If there is an error connecting to Atcoder or the username is not found.
+ */
 async function isLogin(username) {
-    const url = 'https://atcoder.jp/';
-    const res = await superagent.get(url);
-    if (!res.status === 200) {
-        throw new Error('Atcoder Connection Error');
+    try {
+        const url = 'https://atcoder.jp/';
+        const res = await superagent.get(url);
+        if (res.status !== 200) {
+            throw new Error('Atcoder Connection Error');
+        }
+        const html = res.text;
+        const regex = /var userScreenName = "(.*?)"/;
+        const tmp = regex.exec(html);
+        if (tmp === null || tmp.length < 2) {
+            return false;
+        }
+        return username === tmp[1];
+    } catch (error) {
+        throw new Error(error.message);
     }
-    const html = res.text;
-    const regex = /var userScreenName = "(.*?)"/;
-    const tmp = regex.exec(html);
-    if (tmp === null || tmp.length < 2) {
-        return false;
-    }
-    return username === tmp[1];
 }
 
-// submit the received code to atcoder judge
+/**
+ * Submits the received code to the Atcoder judge.
+ * @param {Object} info - The submission information.
+ * @param {string} info.contestID - The ID of the contest.
+ * @param {string} info.problemIndex - The index of the problem.
+ * @param {string} info.langID - The ID of the programming language.
+ * @param {string} info.sourceCode - The source code to submit.
+ * @returns {Object} The submission result containing the superagent instance, contest ID, and submission ID.
+ * @throws {Error} If the submission fails or an error occurs.
+ */
 async function atcoderSubmit(info) {
     try {
         const { contestID, problemIndex, langID, sourceCode } = info;
@@ -52,13 +75,13 @@ async function atcoderSubmit(info) {
         let botInfo = await bot.readInfo('bot_user_1', 'atcoder');
         const { username, password, atcoderCredentials } = botInfo;
 
-        // If cookie exist, set cookie, then we will check it is expired or not
+        // If the cookie exists, set the cookie and check if it is expired
         if (atcoderCredentials.cookie.length >= 2) {
             superagent.jar.setCookies(atcoderCredentials.cookie);
         }
 
-        // check user login or not
-        if ((await isLogin(username)) === false) {
+        // Check if the user is logged in or not
+        if (!(await isLogin(username))) {
             await atcoderLogin(username, password);
             botInfo = await bot.readInfo(username, 'atcoder');
         }
@@ -77,16 +100,15 @@ async function atcoderSubmit(info) {
             .send(submitData)
             .set('Content-Type', 'application/x-www-form-urlencoded');
 
-        if (res.status !== 200 && res.status !== 301 && res.status !== 302) {
+        if (![200, 301, 302].includes(res.status)) {
             throw new Error(`Atcoder submit failed, status code ${res.status}`);
         }
 
         const submissionID = getSubmissionID(res.text);
-        // const submissionID = '40989798';
         return { superagent, contestID, submissionID };
     } catch (error) {
-        console.log(error.message);
-        throw new Error(error);
+        console.error('An error occurred during Atcoder submission:', error);
+        throw new Error('Failed to submit to Atcoder. Please try again.');
     }
 }
 

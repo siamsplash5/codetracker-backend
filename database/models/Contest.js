@@ -1,15 +1,10 @@
 const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
 
 const contestModel = mongoose.connection.useDb('contests');
 
+// Define the schema for the contest document
 const contestSchema = new mongoose.Schema(
     {
-        constestID: {
-            type: String,
-            unique: true,
-            index: true,
-        },
         setter: {
             type: [String],
         },
@@ -19,8 +14,7 @@ const contestSchema = new mongoose.Schema(
         },
         password: {
             type: String,
-            // eslint-disable-next-line prettier/prettier, object-shorthand
-            required: function () {
+            required() {
                 return this.privacy === 'protected' || this.privacy === 'private';
             },
             default: '',
@@ -32,7 +26,7 @@ const contestSchema = new mongoose.Schema(
         },
         category: {
             type: String,
-            default: 'pracitce',
+            default: 'practice',
         },
         announcement: {
             type: String,
@@ -69,15 +63,12 @@ const contestSchema = new mongoose.Schema(
         participants: [
             {
                 type: String,
-                unique: true,
             },
         ],
     },
     { timestamps: true }
 );
 
-contestSchema.plugin(uniqueValidator, { message: 'is already taken.' });
-
-const model = contestModel.model('contest', contestSchema);
-
-module.exports = model;
+// Create and export the contest model
+const Contest = contestModel.model('Contest', contestSchema);
+module.exports = Contest;

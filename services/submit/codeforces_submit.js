@@ -14,6 +14,13 @@ const superagent = require('superagent').agent();
 const bot = require('../../database/queries/bot_auth_query');
 const codeforcesLogin = require('../bot_login/codeforces_login');
 
+/**
+ * Extracts the submission ID from the HTML response.
+ * @param {string} html - The HTML response from the server.
+ * @returns {string} The submission ID.
+ * @throws {Error} If the submission ID is not found in the HTML.
+ */
+
 function getSubmissionID(html) {
     try {
         const regex = /data-submission-id="(\d+)"/;
@@ -26,6 +33,13 @@ function getSubmissionID(html) {
         throw new Error(error);
     }
 }
+
+/**
+ * Checks if the user is logged in to Atcoder.
+ * @param {string} username - The username to check.
+ * @returns {boolean} True if the user is logged in, false otherwise.
+ * @throws {Error} If there is an error connecting to Atcoder or the username is not found.
+ */
 
 async function isLogin(username) {
     const url = 'https://codeforces.com/';
@@ -42,19 +56,30 @@ async function isLogin(username) {
     return username === tmp[1];
 }
 
+/**
+ * Submits a solution to Codeforces.
+ * @param {Object} info - Submission information.
+ * @param {number} info.contestID - Contest ID.
+ * @param {string} info.problemIndex - Problem index.
+ * @param {number} info.langID - Language ID.
+ * @param {string} info.sourceCode - Source code of the solution.
+ * @returns {Promise<Object>} - Submission details.
+ * @throws {Error} - If the submission fails.
+ */
+
 async function codeforcesSubmit(info) {
     try {
         const { contestID, problemIndex, langID, sourceCode } = info;
         let botInfo = await bot.readInfo('bot_user_1', 'codeforces');
         const { username, password, codeforcesCredentials } = botInfo;
 
-        // If cookie exist, set cookie, then we will check it is expired or not
+        // If cookie exists, set the cookie and check if it is expired or not
         if (codeforcesCredentials.cookie.length > 2) {
             superagent.jar.setCookies(codeforcesCredentials.cookie);
         }
 
-        // check the user login or not
-        if ((await isLogin(username)) === false) {
+        // Check if the user is logged in or not
+        if (!(await isLogin(username))) {
             await codeforcesLogin(username, password);
             botInfo = await bot.readInfo(username, 'codeforces');
         }
@@ -80,13 +105,15 @@ async function codeforcesSubmit(info) {
             .send(submitData)
             .set('Content-Type', 'application/x-www-form-urlencoded');
 
-        if (res.status !== 200 && res.status !== 301 && res.status !== 302) {
+        if (![200, 301, 302].includes(res.status)) {
             throw new Error(`Codeforces submit failed, status code ${res.status}`);
         }
+
         const submissionID = getSubmissionID(res.text);
         return { superagent, contestID, submissionID };
     } catch (error) {
-        return error;
+        console.error('An error occurred during Codeforces submission:', error);
+        throw new Error('Failed to submit to Codeforces. Please try again.');
     }
 }
 

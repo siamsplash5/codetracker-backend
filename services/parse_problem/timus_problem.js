@@ -4,6 +4,13 @@ const cheerio = require('cheerio');
 const { readProblem, createProblem } = require('../../database/queries/problem_query');
 const getCurrentDateTime = require('../../lib/getCurrentDateTime');
 
+/**
+ * Parses a problem from a specific URL.
+ * @param {string} url - The URL of the problem.
+ * @param {string} problemID - The ID of the problem.
+ * @returns {Promise<object>} A promise that resolves to the parsed problem object.
+ * @throws {Error} If there is an error parsing the problem or the URL is invalid.
+ */
 async function parseProblem(url, problemID) {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
@@ -11,7 +18,7 @@ async function parseProblem(url, problemID) {
     if ((await page.title()) === 'Timus Online Judge') {
         throw new Error('Invalid Url');
     }
-    // grab the div element which contain the problem statement
+    // grab the div element which contains the problem statement
     const problemStatementHTML = await page.$eval(
         '.problem_content',
         (el) => el.parentElement.innerHTML
@@ -32,7 +39,7 @@ async function parseProblem(url, problemID) {
         str.lastIndexOf(' MB')
     )} megabytes`;
 
-    // parsing notes of input output secions
+    // parsing notes of input and output sections
     let note = $('h3.problem_subtitle:contains("Notes")').next().html();
     if (note) note = note.replace(/\n(?=\S)/g, '');
 
@@ -124,6 +131,12 @@ async function parseProblem(url, problemID) {
     return problem;
 }
 
+/**
+ * Extracts the problem ID from the Timus Online Judge URL.
+ * @param {string} url - The Timus Online Judge URL.
+ * @returns {string} The extracted problem ID.
+ * @throws {Error} If the URL is invalid or the problem ID cannot be extracted.
+ */
 function extractProblemID(url) {
     const pattern = /num=(\d+)/;
     const match = url.match(pattern);
@@ -132,7 +145,13 @@ function extractProblemID(url) {
     }
     return match[1];
 }
-
+/**
+ * Parses a problem from Timus Online Judge.
+ * @param {string} judge - The judge name.
+ * @param {string} url - The URL of the problem.
+ * @returns {Promise<object>} A promise that resolves to the parsed problem object.
+ * @throws {Error} If there is an error parsing the problem or the URL is invalid.
+ */
 async function parseTimusProblem(judge, url) {
     try {
         const problemID = extractProblemID(url);

@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const spojDb = mongoose.connection.useDb('problems');
 
+// Define the schema for the problem document
 const problemSchema = new mongoose.Schema({
     volume: {
         type: Number,
@@ -54,5 +55,6 @@ const problemSchema = new mongoose.Schema({
     ],
 });
 
-const model = spojDb.model('spoj', problemSchema);
-module.exports = model;
+// Create and export the spoj model
+const Spoj = spojDb.model('Spoj', problemSchema);
+module.exports = Spoj;

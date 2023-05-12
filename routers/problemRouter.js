@@ -12,19 +12,20 @@ problemRouter.post('/', async (req, res) => {
         let problem;
         if (judge === 'atcoder') {
             problem = await parseAtcoderProblem(judge, url);
-        }
-        if (judge === 'codeforces') {
+        } else if (judge === 'codeforces') {
             problem = await parseCodeforcesProblem(judge, url);
-        }
-        if (judge === 'spoj') {
+        } else if (judge === 'spoj') {
             problem = await parseSpojProblem(judge, url);
-        }
-        if (judge === 'timus') {
+        } else if (judge === 'timus') {
             problem = await parseTimusProblem(judge, url);
+        } else {
+            res.status(400).send('Invalid judge');
+            return;
         }
         res.send(problem);
     } catch (error) {
-        throw new Error(error);
+        console.log(error);
+        res.status(500).send('Internal Server Error');
     }
 });
 

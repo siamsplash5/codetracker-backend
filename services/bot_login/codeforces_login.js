@@ -1,33 +1,43 @@
 /*
-
 Title: Codeforces Login System
 Description: Login to the codeforces.com by sending post request to their server.
 Author: Siam Ahmed
 Date: 24-04-2023
-
 */
 
-// dependencies
 const superagent = require('superagent').agent();
 const getRandomString = require('../../lib/randomStringGenerator');
 const { decryptPassword } = require('../../lib/encryption');
 const bot = require('../../database/queries/bot_auth_query');
 
-// get csrf, bfaa, ftaa tokens for getting authenticate
+/**
+ * Retrieves the CSRF token from the Codeforces website.
+ * @param {string} url - The URL of the login page.
+ * @returns {Promise<string>} The CSRF token.
+ * @throws {Error} If the connection to Codeforces fails or the CSRF token cannot be found.
+ */
 async function getCsrfToken(url) {
-    const res = await superagent.get(url);
-    if (!res.status === 200) {
-        throw new Error('Codeforces server side error');
+    try {
+        const res = await superagent.get(url);
+        if (!res.status === 200) {
+            throw new Error('Codeforces server side error');
+        }
+        const html = res.text;
+        const regex = /csrf='(.+?)'/;
+        const tmp = regex.exec(html);
+        if (tmp === null || tmp.length < 2) {
+            throw new Error('Cannot find CSRF token');
+        }
+        return tmp[1];
+    } catch (error) {
+        throw new Error(error);
     }
-    const html = res.text;
-    const regex = /csrf='(.+?)'/;
-    const tmp = regex.exec(html);
-    if (tmp === null || tmp.length < 2) {
-        throw new Error('Cannot find csrf token');
-    }
-    return tmp[1];
 }
 
+/**
+ * Creates a random ftaa token.
+ * @returns {string} The ftaa token.
+ */
 function createFtaaToken() {
     return getRandomString({
         lowerCase: true,
@@ -38,6 +48,10 @@ function createFtaaToken() {
     });
 }
 
+/**
+ * Creates a random bfaa token.
+ * @returns {string} The bfaa token.
+ */
 function createBfaaToken() {
     return getRandomString({
         lowerCase: true,
@@ -48,13 +62,24 @@ function createBfaaToken() {
     });
 }
 
+/**
+ * Extracts the cookie from the response string.
+ * @param {string} str - The response string.
+ * @returns {string} The extracted cookie.
+ */
 function extractCookie(str) {
     const regex = /"cookie":\s*"([^"]+)"/;
     const match = str.match(regex);
     return match ? match[1] : '';
 }
 
-// login to codeforces.com by sending necessary data
+/**
+ * Logs in to the Codeforces website by sending a POST request to their server.
+ * @param {string} username - The username for the login.
+ * @param {string} encryptedPassword - The encrypted password for the login.
+ * @returns {Promise<object>} The response object from the login request.
+ * @throws {Error} If the login fails.
+ */
 async function codeforcesLogin(username, encryptedPassword) {
     try {
         console.log('Codeforces Login called');
@@ -79,11 +104,9 @@ async function codeforcesLogin(username, encryptedPassword) {
             .send(loginData)
             .set('Content-Type', 'application/x-www-form-urlencoded');
 
-        if (res.status !== 200 && res.status !== 301 && res.status !== 302) {
+        if (![200, 301, 302].includes(res.status)) {
             throw new Error(`Codeforces login failed, status code ${res.status}`);
         }
-
-        // replace by db
 
         const resString = JSON.stringify(res).substring(0, 200);
         const cookie = extractCookie(resString);

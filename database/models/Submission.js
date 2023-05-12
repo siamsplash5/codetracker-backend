@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
-const submisionModel = mongoose.connection.useDb('submissions');
+const submissionDb = mongoose.connection.useDb('submissions');
+
+// Define the schema for the submission document
 const submissionSchema = new mongoose.Schema({
     volume: {
         type: Number,
@@ -26,10 +28,10 @@ const submissionSchema = new mongoose.Schema({
             },
             judge: {
                 type: String,
-                enum: ['atcoder', 'codeforces', 'spoj, timus'],
+                enum: ['atcoder', 'codeforces', 'spoj', 'timus'],
                 required: [true, "can't be blank"],
             },
-            constestID: {
+            contestID: {
                 type: Number,
                 default: 0,
             },
@@ -67,8 +69,9 @@ const submissionSchema = new mongoose.Schema({
     ],
 });
 
+// Apply the uniqueValidator plugin to the submissionSchema
 submissionSchema.plugin(uniqueValidator, { message: 'is already taken.' });
 
-const model = submisionModel.model('submission', submissionSchema);
-
-module.exports = model;
+// Create and export the submission model
+const Submission = submissionDb.model('Submission', submissionSchema);
+module.exports = Submission;
