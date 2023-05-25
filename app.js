@@ -1,6 +1,7 @@
 const express = require('express');
 require('dotenv').config();
 const mongoose = require('mongoose');
+const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 // routes
@@ -24,6 +25,12 @@ const app = express();
  * Middleware
  * Parsing the incoming data
  */
+app.use(
+    cors({
+        credentials: true,
+        origin: 'http://localhost:5173/',
+    })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -49,13 +56,13 @@ mongoose
 /**
  * Register routes
  */
-app.use('/login', loginRouter);
-app.use('/register', registerRouter);
-app.use('/logout', authGuard, logoutRouter);
-app.use('/check', authGuard, checkRouter);
-app.use('/submit', authGuard, submitRouter);
-app.use('/problem', parseRequestValidator, problemRouter);
-app.use('/contest', authGuard, contestValidator, contestRouter);
+app.use('/api/login', loginRouter);
+app.use('/api/register', registerRouter);
+app.use('/api/logout', authGuard, logoutRouter);
+app.use('/api/check', authGuard, checkRouter);
+app.use('/api/submit', authGuard, submitRouter);
+app.use('/api/problem', parseRequestValidator, problemRouter);
+app.use('/api/contest', authGuard, contestValidator, contestRouter);
 
 /**
  * Error Handling Middleware

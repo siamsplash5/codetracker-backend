@@ -4,7 +4,7 @@ const blacklistedJWT = require('../database/models/BlackListedJWT');
 
 const logoutRouter = express.Router();
 
-logoutRouter.get('/', async (req, res) => {
+logoutRouter.post('/', async (req, res) => {
     try {
         const token = req.cookies.jwt;
         res.clearCookie('jwt');
@@ -14,10 +14,10 @@ logoutRouter.get('/', async (req, res) => {
             token,
             expiresAt: exp * 1000,
         });
-        res.send('Logout successful');
+        res.send('SUCCESS');
     } catch (error) {
         if (error instanceof jwt.JsonWebTokenError) {
-            res.send('Logout successful');
+            res.send('SUCCESS');
             return;
         }
         console.log(error);

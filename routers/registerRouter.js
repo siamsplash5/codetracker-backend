@@ -24,6 +24,13 @@ registerRouter.post('/', async (req, res) => {
             return;
         }
 
+        const usernameRegex = /^[a-zA-Z0-9]+$/;
+
+        if (!usernameRegex.test(username)) {
+            res.send('Invalid username. Only alphanumeric characters and dot (.) are allowed.');
+            return;
+        }
+
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             res.send('Enter a valid email address');
@@ -59,11 +66,7 @@ registerRouter.post('/', async (req, res) => {
         await sendOTPVerificationMail(otp, username, email);
 
         res.cookie('uid', _id, { maxAge: 1000 * 60 * 60, httpOnly: true });
-        res.send({
-            status: 'PENDING',
-            message:
-                'A verification code has been sent to your email. Enter the verification code here to complete the registration.',
-        });
+        res.send('PENDING');
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
@@ -114,7 +117,7 @@ registerRouter.post('/verify', async (req, res) => {
         await userOTPVerificationModel.findByIdAndDelete(userID);
 
         res.clearCookie('uid');
-        res.send('Registration successful! Now log in to your account.');
+        res.send('success');
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');

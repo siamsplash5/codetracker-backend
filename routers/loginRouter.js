@@ -46,8 +46,9 @@ loginRouter.post('/', async (req, res) => {
         });
 
         res.clearCookie('jwt');
+        res.clearCookie('uid');
         res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-        res.send('Login successful');
+        res.send('SUCCESS');
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
@@ -60,7 +61,7 @@ loginRouter.post('/passwordRecovery', async (req, res) => {
 
         if (!username) {
             console.log('Username is missing');
-            res.status(400).send('Bad Request');
+            res.status(400).send("Username can't be empty");
             return;
         }
 
