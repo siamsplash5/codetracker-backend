@@ -6,7 +6,7 @@ Date: 24-04-2023
 */
 
 import superagent from 'superagent';
-import bot from '../../database/queries/bot_auth_query.js';
+import { updateInfo } from '../../database/queries/bot_auth_query.js';
 import { decryptPassword } from '../../lib/encryption.js';
 
 
@@ -64,7 +64,7 @@ async function atcoderLogin(username, encryptedPassword) {
         }
 
         const cookie = res.headers['set-cookie'];
-        await bot.updateInfo(username, 'atcoder', {
+        await updateInfo(username, 'atcoder', {
             csrf,
             cookie,
         });

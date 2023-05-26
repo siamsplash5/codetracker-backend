@@ -12,7 +12,7 @@ Date: 24-04-2023
 // dependencies
 import cheerio from 'cheerio';
 import superagent from 'superagent';
-import bot from '../../database/queries/bot_auth_query.js';
+import {readInfo} from '../../database/queries/bot_auth_query.js';
 import { decryptPassword } from '../../lib/encryption.js';
 import randomStringGenerator from '../../lib/randomStringGenerator.js';
 
@@ -59,7 +59,7 @@ async function timusSubmit(info) {
             stringLen: 16,
         });
 
-        const data = await bot.readInfo('bot_user_1', 'timus');
+        const data = await readInfo('bot_user_1', 'timus');
         const judgeID = decryptPassword(data.timusCredentials.judgeID, process.env.SECRET_KEY);
 
         const submitData = {

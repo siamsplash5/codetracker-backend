@@ -1,12 +1,5 @@
-/*
-Title: Codeforces Login System
-Description: Login to the codeforces.com by sending post request to their server.
-Author: Siam Ahmed
-Date: 24-04-2023
-*/
-
 import superagent from 'superagent';
-import bot from '../../database/queries/bot_auth_query.js';
+import { updateInfo } from '../../database/queries/bot_auth_query.js';
 import { decryptPassword } from '../../lib/encryption.js';
 import getRandomString from '../../lib/randomStringGenerator.js';
 
@@ -112,7 +105,7 @@ async function codeforcesLogin(username, encryptedPassword) {
         const resString = JSON.stringify(res).substring(0, 200);
         const cookie = extractCookie(resString);
 
-        await bot.updateInfo(username, 'codeforces', {
+        await updateInfo(username, 'codeforces', {
             csrf,
             ftaa,
             bfaa,

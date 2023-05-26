@@ -8,7 +8,7 @@
 
 // dependencies
 import superagent from 'superagent';
-import bot from '../../database/queries/bot_auth_query.js';
+import { updateInfo } from '../../database/queries/bot_auth_query.js';
 import { decryptPassword } from '../../lib/encryption.js';
 
 
@@ -46,7 +46,7 @@ async function spojLogin(username, encryptedPassword) {
             .find((header) => header.startsWith('Cookie: '));
         const newCookie = cookieHeader.split(': ')[1];
 
-        await bot.updateInfo(username, 'spoj', {
+        await updateInfo(username, 'spoj', {
             cookie: newCookie,
         });
 

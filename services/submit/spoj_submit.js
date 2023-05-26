@@ -13,7 +13,7 @@ Date: 24-04-2023
 // dependencies
 import cheerio from 'cheerio';
 import superagent from 'superagent';
-import bot from '../../database/queries/bot_auth_query.js';
+import {readInfo} from '../../database/queries/bot_auth_query.js';
 import randomStringGenerator from '../../lib/randomStringGenerator.js';
 import spojLogin from '../bot_login/spoj_login.js';
 
@@ -76,7 +76,7 @@ async function spojSubmit(info) {
             stringLen: 16,
         });
 
-        let botInfo = await bot.readInfo('bot_user_1', 'spoj');
+        let botInfo = await readInfo('bot_user_1', 'spoj');
         const { username, password, spojCredentials } = botInfo;
 
          // If cookie exists, set the cookie and check if it is expired or not
@@ -87,7 +87,7 @@ async function spojSubmit(info) {
         // check user login or not
         if (!(await isLogin(username))) {
             await spojLogin(username, password);
-            botInfo = await bot.readInfo(username, 'spoj');
+            botInfo = await readInfo(username, 'spoj');
         }
 
         const { cookie } = botInfo.spojCredentials;

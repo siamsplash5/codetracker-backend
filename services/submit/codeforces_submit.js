@@ -11,7 +11,7 @@ Date: 24-04-2023
 
 // dependencies
 import superagent from 'superagent';
-import bot from '../../database/queries/bot_auth_query.js';
+import {readInfo} from '../../database/queries/bot_auth_query.js';
 import codeforcesLogin from '../bot_login/codeforces_login.js';
 
 /**
@@ -70,7 +70,7 @@ async function isLogin(username) {
 async function codeforcesSubmit(info) {
     try {
         const { contestID, problemIndex, langID, sourceCode } = info;
-        let botInfo = await bot.readInfo('bot_user_1', 'codeforces');
+        let botInfo = await readInfo('bot_user_1', 'codeforces');
         const { username, password, codeforcesCredentials } = botInfo;
 
         // If cookie exists, set the cookie and check if it is expired or not
@@ -81,7 +81,7 @@ async function codeforcesSubmit(info) {
         // Check if the user is logged in or not
         if (!(await isLogin(username))) {
             await codeforcesLogin(username, password);
-            botInfo = await bot.readInfo(username, 'codeforces');
+            botInfo = await readInfo(username, 'codeforces');
         }
 
         const { csrf, ftaa, bfaa, cookie } = botInfo.codeforcesCredentials;

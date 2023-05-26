@@ -19,6 +19,9 @@ import contestValidator from './middlewares/contestValidator.js';
 import loginRequestValidator from './middlewares/loginRequestValidator.js';
 import parseRequestValidator from './middlewares/parseRequestValidator.js';
 
+//handlers
+import responseHandler from './handlers/response.handler.js';
+
 
 // App Object - module scaffolding
 const app = express();
@@ -72,11 +75,10 @@ app.use('/api/contest', authGuard, contestValidator, contestRouter);
  */
 app.use((err, req, res, next) => {
     if (res.headersSent) {
-        // If headers already sent, pass the error to the default error handler
         next(err);
     } else {
         console.error(err);
-        res.status(500).send('Internal Server Error');
+        responseHandler.error(res);
     }
 });
 

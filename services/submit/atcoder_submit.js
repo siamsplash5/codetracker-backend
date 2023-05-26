@@ -10,7 +10,7 @@
 
 import cheerio from 'cheerio';
 import superagent from 'superagent';
-import bot from '../../database/queries/bot_auth_query.js';
+import {readInfo} from '../../database/queries/bot_auth_query.js';
 import atcoderLogin from '../bot_login/atcoder_login.js';
 
 
@@ -73,7 +73,7 @@ async function atcoderSubmit(info) {
     try {
         const { contestID, problemIndex, langID, sourceCode } = info;
         const submitUrl = `https://atcoder.jp/contests/${contestID}/submit`;
-        let botInfo = await bot.readInfo('bot_user_1', 'atcoder');
+        let botInfo = await readInfo('bot_user_1', 'atcoder');
         const { username, password, atcoderCredentials } = botInfo;
 
         // If the cookie exists, set the cookie and check if it is expired
@@ -84,7 +84,7 @@ async function atcoderSubmit(info) {
         // Check if the user is logged in or not
         if (!(await isLogin(username))) {
             await atcoderLogin(username, password);
-            botInfo = await bot.readInfo(username, 'atcoder');
+            botInfo = await readInfo(username, 'atcoder');
         }
         const { csrf, cookie } = botInfo.atcoderCredentials;
         superagent.jar.setCookies(cookie);
