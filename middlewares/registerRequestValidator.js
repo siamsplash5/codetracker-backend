@@ -6,8 +6,9 @@ export const registerValidationSchema = [
             .trim()
             .notEmpty()
             .withMessage("Username can't be empty")
-            .matches(/^[a-zA-Z0-9]+$/)
-            .withMessage('Username should contain only letters, numbers and dot(.)'),
+            .toLowerCase()
+            .matches(/^[a-z0-9._-]+$/)
+            .withMessage('Username should contain only Latin letters, digits, dot, underscore or dash characters'),
 
             body('email')
                 .trim()

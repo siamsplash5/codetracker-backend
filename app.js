@@ -17,7 +17,7 @@ import submitRouter from './routers/submitRouter.js';
 // middlewares
 import authGuard from './middlewares/authGuard.js';
 import contestValidator from './middlewares/contestValidator.js';
-import loginRequestValidator from './middlewares/loginRequestValidator.js';
+import {loginValidationSchema, loginRequestValidator} from './middlewares/loginRequestValidator.js';
 import parseRequestValidator from './middlewares/parseRequestValidator.js';
 import {registerValidationSchema, registerRequestValidator} from './middlewares/registerRequestValidator.js';
 import {verifyValidationSchema, verifyRequestValidator} from './middlewares/verifyRequestValidator.js';
@@ -65,10 +65,11 @@ mongoose
 /**
  * Register routes
  */
-app.use('/api/login', loginRequestValidator, loginRouter);
+app.use('/api/login', loginValidationSchema, loginRequestValidator, loginRouter);
 app.use('/api/register', registerValidationSchema, registerRequestValidator, registerRouter);
 app.use('/api/register-verify',verifyValidationSchema, verifyRequestValidator, registrationVerifyRouter);
 app.use('/api/logout', authGuard, logoutRouter);
+
 app.use('/api/check', authGuard, checkRouter);
 app.use('/api/submit', authGuard, submitRouter);
 app.use('/api/problem', parseRequestValidator, problemRouter);

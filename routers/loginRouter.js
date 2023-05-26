@@ -17,7 +17,7 @@ const maxAge = 24 * 60 * 60; // 24 hours
 loginRouter.post('/', async (req, res) => {
     try {
         const { username, password } = req.body;
-
+        console.log(username);
         const user = await userModel.findOne({ username });
 
         if (!user) {
