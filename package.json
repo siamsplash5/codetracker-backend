@@ -1,6 +1,7 @@
 {
     "name": "server",
     "version": "1.0.0",
+    "type": "module",
     "main": "app.js",
     "repository": "https://github.com/siamsplash5/project-app.git",
     "author": "Siam Ahmed",
@@ -31,6 +32,6 @@
         "superagent": "^8.0.9"
     },
     "scripts": {
-        "start": "nodemon src/app.js"
+        "start": "nodemon app.js"
     }
 }
