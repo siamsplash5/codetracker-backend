@@ -1,27 +1,27 @@
 /* eslint-disable operator-linebreak */
 function parseRequestValidator(req, res, next) {
     try {
-        let { url } = req.body;
+        let { problemUrl } = req.body;
 
-        if (!url || url === '') {
-            throw new Error('Invalid url');
+        if (!problemUrl || problemUrl === '') {
+            res.send('Invalid Url');
         }
 
         const cfRegex = /^https?:\/\/codeforces\.com\/[^\s]+$/;
         const timusRegex = /^https?:\/\/acm\.timus\.ru\/problem.aspx\?(space=[^\s]+&)?num=[^\s]+$/;
         const atcoderRegex = /^https?:\/\/atcoder\.jp\/contests\/[^\s]+\/tasks\/[^\s]+$/;
         const spojRegex = /^https?:\/\/www\.spoj\.com\/problems\/[^\s]+\/$/;
-        url = url.toLowerCase();
+        problemUrl = problemUrl.toLowerCase();
 
         if (
             !(
-                cfRegex.test(url) ||
-                timusRegex.test(url) ||
-                atcoderRegex.test(url) ||
-                spojRegex.test(url)
+                cfRegex.test(problemUrl) ||
+                timusRegex.test(problemUrl) ||
+                atcoderRegex.test(problemUrl) ||
+                spojRegex.test(problemUrl)
             )
         ) {
-            throw new Error('Invalid url');
+            res.send('Invalid Url');
         }
 
         let judge;
@@ -31,34 +31,34 @@ function parseRequestValidator(req, res, next) {
         const atcoderDomainRegex = /atcoder\.jp/;
         const spojDomainRegex = /spoj\.com/;
 
-        if (cfDomainRegex.test(url)) {
+        if (cfDomainRegex.test(problemUrl)) {
             judge = 'codeforces';
-        } else if (timusDomainRegex.test(url)) {
+        } else if (timusDomainRegex.test(problemUrl)) {
             judge = 'timus';
-        } else if (atcoderDomainRegex.test(url)) {
+        } else if (atcoderDomainRegex.test(problemUrl)) {
             judge = 'atcoder';
-        } else if (spojDomainRegex.test(url)) {
+        } else if (spojDomainRegex.test(problemUrl)) {
             judge = 'spoj';
         } else {
-            throw new Error('Invalid Url');
+            res.send('Invalid Url');
         }
 
-        // Uppercase the problemID from url for spoj
+        // Uppercase the problemID from problemUrl for spoj
         if (judge === 'spoj') {
-            let problemID = url.replace('https://www.spoj.com/problems/', '');
+            let problemID = problemUrl.replace('https://www.spoj.com/problems/', '');
             if (problemID.slice(-1) === '/') {
                 problemID = problemID.slice(0, -1);
             }
             const newProblemID = problemID.toUpperCase();
-            url = url.replace(problemID, newProblemID);
+            problemUrl = problemUrl.replace(problemID, newProblemID);
         }
 
         req.body.judge = judge;
-        req.body.url = url;
+        req.body.problemUrl = problemUrl;
         next();
     } catch (error) {
         console.log(error);
-        res.send('Invalid Request');
+        res.send('Internal Server Error');
     }
 }
 

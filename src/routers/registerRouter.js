@@ -17,6 +17,7 @@ registerRouter.post('/', async (req, res) => {
 
         username = username.trim();
         email = email.trim();
+        email = email.toLowerCase();
         password = password.trim();
 
         if (!username || !email || !password) {
@@ -87,9 +88,7 @@ registerRouter.post('/verify', async (req, res) => {
         const registrationData = await userOTPVerificationModel.findById(userID);
         if (!registrationData) {
             console.log('userID not found');
-            res.status(401).send(
-                "Account record doesn't exist or has already been verified. Please sign up or log in."
-            );
+            res.send('Invalid OTP');
             return;
         }
 
@@ -98,18 +97,14 @@ registerRouter.post('/verify', async (req, res) => {
         const isValidOTP = await bcrypt.compare(otp, hashedOTP);
         if (!isValidOTP) {
             console.log('Invalid OTP');
-            res.status(401).send(
-                "Account record doesn't exist or has already been verified. Please sign up or log in."
-            );
+            res.send('Invalid OTP');
             return;
         }
 
         if (expiresAt <= Date.now()) {
             await userOTPVerificationModel.findByIdAndDelete(userID);
             console.log('OTP expired');
-            res.status(401).send(
-                "Account record doesn't exist or has already been verified. Please sign up or log in."
-            );
+            res.send('Invalid OTP');
             return;
         }
 

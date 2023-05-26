@@ -19,8 +19,8 @@ helper.getOTP = async (username, email, hashedPassword) => {
     try {
         // Create OTP
         const otp = randomStringGenerator({
-            lowerCase: true,
-            upperCase: true,
+            lowerCase: false,
+            upperCase: false,
             numbers: true,
             specialChar: false,
             stringLen: 6,

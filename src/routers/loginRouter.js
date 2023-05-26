@@ -61,7 +61,7 @@ loginRouter.post('/passwordRecovery', async (req, res) => {
 
         if (!username) {
             console.log('Username is missing');
-            res.status(400).send("Username can't be empty");
+            res.send("Username can't be empty");
             return;
         }
 
@@ -82,11 +82,7 @@ loginRouter.post('/passwordRecovery', async (req, res) => {
         await passwordRecoveryMail(otp, username, email);
 
         res.cookie('uid', _id);
-        res.send({
-            status: 'PENDING',
-            message:
-                'A verification code has been sent to your email. Enter the verification code here to proceed.',
-        });
+        res.send('success');
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');
@@ -98,7 +94,7 @@ loginRouter.post('/passwordRecovery/verify', async (req, res) => {
         let { otp, newPassword } = req.body;
 
         if (!otp || !newPassword) {
-            res.status(400).send('Bad Request');
+            res.send('Bad Request');
             return;
         }
 
@@ -112,7 +108,7 @@ loginRouter.post('/passwordRecovery/verify', async (req, res) => {
         // Check if the registration data is found or not
         if (!userOTP) {
             console.log('userID not found');
-            res.status(401).send('Invalid OTP');
+            res.send('Invalid OTP');
             return;
         }
 
@@ -122,7 +118,7 @@ loginRouter.post('/passwordRecovery/verify', async (req, res) => {
         const isValidOTP = await bcrypt.compare(otp, hashedOTP);
         if (!isValidOTP) {
             console.log('Invalid OTP');
-            res.status(401).send('Invalid OTP, try again');
+            res.send('Invalid OTP');
             return;
         }
 
@@ -130,7 +126,7 @@ loginRouter.post('/passwordRecovery/verify', async (req, res) => {
         if (expiresAt <= Date.now()) {
             await userOTPVerificationModel.findByIdAndDelete(userID);
             console.log('OTP date expired');
-            res.status(401).send('OTP expired, try again');
+            res.send('Invalid OTP');
             return;
         }
 
@@ -142,7 +138,7 @@ loginRouter.post('/passwordRecovery/verify', async (req, res) => {
         await userModel.updateOne({ username }, { password: hashedPassword });
 
         res.clearCookie('uid');
-        res.send('Password recovery successful! Now log in to your account.');
+        res.send({ message: 'success', username });
     } catch (error) {
         console.log(error);
         res.status(500).send('Internal Server Error');

@@ -104,13 +104,12 @@ async function parseProblem(url, problemID) {
  * @throws {Error} If the URL is invalid.
  */
 function extractProblemID(url) {
-    const regex = /\/(\d+)\/([a-z])$/;
+    const regex = /\/(\d+\/[A-Za-z]?)/;
     const match = url.match(regex);
-    if (match) {
-        const problemCode = match[1] + match[2].toUpperCase();
-        return problemCode;
+    if (match && match[1]) {
+        return match[1];
     }
-    throw new Error('Invalid Url');
+    throw new Error('Regex not matching');
 }
 
 /**
@@ -123,6 +122,8 @@ function extractProblemID(url) {
 async function parseCodeforcesProblem(judge, url) {
     try {
         const problemID = extractProblemID(url);
+        console.log(url);
+        console.log(problemID);
         let problem = await readProblem(judge, problemID);
         if (problem === 'not found') {
             problem = await parseProblem(url, problemID);
