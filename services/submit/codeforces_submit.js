@@ -113,7 +113,7 @@ async function codeforcesSubmit(info) {
         return { superagent, contestID, submissionID };
     } catch (error) {
         console.error('An error occurred during Codeforces submission:', error);
-        throw new Error('Failed to submit to Codeforces. Please try again.');
+         throw new Error(error);
     }
 }
 

@@ -109,7 +109,7 @@ async function atcoderSubmit(info) {
         return { superagent, contestID, submissionID };
     } catch (error) {
         console.error('An error occurred during Atcoder submission:', error);
-        throw new Error('Failed to submit to Atcoder. Please try again.');
+        throw new Error(error);
     }
 }
 

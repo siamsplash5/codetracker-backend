@@ -88,7 +88,8 @@ async function timusSubmit(info) {
 
         return { superagent, submissionID };
     } catch (error) {
-        throw new Error(error.message || 'Timus submit failed');
+        console.error('An error occurred during Spoj submission:', error);
+        throw new Error(error);
     }
 }
 

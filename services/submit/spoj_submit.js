@@ -116,7 +116,7 @@ async function spojSubmit(info) {
         return { superagent, username, submissionID };
     } catch (error) {
         console.error('An error occurred during Spoj submission:', error);
-        throw new Error('Failed to submit to Spoj. Please try again.');
+        throw new Error(error);
     }
 }
 

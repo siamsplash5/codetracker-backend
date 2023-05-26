@@ -8,6 +8,7 @@ import watchAtcoderVerdict from '../services/watch-verdict/atcoder_verdict.js';
 import watchCodeforcesVerdict from '../services/watch-verdict/codeforces_verdict.js';
 import watchSPOJVerdict from '../services/watch-verdict/spoj_verdict.js';
 import watchTimusVerdict from '../services/watch-verdict/timus_verdict.js';
+import responseHandler from '../handlers/response.handler.js'
 
 
 const submitRouter = express.Router();
@@ -67,10 +68,10 @@ submitRouter.post('/', async (req, res) => {
 
         await updateSubmission(userDatabaseID, submission);
 
-        res.send(status);
+        responseHandler.ok(res, status);
     } catch (error) {
-        console.log(error);
-        res.status(500).send('Internal Server Error');
+        console.error(error);
+        responseHandler.error(res);
     }
 });
 
