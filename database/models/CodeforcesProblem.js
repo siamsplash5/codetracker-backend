@@ -82,6 +82,6 @@ const problemSchema = new mongoose.Schema({
 });
 
 // Create and export the problem model
-const Problem = codeforcesDb.model('Problem', problemSchema);
+const Problem = codeforcesDb.model('Codeforces', problemSchema);
 
 export default Problem;
