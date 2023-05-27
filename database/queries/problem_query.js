@@ -44,7 +44,6 @@ function getCodeforcesVolume(problemID) {
     try {
         const matches = problemID.match(/^(\d+)([a-zA-Z0-9]+)$/);
         const contestID = parseInt(matches[1], 10);
-        console.log(contestID);
         if (Number.isNaN(contestID)) {
             throw new Error();
         }

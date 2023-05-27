@@ -9,23 +9,19 @@ const checkRouter = express.Router();
 checkRouter.post('/', (req, res) => {
     try {
         const {problemUrl} = req.body;
-        const cfRegex = /^https?:\/\/codeforces\.com\/[^\s]+$/;
-        const timusRegex = /^https?:\/\/acm\.timus\.ru\/problem.aspx\?(space=[^\s]+&)?num=[^\s]+$/;
-        const atcoderRegex = /^https?:\/\/atcoder\.jp\/contests\/[^\s]+\/tasks\/[^\s]+$/;
-        const spojRegex = /^https?:\/\/(www\.)?spoj\.com\/problems\/\w+\/?$/i;
-
-        if(spojRegex.test(problemUrl)){
-            responseHandler.ok(res, {
-                status: 200,
-                message: "matched"
+        //const regex = /\/(\d+\/)?(contest\/)?(\d+)\/problem\/(\w+)/;
+        const regex = /\/(\d+\/)?(contest\/|problemset\/problem\/)(\d+)\/(\w+)/;
+        const matches = problemUrl.match(regex);
+        
+        if (matches && matches.length >= 5) {
+            const contestNumber = matches[3] || '';
+            const problemCode = matches[4] || '';
+            const problemID = (contestNumber + problemCode).toUpperCase();
+            return responseHandler.ok(res, {
+                problemID
             })
         }
-        else{
-            responseHandler.ok(res, {
-                status: 400,
-                message: "not matched"
-            })
-        }
+        throw new Error('Invalid Url');
     } catch (error) {
         console.log(error);
         responseHandler.error(res);

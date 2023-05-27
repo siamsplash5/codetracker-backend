@@ -106,10 +106,18 @@ async function parseProblem(url, problemID) {
  * @throws {Error} If the URL is invalid.
  */
 function extractProblemID(url) {
-    const regex = /\/(\d+\/[A-Za-z]?)/;
-    const match = url.match(regex);
-    if (match && match[1]) {
-        return match[1];
+    let regex;
+    if(url.includes('problemset')){
+        regex = /\/(\d+\/)?(contest\/|problemset\/problem\/)(\d+)\/(\w+)/
+    }else{
+        regex = /\/(\d+\/)?(contest\/)?(\d+)\/problem\/(\w+)/
+    }
+    const matches = url.match(regex);
+    
+    if (matches && matches.length >= 5) {
+        const contestNumber = matches[3] || '';
+        const problemCode = matches[4] || '';
+        return (contestNumber + problemCode).toUpperCase();
     }
     console.log('Error occurred during extract problemID');
     throw new Error('Invalid Url');
