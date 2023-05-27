@@ -1,7 +1,7 @@
 /* eslint-disable consistent-return */
 import jwt from 'jsonwebtoken';
-import userModel from '../database/models/User.js';
 import blackListedJWT from '../database/models/BlackListedJWT.js';
+import userModel from '../database/models/User.js';
 
 // Middleware to check if the JSON Web Token is valid and authenticated
 const authGuard = async (req, res, next) => {

@@ -29,7 +29,7 @@ export const readInfo = async (userName, judgeName) => {
         const data = await BotModel.findOne({ username }, projection);
 
         if (!data) {
-        throw new Error('Data not found');
+            throw new Error('Data not found');
         }
 
         return data;
@@ -73,10 +73,7 @@ export const updateInfo = async (userName, judgeName, info) => {
             throw new Error('Invalid judge name');
         }
 
-        await BotModel.updateOne(
-            { username: userName },
-            { [`${judge}Credentials`]: info }
-        );
+        await BotModel.updateOne({ username: userName }, { [`${judge}Credentials`]: info });
     } catch (error) {
         console.error('Error occurred while updating bot info:', error);
         throw new Error('Failed to update bot info in the database');

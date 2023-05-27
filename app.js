@@ -13,18 +13,21 @@ import problemRouter from './routers/problemRouter.js';
 import registerRouter from './routers/registerRouter.js';
 import registrationVerifyRouter from './routers/registrationVerifyRouter.js';
 import submitRouter from './routers/submitRouter.js';
+import passwordVerifyRouter from './routers/passwordVerifyRouter.js';
+import resetPasswordRouter from './routers/resetPasswordRouter.js';
 
 // middlewares
 import authGuard from './middlewares/authGuard.js';
 import contestValidator from './middlewares/contestValidator.js';
-import {loginValidationSchema, loginRequestValidator} from './middlewares/loginRequestValidator.js';
+import { loginRequestValidator, loginValidationSchema } from './middlewares/loginRequestValidator.js';
 import parseRequestValidator from './middlewares/parseRequestValidator.js';
-import {registerValidationSchema, registerRequestValidator} from './middlewares/registerRequestValidator.js';
-import {verifyValidationSchema, verifyRequestValidator} from './middlewares/verifyRequestValidator.js';
+import { registerRequestValidator, registerValidationSchema } from './middlewares/registerRequestValidator.js';
+import { verifyRequestValidator, verifyValidationSchema } from './middlewares/verifyRequestValidator.js';
+import {resetPasswordValidationSchema, resetPasswordRequestValidator} from './middlewares/resetPasswordRequestValidator.js';
+import {passwordVerifyRequestSchema, passwordVerifyRequestValidator} from './middlewares/passwordVerifyRequestValidator.js';
 
 //handlers
 import responseHandler from './handlers/response.handler.js';
-import { body } from 'express-validator';
 
 // App Object - module scaffolding
 const app = express();
@@ -66,8 +69,12 @@ mongoose
  * Register routes
  */
 app.use('/api/login', loginValidationSchema, loginRequestValidator, loginRouter);
+app.use('/api/reset-password', resetPasswordValidationSchema, resetPasswordRequestValidator, resetPasswordRouter);
+app.use('/api/reset-password-verify', passwordVerifyRequestSchema, passwordVerifyRequestValidator, passwordVerifyRouter);
+
 app.use('/api/register', registerValidationSchema, registerRequestValidator, registerRouter);
 app.use('/api/register-verify',verifyValidationSchema, verifyRequestValidator, registrationVerifyRouter);
+
 app.use('/api/logout', authGuard, logoutRouter);
 
 app.use('/api/check', authGuard, checkRouter);

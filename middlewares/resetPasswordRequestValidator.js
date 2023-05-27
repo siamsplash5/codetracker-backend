@@ -1,15 +1,17 @@
 import { body, validationResult } from 'express-validator';
 import responseHandler from '../handlers/response.handler.js';
 
-export const verifyValidationSchema = [
-    body('otp')
+export const resetPasswordValidationSchema = [
+    body('username')
         .trim()
         .notEmpty()
-        .withMessage("OTP can't be empty")
-        .matches(/^\d{6}$/)
-        .withMessage('Invalid OTP'),
+        .withMessage("Username can't be empty")
+        .toLowerCase()
+        .matches(/^[a-z0-9._-]+$/)
+        .withMessage('Invalid username'),
 ];
-export function verifyRequestValidator(req, res, next) {
+
+export function resetPasswordRequestValidator(req, res, next) {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -17,7 +19,7 @@ export function verifyRequestValidator(req, res, next) {
         }
         next();
     } catch (error) {
-        console.log(error);
+        console.error(error);
         responseHandler.error(res);
     }
 }
