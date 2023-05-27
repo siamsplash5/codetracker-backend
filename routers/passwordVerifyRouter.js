@@ -46,6 +46,7 @@ passwordVerifyRouter.post('/', async (req, res) => {
 
         res.clearCookie('uid');
         responseHandler.ok(res, {
+            username,
             status: 200,
             message: 'Updating password successful',
         });
