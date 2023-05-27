@@ -28,7 +28,7 @@ function getAtcoderVolume(problemID) {
 
         return null;
     } catch (error) {
-        throw new Error('Invalid Parsing Information');
+        throw new Error('Invalid Url');
     }
 }
 
@@ -44,12 +44,14 @@ function getCodeforcesVolume(problemID) {
     try {
         const matches = problemID.match(/^(\d+)([a-zA-Z0-9]+)$/);
         const contestID = parseInt(matches[1], 10);
+        console.log(contestID);
         if (Number.isNaN(contestID)) {
             throw new Error();
         }
         return Math.ceil(contestID / 200);
     } catch (error) {
-        throw new Error('Invalid Parsing Information');
+        console.log(error);
+        throw new Error('Invalid Url');
     }
 }
 
@@ -63,7 +65,7 @@ function getTimusVolume(problemID) {
         const volume = Math.ceil((Number(problemID) - 1000) / 300);
         return volume;
     } catch (error) {
-        throw new Error('Invalid Parsing Information');
+        throw new Error('Invalid Url');
     }
 }
 

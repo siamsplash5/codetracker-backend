@@ -17,7 +17,8 @@ async function parseProblem(url, problemID) {
     await page.goto(url, { timeout: 60000 });
 
     if (page.url() !== url) {
-        throw new Error('Invalid parsing information');
+        console.log('Url redirect to another page');
+        throw new Error('Invalid Url');
     }
 
     const problemStatementHTML = await page.$eval('.problem-statement', (el) => el.innerHTML);
@@ -110,7 +111,8 @@ function extractProblemID(url) {
     if (match && match[1]) {
         return match[1];
     }
-    throw new Error('Regex not matching');
+    console.log('Error occurred during extract problemID');
+    throw new Error('Invalid Url');
 }
 
 /**
@@ -123,8 +125,6 @@ function extractProblemID(url) {
 async function parseCodeforcesProblem(judge, url) {
     try {
         const problemID = extractProblemID(url);
-        console.log(url);
-        console.log(problemID);
         let problem = await readProblem(judge, problemID);
         if (problem === 'not found') {
             problem = await parseProblem(url, problemID);

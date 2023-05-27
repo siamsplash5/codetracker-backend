@@ -18,7 +18,8 @@ async function parseProblem(url, problemID) {
     await page.goto(url, { timeout: 60000 });
 
     if ((await page.title()) === '404 Not Found - AtCoder') {
-        throw new Error('Invalid URL');
+        console.log('Url redirect to another page');
+        throw new Error('Invalid Url');
     }
 
     // Grab problem statement from the webpage
@@ -114,7 +115,8 @@ function extractProblemID(url) {
     const pattern = /\/tasks\/([a-z0-9_]+)/i;
     const match = url.match(pattern);
     if (!(match && match.length > 1)) {
-        throw new Error('Invalid URL');
+        console.log('Error occurred during extract problemID');
+        throw new Error('Invalid Url');
     }
     return match[1];
 }

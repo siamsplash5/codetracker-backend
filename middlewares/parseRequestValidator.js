@@ -1,16 +1,19 @@
+import responseHandler from "../handlers/response.handler.js";
+
 function parseRequestValidator(req, res, next) {
     try {
         let { problemUrl } = req.body;
 
-        if (!problemUrl || problemUrl === '') {
-            res.send('Invalid Url');
+        if (problemUrl===undefined || problemUrl===null || problemUrl === '') {
+            return responseHandler.badRequest(res, "Problem url can't be empty");
         }
+        problemUrl = problemUrl.toLowerCase();
 
+        //check if the given url is valid domain
         const cfRegex = /^https?:\/\/codeforces\.com\/[^\s]+$/;
         const timusRegex = /^https?:\/\/acm\.timus\.ru\/problem.aspx\?(space=[^\s]+&)?num=[^\s]+$/;
         const atcoderRegex = /^https?:\/\/atcoder\.jp\/contests\/[^\s]+\/tasks\/[^\s]+$/;
-        const spojRegex = /^https?:\/\/www\.spoj\.com\/problems\/[^\s]+\/$/;
-        problemUrl = problemUrl.toLowerCase();
+        const spojRegex = /^https?:\/\/(www\.)?spoj\.com\/problems\/\w+\/?$/i;
 
         if (
             !(
@@ -20,7 +23,7 @@ function parseRequestValidator(req, res, next) {
                 spojRegex.test(problemUrl)
             )
         ) {
-            res.send('Invalid Url');
+            return responseHandler.badRequest(res, 'Invalid url');
         }
 
         let judge;
@@ -39,7 +42,7 @@ function parseRequestValidator(req, res, next) {
         } else if (spojDomainRegex.test(problemUrl)) {
             judge = 'spoj';
         } else {
-            res.send('Invalid Url');
+            return responseHandler.badRequest(res, 'Invalid url');
         }
 
         // Uppercase the problemID from problemUrl for spoj
@@ -57,7 +60,7 @@ function parseRequestValidator(req, res, next) {
         next();
     } catch (error) {
         console.log(error);
-        res.send('Internal Server Error');
+        responseHandler.error(res);
     }
 }
 

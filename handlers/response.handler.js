@@ -16,9 +16,9 @@ const created = (res, data) => responseWithData(res, 201, data);
 
 const pending = (res, data) => responseWithData(res, 202, data);
 
-const unauthorize = (res) => responseWithData(res, 401, {
+const unauthorize = (res, message) => responseWithData(res, 401, {
         status: 401,
-        message: 'unauthorize',
+        message
     });
 
 const notfound = (res) => responseWithData(res, 404, {

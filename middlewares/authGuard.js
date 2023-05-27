@@ -2,6 +2,7 @@
 import jwt from 'jsonwebtoken';
 import blackListedJWT from '../database/models/BlackListedJWT.js';
 import userModel from '../database/models/User.js';
+import responseHandler from '../handlers/response.handler.js';
 
 // Middleware to check if the JSON Web Token is valid and authenticated
 const authGuard = async (req, res, next) => {
@@ -10,14 +11,14 @@ const authGuard = async (req, res, next) => {
         const token = req.cookies.jwt;
         if (!token) {
             console.log('Token not found');
-            return res.send("You're logged out. Please login.");
+            return responseHandler.unauthorize(res, "You're logged out. Please login.");
         }
 
         // Check if the token is blacklisted
         const isBlacklisted = await blackListedJWT.findOne({ token });
         if (isBlacklisted) {
             console.log('Token is blacklisted');
-            return res.send("You're logged out. Please login.");
+            return responseHandler.unauthorize(res, "You're logged out. Please login.");
         }
 
         // Verify the token and extract the user information
@@ -28,13 +29,13 @@ const authGuard = async (req, res, next) => {
         const foundUser = await userModel.findById(id);
         if (!foundUser) {
             console.log('Token user ID not found in the database');
-            return res.send("You're logged out. Please login.");
+            return responseHandler.unauthorize(res, "You're logged out. Please login.");
         }
 
         // Check if the token's username is valid
         if (foundUser.username !== user) {
             console.log('Token username is invalid');
-            return res.send("You're logged out. Please login.");
+            return responseHandler.unauthorize(res, "You're logged out. Please login.");
         }
 
         // Set user information in the request object for further use
@@ -45,14 +46,11 @@ const authGuard = async (req, res, next) => {
         next();
     } catch (error) {
         console.error(error);
-
         if (error instanceof jwt.TokenExpiredError) {
             console.log('Token expired');
-            return res.send("You're logged out. Please login.");
+            return responseHandler.unauthorize(res, "You're logged out. Please login.");
         }
-
-        // Handle other errors
-        res.status(500).send('Internal Server Error');
+        responseHandler.error(res);
     }
 };
 

@@ -18,6 +18,7 @@ async function parseProblem(url, problemID) {
     const page = await browser.newPage();
     await page.goto(url, { timeout: 60000 });
     if ((await page.title()) === '404 Not Found') {
+        console.log('Url redirect to another page');
         throw new Error('Invalid URL');
     }
     // Grab the div element which contains the problem statement

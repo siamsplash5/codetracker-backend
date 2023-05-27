@@ -26,7 +26,7 @@ import { verifyRequestValidator, verifyValidationSchema } from './middlewares/ve
 import {resetPasswordValidationSchema, resetPasswordRequestValidator} from './middlewares/resetPasswordRequestValidator.js';
 import {passwordVerifyRequestSchema, passwordVerifyRequestValidator} from './middlewares/passwordVerifyRequestValidator.js';
 
-//handlers
+// handlers
 import responseHandler from './handlers/response.handler.js';
 
 // App Object - module scaffolding
@@ -69,15 +69,34 @@ mongoose
  * Register routes
  */
 app.use('/api/login', loginValidationSchema, loginRequestValidator, loginRouter);
-app.use('/api/reset-password', resetPasswordValidationSchema, resetPasswordRequestValidator, resetPasswordRouter);
-app.use('/api/reset-password-verify', passwordVerifyRequestSchema, passwordVerifyRequestValidator, passwordVerifyRouter);
+app.use(
+    '/api/reset-password',
+    resetPasswordValidationSchema,
+    resetPasswordRequestValidator,
+    resetPasswordRouter
+);
+app.use(
+    '/api/reset-password-verify',
+    passwordVerifyRequestSchema,
+    passwordVerifyRequestValidator,
+    passwordVerifyRouter
+);
 
-app.use('/api/register', registerValidationSchema, registerRequestValidator, registerRouter);
-app.use('/api/register-verify',verifyValidationSchema, verifyRequestValidator, registrationVerifyRouter);
+app.use('/api/register', 
+    registerValidationSchema, 
+    registerRequestValidator, 
+    registerRouter
+);
+app.use(
+    '/api/register-verify',
+    verifyValidationSchema,
+    verifyRequestValidator,
+    registrationVerifyRouter
+);
 
 app.use('/api/logout', authGuard, logoutRouter);
 
-app.use('/api/check', authGuard, checkRouter);
+app.use('/api/check', checkRouter);
 app.use('/api/submit', authGuard, submitRouter);
 app.use('/api/problem', parseRequestValidator, problemRouter);
 app.use('/api/contest', authGuard, contestValidator, contestRouter);

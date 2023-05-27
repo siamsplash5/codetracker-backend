@@ -1,4 +1,5 @@
 import express from 'express';
+import responseHandler from '../handlers/response.handler.js';
 import parseAtcoderProblem from '../services/parse_problem/atcoder_problem.js';
 import parseCodeforcesProblem from '../services/parse_problem/codeforces_problem.js';
 import parseSpojProblem from '../services/parse_problem/spoj_problem.js';
@@ -19,13 +20,15 @@ problemRouter.post('/', async (req, res) => {
         } else if (judge === 'timus') {
             problem = await parseTimusProblem(judge, problemUrl);
         } else {
-            res.status(400).send('Invalid judge');
-            return;
+            return responseHandler.badRequest(res, 'Invalid online judge');
         }
-        res.send(problem);
+        responseHandler.ok(res, problem);
     } catch (error) {
         console.log(error);
-        res.status(500).send('Internal Server Error');
+        if(error.message=='Invalid Url'){
+           return responseHandler.badRequest(res, error.message);
+        }
+        responseHandler.error(res);
     }
 });
 
