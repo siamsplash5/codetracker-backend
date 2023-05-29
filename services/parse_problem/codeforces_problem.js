@@ -77,7 +77,7 @@ async function parseProblem(url, judge, problemID) {
     const currentDateTime = getCurrentDateTime();
 
     const problem = {
-        judge: judge.charAt(0).toUpperCase() + judge.slice(1),
+        judge,
         problemID,
         title,
         timeLimit,
@@ -137,7 +137,7 @@ async function parseCodeforcesProblem(judge, url) {
         const problemID = extractProblemID(url);
         let problem = await readProblem(judge, problemID);
         if (problem === 'not found') {
-            problem = await parseProblem(url, problemID);
+            problem = await parseProblem(url, judge, problemID);
             await createProblem(judge, problem);
         }
         return problem;

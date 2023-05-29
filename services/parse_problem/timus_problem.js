@@ -110,7 +110,7 @@ async function parseProblem(url, judge, problemID) {
     const currentDateTime = getCurrentDateTime();
 
     const problem = {
-        judge: judge.charAt(0).toUpperCase() + judge.slice(1),
+        judge,
         problemID,
         title,
         timeLimit,

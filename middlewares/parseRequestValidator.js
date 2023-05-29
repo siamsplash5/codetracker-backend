@@ -34,19 +34,19 @@ function parseRequestValidator(req, res, next) {
         const spojDomainRegex = /spoj\.com/;
 
         if (cfDomainRegex.test(problemUrl)) {
-            judge = 'codeforces';
+            judge = 'Codeforces';
         } else if (timusDomainRegex.test(problemUrl)) {
-            judge = 'timus';
+            judge = 'Timus';
         } else if (atcoderDomainRegex.test(problemUrl)) {
-            judge = 'atcoder';
+            judge = 'Atcoder';
         } else if (spojDomainRegex.test(problemUrl)) {
-            judge = 'spoj';
+            judge = 'Spoj';
         } else {
             return responseHandler.badRequest(res, 'Invalid url');
         }
 
         // Uppercase the problemID from problemUrl for spoj
-        if (judge === 'spoj') {
+        if (judge === 'Spoj') {
             let problemID = problemUrl.replace('https://www.spoj.com/problems/', '');
             if (problemID.slice(-1) === '/') {
                 problemID = problemID.slice(0, -1);

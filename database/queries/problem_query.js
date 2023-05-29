@@ -42,7 +42,6 @@ function getAtcoderVolume(problemID) {
 
 function getCodeforcesVolume(problemID) {
     try {
-        console.log(problemID);
         const matches = problemID.match(/^(\d+)([a-zA-Z0-9]+)$/);
         const contestID = parseInt(matches[1], 10);
         if (Number.isNaN(contestID)) {
@@ -70,23 +69,22 @@ function getTimusVolume(problemID) {
 }
 
 function getModelAndVolume(judge, problemID) {
-    console.log(problemID);
-    if (judge === 'atcoder') {
+    if (judge === 'Atcoder') {
         const volume = getAtcoderVolume(problemID);
         const problemModel = Atcoder;
         return { volume, problemModel };
     }
-    if (judge === 'codeforces') {
+    if (judge === 'Codeforces') {
         const volume = getCodeforcesVolume(problemID);
         const problemModel = Codeforces;
         return { volume, problemModel };
     }
-    if (judge === 'spoj') {
+    if (judge === 'Spoj') {
         const volume = getSpojVolume(problemID);
         const problemModel = Spoj;
         return { volume, problemModel };
     }
-    if (judge === 'timus') {
+    if (judge === 'Timus') {
         const volume = getTimusVolume(problemID);
         const problemModel = Timus;
         return { volume, problemModel };

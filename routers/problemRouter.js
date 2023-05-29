@@ -11,13 +11,13 @@ problemRouter.post('/', async (req, res) => {
     try {
         const { judge, problemUrl } = req.body;
         let problem;
-        if (judge === 'atcoder') {
+        if (judge === 'Atcoder') {
             problem = await parseAtcoderProblem(judge, problemUrl);
-        } else if (judge === 'codeforces') {
+        } else if (judge === 'Codeforces') {
             problem = await parseCodeforcesProblem(judge, problemUrl);
-        } else if (judge === 'spoj') {
+        } else if (judge === 'Spoj') {
             problem = await parseSpojProblem(judge, problemUrl);
-        } else if (judge === 'timus') {
+        } else if (judge === 'Timus') {
             problem = await parseTimusProblem(judge, problemUrl);
         } else {
             return responseHandler.badRequest(res, 'Invalid online judge');
