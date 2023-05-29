@@ -9,6 +9,11 @@ const problemSchema = new mongoose.Schema({
     },
     problems: [
         {
+            judge: {
+                type: String,
+                required: true,
+                trim: true,
+            },
             problemID: {
                 type: String,
                 required: true,

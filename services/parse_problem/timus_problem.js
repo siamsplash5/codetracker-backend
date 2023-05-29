@@ -8,11 +8,12 @@ import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
 /**
  * Parses a problem from a specific URL.
  * @param {string} url - The URL of the problem.
+ * @param {string} judge - The main judge of the problem.
  * @param {string} problemID - The ID of the problem.
  * @returns {Promise<object>} A promise that resolves to the parsed problem object.
  * @throws {Error} If there is an error parsing the problem or the URL is invalid.
  */
-async function parseProblem(url, problemID) {
+async function parseProblem(url, judge, problemID) {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto(url, { timeout: 60000 });
@@ -109,6 +110,7 @@ async function parseProblem(url, problemID) {
     const currentDateTime = getCurrentDateTime();
 
     const problem = {
+        judge: judge.charAt(0).toUpperCase() + judge.slice(1),
         problemID,
         title,
         timeLimit,
@@ -160,7 +162,7 @@ async function parseTimusProblem(judge, url) {
         const problemID = extractProblemID(url);
         let problem = await readProblem(judge, problemID);
         if (problem === 'not found') {
-            problem = await parseProblem(url, problemID);
+            problem = await parseProblem(url, judge, problemID);
             await createProblem(judge, problem);
         }
         return problem;
