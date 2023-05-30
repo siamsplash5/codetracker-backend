@@ -54,7 +54,6 @@ function parseRequestValidator(req, res, next) {
             const newProblemID = problemID.toUpperCase();
             problemUrl = problemUrl.replace(problemID, newProblemID);
         }
-
         req.body.judge = judge;
         req.body.problemUrl = problemUrl;
         next();

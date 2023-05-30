@@ -108,14 +108,8 @@ async function parseProblem(url, judge, problemID) {
  * @throws {Error} If the URL is invalid.
  */
 function extractProblemID(url) {
-    let regex;
-    if(url.includes('problemset')){
-        regex = /\/(\d+\/)?(contest\/|problemset\/problem\/)(\d+)\/(\w+)/
-    }else{
-        regex = /\/(\d+\/)?(contest\/)?(\d+)\/problem\/(\w+)/
-    }
+    const regex = /\/(\d+\/)?(contest\/)?(\d+)\/problem\/(\w+)/
     const matches = url.match(regex);
-    
     if (matches && matches.length >= 5) {
         const contestNumber = matches[3] || '';
         const problemCode = matches[4] || '';
