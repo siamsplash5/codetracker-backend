@@ -13,10 +13,11 @@ Date: 24-04-2023
 // dependencies
 import cheerio from 'cheerio';
 import superagent from 'superagent';
-import {readInfo} from '../../database/queries/bot_auth_query.js';
+import { readInfo } from '../../database/queries/bot_auth_query.js';
 import randomStringGenerator from '../../lib/randomStringGenerator.js';
 import spojLogin from '../bot_login/spoj_login.js';
 
+const agent = superagent.agent();
 
 /**
  * Extracts the submission ID from the HTML response.
@@ -46,7 +47,7 @@ function getSubmissionID(html) {
  */
 async function isLogin(username) {
     const url = 'https://www.spoj.com/';
-    const res = await superagent.get(url);
+    const res = await agent.get(url);
     if (res.status !== 200) {
         throw new Error('SPOJ Connection Error');
     }
@@ -81,7 +82,7 @@ async function spojSubmit(info) {
 
          // If cookie exists, set the cookie and check if it is expired or not
         if (spojCredentials.cookie.length >= 2) {
-            superagent.jar.setCookies(spojCredentials.cookie);
+            agent.jar.setCookies(spojCredentials.cookie);
         }
 
         // check user login or not
@@ -91,7 +92,7 @@ async function spojSubmit(info) {
         }
 
         const { cookie } = botInfo.spojCredentials;
-        superagent.jar.setCookies(cookie);
+        agent.jar.setCookies(cookie);
 
         const submitData = {
             subm_file: '(binary)',
@@ -100,7 +101,7 @@ async function spojSubmit(info) {
             problemcode: problemIndex,
             submit: 'Submit!',
         };
-        const res = await superagent
+        const res = await agent
             .post(submitUrl)
             .field(submitData)
             .set(
@@ -113,7 +114,7 @@ async function spojSubmit(info) {
         }
 
         const submissionID = getSubmissionID(res.text);
-        return { superagent, username, submissionID };
+        return { agent, username, submissionID };
     } catch (error) {
         console.error('An error occurred during Spoj submission:', error);
         throw new Error(error);

@@ -9,22 +9,37 @@ import checkRouter from './routers/checkRouter.js';
 import contestRouter from './routers/contestRouter.js';
 import loginRouter from './routers/loginRouter.js';
 import logoutRouter from './routers/logoutRouter.js';
+import passwordVerifyRouter from './routers/passwordVerifyRouter.js';
 import problemRouter from './routers/problemRouter.js';
 import registerRouter from './routers/registerRouter.js';
 import registrationVerifyRouter from './routers/registrationVerifyRouter.js';
-import submitRouter from './routers/submitRouter.js';
-import passwordVerifyRouter from './routers/passwordVerifyRouter.js';
 import resetPasswordRouter from './routers/resetPasswordRouter.js';
+import submitRouter from './routers/submitRouter.js';
 
 // middlewares
 import authGuard from './middlewares/authGuard.js';
 import contestValidator from './middlewares/contestValidator.js';
-import { loginRequestValidator, loginValidationSchema } from './middlewares/loginRequestValidator.js';
+import {
+    loginRequestValidator,
+    loginValidationSchema
+} from './middlewares/loginRequestValidator.js';
 import parseRequestValidator from './middlewares/parseRequestValidator.js';
-import { registerRequestValidator, registerValidationSchema } from './middlewares/registerRequestValidator.js';
-import { verifyRequestValidator, verifyValidationSchema } from './middlewares/verifyRequestValidator.js';
-import {resetPasswordValidationSchema, resetPasswordRequestValidator} from './middlewares/resetPasswordRequestValidator.js';
-import {passwordVerifyRequestSchema, passwordVerifyRequestValidator} from './middlewares/passwordVerifyRequestValidator.js';
+import {
+    passwordVerifyRequestSchema,
+    passwordVerifyRequestValidator
+} from './middlewares/passwordVerifyRequestValidator.js';
+import {
+    registerRequestValidator,
+    registerValidationSchema
+} from './middlewares/registerRequestValidator.js';
+import {
+    resetPasswordRequestValidator,
+    resetPasswordValidationSchema
+} from './middlewares/resetPasswordRequestValidator.js';
+import {
+    verifyRequestValidator,
+    verifyValidationSchema
+} from './middlewares/verifyRequestValidator.js';
 
 // handlers
 import responseHandler from './handlers/response.handler.js';
@@ -82,11 +97,7 @@ app.use(
     passwordVerifyRouter
 );
 
-app.use('/api/register', 
-    registerValidationSchema, 
-    registerRequestValidator, 
-    registerRouter
-);
+app.use('/api/register', registerValidationSchema, registerRequestValidator, registerRouter);
 app.use(
     '/api/register-verify',
     verifyValidationSchema,
@@ -97,8 +108,11 @@ app.use(
 app.use('/api/logout', authGuard, logoutRouter);
 
 app.use('/api/check', checkRouter);
+
 app.use('/api/submit', authGuard, submitRouter);
+
 app.use('/api/problem', parseRequestValidator, problemRouter);
+
 app.use('/api/contest', authGuard, contestValidator, contestRouter);
 
 /**

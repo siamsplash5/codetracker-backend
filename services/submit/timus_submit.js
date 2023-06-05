@@ -12,11 +12,11 @@ Date: 24-04-2023
 // dependencies
 import cheerio from 'cheerio';
 import superagent from 'superagent';
-import {readInfo} from '../../database/queries/bot_auth_query.js';
+import { readInfo } from '../../database/queries/bot_auth_query.js';
 import { decryptPassword } from '../../lib/encryption.js';
 import randomStringGenerator from '../../lib/randomStringGenerator.js';
 
-
+const agent = superagent.agent();
 /**
  * Extracts the submission ID from the HTML response.
  *
@@ -72,7 +72,7 @@ async function timusSubmit(info) {
             SourceFile: '(binary)',
         };
 
-        const res = await superagent
+        const res = await agent
             .post(submitUrl)
             .field(submitData)
             .set(
@@ -86,7 +86,7 @@ async function timusSubmit(info) {
 
         const submissionID = getSubmissionID(res.text);
 
-        return { superagent, submissionID };
+        return { agent, submissionID };
     } catch (error) {
         console.error('An error occurred during Spoj submission:', error);
         throw new Error(error);

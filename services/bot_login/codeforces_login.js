@@ -3,6 +3,7 @@ import { updateInfo } from '../../database/queries/bot_auth_query.js';
 import { decryptPassword } from '../../lib/encryption.js';
 import getRandomString from '../../lib/randomStringGenerator.js';
 
+const agent = superagent.agent();
 
 /**
  * Retrieves the CSRF token from the Codeforces website.
@@ -12,7 +13,7 @@ import getRandomString from '../../lib/randomStringGenerator.js';
  */
 async function getCsrfToken(url) {
     try {
-        const res = await superagent.get(url);
+        const res = await agent.get(url);
         if (!res.status === 200) {
             throw new Error('Codeforces server side error');
         }
@@ -93,7 +94,7 @@ async function codeforcesLogin(username, encryptedPassword) {
             _tta: 104,
         };
 
-        const res = await superagent
+        const res = await agent
             .post(loginUrl)
             .send(loginData)
             .set('Content-Type', 'application/x-www-form-urlencoded');

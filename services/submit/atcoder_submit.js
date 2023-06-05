@@ -10,10 +10,10 @@
 
 import cheerio from 'cheerio';
 import superagent from 'superagent';
-import {readInfo} from '../../database/queries/bot_auth_query.js';
+import { readInfo } from '../../database/queries/bot_auth_query.js';
 import atcoderLogin from '../bot_login/atcoder_login.js';
 
-
+const agent = superagent.agent();
 /**
  * Extracts the submission ID from the HTML response.
  * @param {string} html - The HTML response from the server.
@@ -43,7 +43,7 @@ function getSubmissionID(html) {
 async function isLogin(username) {
     try {
         const url = 'https://atcoder.jp/';
-        const res = await superagent.get(url);
+        const res = await agent.get(url);
         if (res.status !== 200) {
             throw new Error('Atcoder Connection Error');
         }
@@ -66,7 +66,7 @@ async function isLogin(username) {
  * @param {string} info.problemIndex - The index of the problem.
  * @param {string} info.langID - The ID of the programming language.
  * @param {string} info.sourceCode - The source code to submit.
- * @returns {Object} The submission result containing the superagent instance, contest ID, and submission ID.
+ * @returns {Object} The submission result containing the agent instance, contest ID, and submission ID.
  * @throws {Error} If the submission fails or an error occurs.
  */
 async function atcoderSubmit(info) {
@@ -78,7 +78,7 @@ async function atcoderSubmit(info) {
 
         // If the cookie exists, set the cookie and check if it is expired
         if (atcoderCredentials.cookie.length >= 2) {
-            superagent.jar.setCookies(atcoderCredentials.cookie);
+            agent.jar.setCookies(atcoderCredentials.cookie);
         }
 
         // Check if the user is logged in or not
@@ -87,7 +87,7 @@ async function atcoderSubmit(info) {
             botInfo = await readInfo(username, 'atcoder');
         }
         const { csrf, cookie } = botInfo.atcoderCredentials;
-        superagent.jar.setCookies(cookie);
+        agent.jar.setCookies(cookie);
 
         const submitData = {
             'data.TaskScreenName': `${contestID}_${problemIndex}`,
@@ -96,7 +96,7 @@ async function atcoderSubmit(info) {
             csrf_token: csrf,
         };
 
-        const res = await superagent
+        const res = await agent
             .post(submitUrl)
             .send(submitData)
             .set('Content-Type', 'application/x-www-form-urlencoded');
@@ -106,7 +106,7 @@ async function atcoderSubmit(info) {
         }
 
         const submissionID = getSubmissionID(res.text);
-        return { superagent, contestID, submissionID };
+        return { agent, contestID, submissionID };
     } catch (error) {
         console.error('An error occurred during Atcoder submission:', error);
         throw new Error(error);

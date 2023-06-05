@@ -1,5 +1,6 @@
 import express from 'express';
 import updateSubmission from '../database/queries/submission_query.js';
+import responseHandler from '../handlers/response.handler.js';
 import atcoderSubmit from '../services/submit/atcoder_submit.js';
 import codeforcesSubmit from '../services/submit/codeforces_submit.js';
 import spojSubmit from '../services/submit/spoj_submit.js';
@@ -8,38 +9,29 @@ import watchAtcoderVerdict from '../services/watch-verdict/atcoder_verdict.js';
 import watchCodeforcesVerdict from '../services/watch-verdict/codeforces_verdict.js';
 import watchSPOJVerdict from '../services/watch-verdict/spoj_verdict.js';
 import watchTimusVerdict from '../services/watch-verdict/timus_verdict.js';
-import responseHandler from '../handlers/response.handler.js'
-
 
 const submitRouter = express.Router();
-
-const createProblemID = (judge, contestID, problemIndex) => {
-    if (judge === 'codeforces') return `${contestID}${problemIndex}`;
-    if (judge === 'atcoder') return `${contestID}_${problemIndex}`;
-    return problemIndex;
-};
 
 submitRouter.post('/', async (req, res) => {
     try {
         const submitInfo = req.body;
-        const { judge, contestID, problemIndex, sourceCode } = submitInfo;
+        const { judge, problemID, sourceCode } = submitInfo;
         const { username, userDatabaseID } = req;
-        const problemID = createProblemID(judge, contestID, problemIndex);
 
         let status;
-        if (submitInfo.judge === 'atcoder') {
+        if (submitInfo.judge === 'Atcoder') {
             const watchInfo = await atcoderSubmit(submitInfo);
             console.log('Submitted');
             status = await watchAtcoderVerdict(watchInfo);
-        } else if (submitInfo.judge === 'codeforces') {
+        } else if (submitInfo.judge === 'Codeforces') {
             const watchInfo = await codeforcesSubmit(submitInfo);
             console.log('Submitted');
             status = await watchCodeforcesVerdict(watchInfo);
-        } else if (submitInfo.judge === 'spoj') {
+        } else if (submitInfo.judge === 'Spoj') {
             const watchInfo = await spojSubmit(submitInfo);
             console.log('Submitted');
             status = await watchSPOJVerdict(watchInfo);
-        } else if (submitInfo.judge === 'timus') {
+        } else if (submitInfo.judge === 'Timus') {
             const watchInfo = await timusSubmit(submitInfo);
             console.log('Submitted');
             status = await watchTimusVerdict(watchInfo);
@@ -51,7 +43,7 @@ submitRouter.post('/', async (req, res) => {
         }
         const { submissionID, botUsername, problemName, language, verdict, time, memory } = status;
 
-        const submission = {
+        const submittedSolution = {
             realJudgesSubmissionID: submissionID,
             submittedBy: username,
             botWhoSubmitted: botUsername,
@@ -66,9 +58,9 @@ submitRouter.post('/', async (req, res) => {
             memory,
         };
 
-        await updateSubmission(userDatabaseID, submission);
+        await updateSubmission(userDatabaseID, submittedSolution);
 
-        responseHandler.ok(res, status);
+        responseHandler.ok(res, submittedSolution);
     } catch (error) {
         console.error(error);
         responseHandler.error(res);

@@ -11,6 +11,7 @@ import superagent from 'superagent';
 import { updateInfo } from '../../database/queries/bot_auth_query.js';
 import { decryptPassword } from '../../lib/encryption.js';
 
+const agent = superagent.agent();
 
 /**
  * Logs in to spoj.com by sending a POST request to the login URL.
@@ -32,7 +33,7 @@ async function spojLogin(username, encryptedPassword) {
             password: decryptedPassword,
         };
 
-        const res = await superagent
+        const res = await agent
             .post(loginUrl)
             .send(loginData)
             .set('Content-Type', 'application/x-www-form-urlencoded');

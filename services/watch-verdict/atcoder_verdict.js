@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-promise-executor-return */
 /* eslint-disable prefer-destructuring */
-import cheerio from "cheerio";
+import cheerio from 'cheerio';
 /**
  * Pauses the execution for a specified amount of time.
  *
@@ -84,7 +84,7 @@ function getStatus(html, contestID, atcSubmissionID) {
  * Retrieves the status of an AtCoder submission by watching for the verdict.
  *
  * @param {Object} watchInfo - Watch information.
- * @param {Object} watchInfo.superagent - Superagent instance for making HTTP requests.
+ * @param {Object} watchInfo.agent - Superagent instance for making HTTP requests.
  * @param {string} watchInfo.contestID - Contest ID.
  * @param {string} watchInfo.submissionID - Submission ID.
  * @returns {Promise<Object>} - Submission status.
@@ -92,12 +92,12 @@ function getStatus(html, contestID, atcSubmissionID) {
  */
 async function watchAtcoderVerdict(watchInfo) {
     try {
-        const { superagent, contestID, submissionID } = watchInfo;
+        const { agent, contestID, submissionID } = watchInfo;
         const watchUrl = `https://atcoder.jp/contests/${contestID}/submissions/${submissionID}`;
         let status;
 
         for (let i = 0; i < 20; i += 1) {
-            const { text } = await superagent.get(watchUrl);
+            const { text } = await agent.get(watchUrl);
             status = getStatus(text, contestID, submissionID);
             console.log(status);
 

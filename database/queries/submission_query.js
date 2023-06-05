@@ -6,23 +6,19 @@ import userModel from '../models/User.js';
  * Update the problem object in the database
  *
  * @param {string} userDatabaseID - User database ID
- * @param {object} submission - Submission object
+ * @param {object} submittedSolution - Submited solution object
  * @returns {Promise<object>} - Created or updated object
  * @throws {Error} - If an error occurs
  */
 
-const updateSubmission = async (userDatabaseID, submission) => {
+const updateSubmission = async (userDatabaseID, submittedSolution) => {
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-        const result = await submissionModel.findOneAndUpdate(
-            { volume: 1 },
-            { $push: { submissions: submission } },
-            { new: true, upsert: true, session }
-        );
+        const result = await submissionModel.create([submittedSolution], { session });
 
-        const { _id } = result.submissions[result.submissions.length - 1];
+        const { _id } = result;
 
         await userModel.updateOne(
             { _id: userDatabaseID },

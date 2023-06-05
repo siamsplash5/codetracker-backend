@@ -6,22 +6,23 @@ const checkRouter = express.Router();
  * GET /check
  * Check endpoint
  */
+
+function extractInfo(input) {
+    const regex = /^(\d+)([A-Za-z]+(\d+)?)$/;
+    const matches = input.match(regex);
+
+    if (matches) {
+        const contestID = matches[1];
+        const problemIndex = matches[2];
+        return { contestID, problemIndex };
+    }
+    return null; // Return null or handle invalid inputs as per your requirement
+}
 checkRouter.post('/', (req, res) => {
     try {
-        const {problemUrl} = req.body;
-        //const regex = /\/(\d+\/)?(contest\/)?(\d+)\/problem\/(\w+)/;
-        const regex = /\/(\d+\/)?(contest\/|problemset\/problem\/)(\d+)\/(\w+)/;
-        const matches = problemUrl.match(regex);
-        
-        if (matches && matches.length >= 5) {
-            const contestNumber = matches[3] || '';
-            const problemCode = matches[4] || '';
-            const problemID = (contestNumber + problemCode).toUpperCase();
-            return responseHandler.ok(res, {
-                problemID
-            })
-        }
-        throw new Error('Invalid Url');
+        const { problemID } = req.body;
+        const data = extractInfo(problemID);
+        responseHandler.ok(res, data);
     } catch (error) {
         console.log(error);
         responseHandler.error(res);

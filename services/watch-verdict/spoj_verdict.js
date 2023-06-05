@@ -1,7 +1,7 @@
 /* eslint-disable no-promise-executor-return */
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-await-in-loop */
-import cheerio from "cheerio";
+import cheerio from 'cheerio';
 
 /**
  * Pauses the execution for a specified amount of time.
@@ -58,21 +58,21 @@ function getStatus(html, spojSubmissionID, botUsername) {
  * Retrieves the status of a SPOJ submission by watching for the verdict.
  *
  * @param {Object} submissionInfo - Submission information.
- * @param {Object} submissionInfo.superagent - Superagent instance for making HTTP requests.
+ * @param {Object} submissionInfo.agent - Superagent instance for making HTTP requests.
  * @param {string} submissionInfo.username - Username.
  * @param {string} submissionInfo.submissionID - Submission ID.
  * @returns {Promise<Object>} - Submission status.
  * @throws {Error} - If the submission status cannot be retrieved.
  */
 async function watchSPOJVerdict(submissionInfo) {
-    const { superagent, username, submissionID } = submissionInfo;
+    const { agent, username, submissionID } = submissionInfo;
     const watchUrl = `https://www.spoj.com/status/${username}/`;
 
     try {
         let status;
 
         for (let i = 0; i < 10000; i += 1) {
-            const { text } = await superagent.get(watchUrl);
+            const { text } = await agent.get(watchUrl);
             status = getStatus(text, submissionID, username);
             console.log(status.verdict);
 

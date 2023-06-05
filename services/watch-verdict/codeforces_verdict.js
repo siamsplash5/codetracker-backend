@@ -1,6 +1,6 @@
 /* eslint-disable no-promise-executor-return */
 /* eslint-disable no-await-in-loop */
-import cheerio from "cheerio";
+import cheerio from 'cheerio';
 
 /**
  * Pauses the execution for a specified amount of time.
@@ -54,21 +54,21 @@ function getStatus(html, cfSubmissionID) {
  * Retrieves the status of a Codeforces submission by watching for the verdict.
  *
  * @param {Object} submissionInfo - Submission information.
- * @param {Object} submissionInfo.superagent - Superagent instance for making HTTP requests.
+ * @param {Object} submissionInfo.agent - Superagent instance for making HTTP requests.
  * @param {string} submissionInfo.contestID - Contest ID.
  * @param {string} submissionInfo.submissionID - Submission ID.
  * @returns {Promise<Object>} - Submission status.
  * @throws {Error} - If the submission status cannot be retrieved.
  */
 async function watchCodeforcesVerdict(submissionInfo) {
-    const { superagent, contestID, submissionID } = submissionInfo;
+    const { agent, contestID, submissionID } = submissionInfo;
     const watchUrl = `https://codeforces.com/contest/${contestID}/my`;
 
     try {
         let status;
 
         for (let i = 0; i < 20; i += 1) {
-            const { text } = await superagent.get(watchUrl);
+            const { text } = await agent.get(watchUrl);
             status = getStatus(text, submissionID);
             console.log(status.verdict);
 

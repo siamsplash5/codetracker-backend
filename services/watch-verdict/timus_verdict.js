@@ -1,7 +1,7 @@
 /* eslint-disable no-promise-executor-return */
 /* eslint-disable no-await-in-loop */
 
-import cheerio from "cheerio";
+import cheerio from 'cheerio';
 
 /**
  * Pauses the execution for a specified amount of time.
@@ -64,20 +64,20 @@ function getStatus(html, timusSubmissionID) {
  * Retrieves the status of a Timus submission by watching for the verdict.
  *
  * @param {Object} submissionInfo - Submission information.
- * @param {Object} submissionInfo.superagent - Superagent instance for making HTTP requests.
+ * @param {Object} submissionInfo.agent - Superagent instance for making HTTP requests.
  * @param {string} submissionInfo.timusSubmissionID - Timus submission ID.
  * @returns {Promise<Object>} - Submission status.
  * @throws {Error} - If the submission status cannot be retrieved.
  */
 async function watchTimusVerdict(submissionInfo) {
-    const { superagent, timusSubmissionID } = submissionInfo;
+    const { agent, timusSubmissionID } = submissionInfo;
     const watchUrl = 'https://acm.timus.ru/status.aspx?space=1&count=100';
 
     try {
         let status;
 
         for (let i = 0; i < 10000; i += 1) {
-            const { text } = await superagent.get(watchUrl);
+            const { text } = await agent.get(watchUrl);
             status = getStatus(text, timusSubmissionID);
             console.log(status.verdict);
 

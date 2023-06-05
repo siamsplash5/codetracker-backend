@@ -11,8 +11,10 @@ Date: 24-04-2023
 
 // dependencies
 import superagent from 'superagent';
-import {readInfo} from '../../database/queries/bot_auth_query.js';
+import { readInfo } from '../../database/queries/bot_auth_query.js';
 import codeforcesLogin from '../bot_login/codeforces_login.js';
+
+const agent = superagent.agent();
 
 /**
  * Extracts the submission ID from the HTML response.
@@ -43,9 +45,9 @@ function getSubmissionID(html) {
 
 async function isLogin(username) {
     const url = 'https://codeforces.com/';
-    const res = await superagent.get(url);
+    const res = await agent.get(url);
     if (!res.status === 200) {
-        throw new Error('Atcoder Connection Error');
+        throw new Error('Codeforces Connection Error');
     }
     const html = res.text;
     const regex = /var handle = "(.*?)"/;
@@ -56,11 +58,21 @@ async function isLogin(username) {
     return username === tmp[1];
 }
 
+function extractInfo(input) {
+    const regex = /^(\d+)([A-Za-z]+(\d+)?)$/;
+    const matches = input.match(regex);
+
+    if (matches) {
+        const contestID = matches[1];
+        const problemIndex = matches[2];
+        return { contestID, problemIndex };
+    }
+    return null;
+}
 /**
  * Submits a solution to Codeforces.
  * @param {Object} info - Submission information.
- * @param {number} info.contestID - Contest ID.
- * @param {string} info.problemIndex - Problem index.
+ * @param {string} info.problemID - Problem ID (ContestID+ProblemIndex).
  * @param {number} info.langID - Language ID.
  * @param {string} info.sourceCode - Source code of the solution.
  * @returns {Promise<Object>} - Submission details.
@@ -69,13 +81,15 @@ async function isLogin(username) {
 
 async function codeforcesSubmit(info) {
     try {
-        const { contestID, problemIndex, langID, sourceCode } = info;
+        const { problemID, langID, sourceCode } = info;
+        const { contestID, problemIndex } = extractInfo(problemID);
+
         let botInfo = await readInfo('bot_user_1', 'codeforces');
         const { username, password, codeforcesCredentials } = botInfo;
 
         // If cookie exists, set the cookie and check if it is expired or not
         if (codeforcesCredentials.cookie.length > 2) {
-            superagent.jar.setCookies(codeforcesCredentials.cookie);
+            agent.jar.setCookies(codeforcesCredentials.cookie);
         }
 
         // Check if the user is logged in or not
@@ -85,7 +99,7 @@ async function codeforcesSubmit(info) {
         }
 
         const { csrf, ftaa, bfaa, cookie } = botInfo.codeforcesCredentials;
-        superagent.jar.setCookies(cookie);
+        agent.jar.setCookies(cookie);
 
         const submitUrl = `https://codeforces.com/contest/${contestID}/submit?csrf_token=${csrf}`;
         const submitData = {
@@ -100,7 +114,7 @@ async function codeforcesSubmit(info) {
             _tta: 104,
         };
 
-        const res = await superagent
+        const res = await agent
             .post(submitUrl)
             .send(submitData)
             .set('Content-Type', 'application/x-www-form-urlencoded');
@@ -110,10 +124,11 @@ async function codeforcesSubmit(info) {
         }
 
         const submissionID = getSubmissionID(res.text);
-        return { superagent, contestID, submissionID };
+        console.log(submissionID);
+        return { agent, contestID, submissionID };
     } catch (error) {
         console.error('An error occurred during Codeforces submission:', error);
-         throw new Error(error);
+        throw new Error(error);
     }
 }
 
