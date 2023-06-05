@@ -1,6 +1,7 @@
 import express from 'express';
 import updateSubmission from '../database/queries/submission_query.js';
 import responseHandler from '../handlers/response.handler.js';
+import dateFormatter from '../lib/dateFormatter.js';
 import atcoderSubmit from '../services/submit/atcoder_submit.js';
 import codeforcesSubmit from '../services/submit/codeforces_submit.js';
 import spojSubmit from '../services/submit/spoj_submit.js';
@@ -42,6 +43,7 @@ submitRouter.post('/', async (req, res) => {
             myContestID = req.contestID;
         }
         const { submissionID, botUsername, problemName, language, verdict, time, memory } = status;
+        const { convertedDate, convertedTime } = dateFormatter(Date.now());
 
         const submittedSolution = {
             realJudgesSubmissionID: submissionID,
@@ -56,6 +58,8 @@ submitRouter.post('/', async (req, res) => {
             language,
             time,
             memory,
+            submitDate: convertedDate,
+            submitTime: convertedTime,
         };
 
         await updateSubmission(userDatabaseID, submittedSolution);

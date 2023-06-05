@@ -7,21 +7,38 @@ const checkRouter = express.Router();
  * Check endpoint
  */
 
-function extractInfo(input) {
-    const regex = /^(\d+)([A-Za-z]+(\d+)?)$/;
-    const matches = input.match(regex);
+function extractInfo(timestamp) {
+    const date = new Date(timestamp);
 
-    if (matches) {
-        const contestID = matches[1];
-        const problemIndex = matches[2];
-        return { contestID, problemIndex };
+    function getMonthName(month) {
+        const monthNames = [
+            'Jan',
+            'Feb',
+            'Mar',
+            'Apr',
+            'May',
+            'Jun',
+            'Jul',
+            'Aug',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dec',
+        ];
+        return monthNames[month];
     }
-    return null; // Return null or handle invalid inputs as per your requirement
+
+    function padZero(number) {
+        return number.toString().padStart(2, '0');
+    }
+    const formattedDate = `${getMonthName(date.getMonth())}/${padZero(
+        date.getDate()
+    )}/${date.getFullYear()} ${padZero(date.getHours())}:${padZero(date.getMinutes())}`;
+    return formattedDate;
 }
 checkRouter.post('/', (req, res) => {
     try {
-        const { problemID } = req.body;
-        const data = extractInfo(problemID);
+        const data = extractInfo(Date.now());
         responseHandler.ok(res, data);
     } catch (error) {
         console.log(error);

@@ -54,9 +54,13 @@ const submissionSchema = new mongoose.Schema({
     memory: {
         type: String,
     },
+    submitDate: {
+        type: String,
+        required: true,
+    },
     submitTime: {
-        type: Date,
-        default: Date.now,
+        type: String,
+        required: true,
     },
 });
 
