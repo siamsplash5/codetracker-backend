@@ -25,8 +25,8 @@ problemRouter.post('/', async (req, res) => {
         responseHandler.ok(res, problem);
     } catch (error) {
         console.log(error);
-        if(error.message==='Invalid Url'){
-           return responseHandler.badRequest(res, error.message);
+        if (error.message === 'Invalid Url') {
+            return responseHandler.badRequest(res, error.message);
         }
         responseHandler.error(res);
     }

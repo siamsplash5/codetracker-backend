@@ -4,7 +4,7 @@ import responseHandler from '../handlers/response.handler.js';
 
 const submissionQueryRouter = express.Router();
 /**
- * GET /submissionQueryRouter
+ * POST /submissionQueryRouter
  * Query User's submission for a particular problem
  */
 
@@ -21,7 +21,7 @@ submissionQueryRouter.post('/specific-problem', async (req, res) => {
 });
 
 /**
- * GET /submissionQueryRouter
+ * POST /submissionQueryRouter
  * Query User's submission for all problem
  */
 

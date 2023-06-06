@@ -11,6 +11,7 @@ import loginRouter from './routers/loginRouter.js';
 import logoutRouter from './routers/logoutRouter.js';
 import passwordVerifyRouter from './routers/passwordVerifyRouter.js';
 import problemRouter from './routers/problemRouter.js';
+import problemAllRouter from './routers/problemAllRouter.js';
 import registerRouter from './routers/registerRouter.js';
 import registrationVerifyRouter from './routers/registrationVerifyRouter.js';
 import resetPasswordRouter from './routers/resetPasswordRouter.js';
@@ -114,6 +115,7 @@ app.use('/api/submit', authGuard, submitRouter);
 app.use('/api/submissiondata', authGuard, submissionQueryRouter);
 
 app.use('/api/problem', parseRequestValidator, problemRouter);
+app.use('/api/problem-all', problemAllRouter);
 
 app.use('/api/contest', authGuard, contestValidator, contestRouter);
 
