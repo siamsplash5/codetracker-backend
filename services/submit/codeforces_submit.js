@@ -30,7 +30,7 @@ function getSubmissionID(html) {
         if (match) {
             return match[1];
         }
-        throw new Error('submission ID not found');
+        throw new Error('submission ID not found/Duplicate code');
     } catch (error) {
         throw new Error(error);
     }
