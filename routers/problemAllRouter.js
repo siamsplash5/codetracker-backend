@@ -6,34 +6,26 @@ import Timus from '../database/models/TimusProblem.js';
 import responseHandler from '../handlers/response.handler.js';
 
 const problemAllRouter = express.Router();
+
 /**
  * GET /problemAllRouter
- * Return all problem from database
+ * Return all problems from the database
  */
 problemAllRouter.get('/', async (req, res) => {
     try {
-        const atcoderProblems = await Atcoder.find();
-        const codeforcesProblems = await Codeforces.find();
-        const spojProblems = await Spoj.find();
-        const timusProblems = await Timus.find();
+        const [atcoderProblems, codeforcesProblems, spojProblems, timusProblems] =
+            await Promise.all([
+                Atcoder.find({}, 'problems'),
+                Codeforces.find({}, 'problems'),
+                Spoj.find({}, 'problems'),
+                Timus.find({}, 'problems'),
+            ]);
 
-        const problemList = [];
-
-        atcoderProblems.forEach((volumeObject) => {
-            problemList.push(...volumeObject.problems);
-        });
-
-        codeforcesProblems.forEach((volumeObject) => {
-            problemList.push(...volumeObject.problems);
-        });
-
-        spojProblems.forEach((volumeObject) => {
-            problemList.push(...volumeObject.problems);
-        });
-
-        timusProblems.forEach((volumeObject) => {
-            problemList.push(...volumeObject.problems);
-        });
+        const problemList = []
+            .concat(...atcoderProblems.map((volumeObject) => volumeObject.problems))
+            .concat(...codeforcesProblems.map((volumeObject) => volumeObject.problems))
+            .concat(...spojProblems.map((volumeObject) => volumeObject.problems))
+            .concat(...timusProblems.map((volumeObject) => volumeObject.problems));
 
         responseHandler.ok(res, problemList);
     } catch (error) {
