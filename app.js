@@ -14,6 +14,7 @@ import problemRouter from './routers/problemRouter.js';
 import registerRouter from './routers/registerRouter.js';
 import registrationVerifyRouter from './routers/registrationVerifyRouter.js';
 import resetPasswordRouter from './routers/resetPasswordRouter.js';
+import submissionQueryRouter from './routers/submissionQueryRouter.js';
 import submitRouter from './routers/submitRouter.js';
 
 // middlewares
@@ -110,6 +111,7 @@ app.use('/api/logout', authGuard, logoutRouter);
 app.use('/api/check', checkRouter);
 
 app.use('/api/submit', authGuard, submitRouter);
+app.use('/api/submissiondata', authGuard, submissionQueryRouter);
 
 app.use('/api/problem', parseRequestValidator, problemRouter);
 

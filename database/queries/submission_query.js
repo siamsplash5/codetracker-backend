@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import submissionModel from '../models/Submission.js';
-import userModel from '../models/User.js';
+import Submission from '../models/Submission.js';
+import User from '../models/User.js';
 
 /**
  * Update the problem object in the database
@@ -16,11 +16,11 @@ const updateSubmission = async (userDatabaseID, submittedSolution) => {
     session.startTransaction();
 
     try {
-        const result = await submissionModel.create([submittedSolution], { session });
+        const result = await Submission.create([submittedSolution], { session });
 
-        const { _id } = result;
+        const { _id } = result[0];
 
-        await userModel.updateOne(
+        await User.updateOne(
             { _id: userDatabaseID },
             { $push: { submissionID: _id } },
             { session }
