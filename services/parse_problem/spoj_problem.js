@@ -3,9 +3,8 @@
 import cheerio from 'cheerio';
 import puppeteer from 'puppeteer';
 import { createProblem, readProblem } from '../../database/queries/problem_query.js';
+import extractTitle from '../../lib/extractTitle.js';
 import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
-
-
 /**
  * Parses a problem from a given URL and problem ID.
  * @param {string} url - The URL of the problem.
@@ -30,8 +29,7 @@ async function parseProblem(url, judge, problemID) {
     const $ = cheerio.load(problemStatementHTML);
 
     // Parsing the problem title
-    let title = $('h2#problem-name').text().trim();
-    title = title.replace(`${problemID} - `, '');
+    const title = extractTitle(judge, $('h2#problem-name').text().trim());
     const problemBody = $('#problem-body');
 
     // Parsing the full problem statement

@@ -2,8 +2,8 @@
 import cheerio from 'cheerio';
 import puppeteer from 'puppeteer';
 import { createProblem, readProblem } from '../../database/queries/problem_query.js';
+import extractTitle from '../../lib/extractTitle.js';
 import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
-
 
 /**
  * Parses a problem from a specific URL.
@@ -31,8 +31,7 @@ async function parseProblem(url, judge, problemID) {
     const $ = cheerio.load(problemStatementHTML);
 
     // parsing the problem title
-    let title = $('.problem_title').text().trim();
-    title = title.slice(title.indexOf('. ') + 2);
+    const title = extractTitle(judge, $('.problem_title').text().trim());
 
     // parsing time and memory limit
     const str = $('div.problem_limits').text().trim();

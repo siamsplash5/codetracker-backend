@@ -2,21 +2,8 @@ import cheerio from 'cheerio';
 import puppeteer from 'puppeteer';
 import { createProblem, readProblem } from '../../database/queries/problem_query.js';
 import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
+import extractTitle from '../../lib/extractTitle.js';
 
-/**
- * Remove index (i.e A, B, G2) from the problem title
- * @param {string} url - The title with problem index
- * @returns {string} The title witout the problem index
-
- */
-
-function extractTitle(input) {
-    const separatorIndex = input.indexOf('. ');
-    if (separatorIndex !== -1) {
-        return input.substring(separatorIndex + 2);
-    }
-    return input;
-}
 /**
  * Parses an AtCoder problem from the given URL and returns the parsed problem object.
  * @param {string} url - The URL of the problem.
@@ -38,7 +25,7 @@ async function parseProblem(url, judge, problemID) {
     const problemStatementHTML = await page.$eval('.problem-statement', (el) => el.innerHTML);
     const $ = cheerio.load(problemStatementHTML);
 
-    const title = extractTitle($('.header .title').text().trim());
+    const title = extractTitle(judge, $('.header .title').text().trim());
     const timeLimit = $('.header .time-limit').text().replace('time limit per test', '').trim();
     const memoryLimit = $('.header .memory-limit')
         .text()

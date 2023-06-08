@@ -2,9 +2,8 @@
 import cheerio from 'cheerio';
 import puppeteer from 'puppeteer';
 import { createProblem, readProblem } from '../../database/queries/problem_query.js';
+import extractTitle from '../../lib/extractTitle.js';
 import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
-
-
 /**
  * Parses a problem from the given URL and returns the parsed problem object.
  * @param {string} url - The URL of the problem.
@@ -33,7 +32,7 @@ async function parseProblem(url, judge, problemID) {
     const $ = cheerio.load(problemStatementHTML);
 
     // Parse the title of the problem
-    const title = $('span.h2').text().trim().replace('\n\t\t\tEditorial', '');
+    const title = extractTitle(judge, $('span.h2').text().trim().replace('\n\t\t\tEditorial', ''));
 
     // Parsing the score of the problem
     const score = $('span.lang-en p').find('mn').eq(0).text();
@@ -49,25 +48,29 @@ async function parseProblem(url, judge, problemID) {
 
     // Parse the problem statement
     const len = $('.part').length;
-    const body = $('div.part')
-        .eq(len / 2)
-        .html();
-    const constraint = $('div.part')
-        .eq(len / 2 + 1)
-        .html();
-    const input = $('div.part')
-        .eq(len / 2 + 2)
-        .html();
-    const output = $('div.part')
-        .eq(len / 2 + 3)
-        .html();
+
+    const problemStatement = [];
+    let breakPoint = 0;
+    for (let i = 0; i < len / 2; i += 1) {
+        const element = $('div.part')
+            .eq(len / 2 + i)
+            .html();
+        const divElement = $(element);
+        const h3Element = divElement.find('h3');
+
+        if (h3Element.length > 0 && h3Element.text().trim() === 'Sample Input 1 Copy') {
+            breakPoint = i;
+            break;
+        }
+        problemStatement.push(element);
+    }
 
     // Parse the sample inputs and outputs and relevant notes
     const inputs = [];
     const outputs = [];
     const notes = [];
 
-    const totalPreTag = len / 2 - 4;
+    const totalPreTag = len / 2 - breakPoint;
     for (let i = totalPreTag; i <= 2 * totalPreTag - 1; i += 1) {
         const data = $(`#pre-sample${i}`).text().trim();
         if (i % 2 === 0) {
@@ -93,14 +96,9 @@ async function parseProblem(url, judge, problemID) {
         judge,
         problemID,
         title,
-        timeLimit: `${timeLimit} seconds`,
-        memoryLimit: `${memoryLimit} megabytes`,
-        problemStatement: {
-            body,
-            constraint,
-            input,
-            output,
-        },
+        timeLimit: `${timeLimit}`,
+        memoryLimit: `${memoryLimit}`,
+        problemStatement,
         sampleTestCase: {
             inputs,
             outputs,

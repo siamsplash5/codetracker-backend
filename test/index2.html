@@ -1,41 +1,1154 @@
-<!DOCTYPE html>
-<html lang="en">
+<span class="h2">
+    B - Trained?
+    <a class="btn btn-default btn-sm" href="/contests/abc065/tasks/abc065_b/editorial">Editorial</a>
+</span>
+<span id="task-lang-btn" class="pull-right"><span data-lang="ja"><img
+            src="//img.atcoder.jp/assets/top/img/flag-lang/ja.png"></span>
+    / <span data-lang="en"><img src="//img.atcoder.jp/assets/top/img/flag-lang/en.png"></span></span>
+<script>
+    $(function () {
+        var ts = $('#task-statement span.lang');
+        if (ts.children('span').size() <= 1) {
+            $('#task-lang-btn').hide();
+            ts.children('span').show();
+            return;
+        }
+        var REMEMBER_LB = 5;
+        var LS_KEY = 'task_lang';
+        var taskLang = getLS(LS_KEY) || '';
+        var changeTimes = 0;
+        if (taskLang == 'ja' || taskLang == 'en') {
+            changeTimes = REMEMBER_LB;
+        } else {
+            var changeTimes = parseInt(taskLang, 10);
+            if (isNaN(changeTimes)) {
+                changeTimes = 0;
+                delLS(LS_KEY);
+            }
+            changeTimes++;
+            taskLang = LANG;
+        }
+        ts.children('span.lang-' + taskLang).show();
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+        $('#task-lang-btn span').click(function () {
+            var l = $(this).data('lang');
+            ts.children('span').hide();
+            ts.children('span.lang-' + l).show();
+            if (changeTimes < REMEMBER_LB) setLS(LS_KEY, changeTimes);
+            else setLS(LS_KEY, l);
+        });
+    });
+</script>
+<hr>
+<p>
+    Time Limit: 2 sec / Memory Limit: 256 MB
 
-<body>
-<p align="justify">
-	Transform the algebraic expression with brackets into RPN form (Reverse Polish Notation). Two-argument operators: +,
-	-, *, /, ^ (priority from the lowest to the highest), brackets ( ). Operands: only letters: a,b,...,z. Assume that
-	there is only one RPN form (no expressions like a*b*c).
 </p>
-<h3>Input</h3>
-<pre><i>t</i> [the number of expressions &lt;= <b>100</b>]
-<i>expression</i> [length &lt;= <b>400</b>]
-[other expressions]
+
+<div id="task-statement">
+
+    <span class="lang">
+        <span class="lang-ja">
+            <p>配点 : <var><span><span class="katex"><span class="katex-mathml"><math
+                                    xmlns="http://www.w3.org/1998/Math/MathML">
+                                    <semantics>
+                                        <mrow>
+                                            <mn>200</mn>
+                                        </mrow>
+                                        <annotation encoding="application/x-tex">200</annotation>
+                                    </semantics>
+                                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span
+                                        class="strut" style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                        class="mord">2</span><span class="mord">0</span><span
+                                        class="mord">0</span></span></span></span></span></var>
+                点</p>
+
+            <div class="part">
+                <section>
+                    <h3>問題文</h3>
+                    <p>筋力をつけたい高橋君は、AtCoder 社のトレーニング設備で、トレーニングをすることにしました。</p>
+                    <p>AtCoder 社のトレーニング設備には
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mi>N</mi>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">N</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.68333em; vertical-align: 0em;"></span><span
+                                                class="mord mathnormal"
+                                                style="margin-right: 0.10903em;">N</span></span></span></span></span></var>
+                        個のボタンがついており、ちょうど
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>1</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">1</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">1</span></span></span></span></span></var>
+                        個のボタンが光っています。
+                        ボタンには、<var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>1</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">1</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">1</span></span></span></span></span></var>
+                        から
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mi>N</mi>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">N</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.68333em; vertical-align: 0em;"></span><span
+                                                class="mord mathnormal"
+                                                style="margin-right: 0.10903em;">N</span></span></span></span></span></var>
+                        までの番号がついています。
+                        ボタン
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mi>i</mi>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">i</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.65952em; vertical-align: 0em;"></span><span
+                                                class="mord mathnormal">i</span></span></span></span></span></var>
+                        が光っているときにそのボタンを押すと、ボタン
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mi>i</mi>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">i</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.65952em; vertical-align: 0em;"></span><span
+                                                class="mord mathnormal">i</span></span></span></span></span></var>
+                        の明かりが消え、その後ボタン
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <msub>
+                                                        <mi>a</mi>
+                                                        <mi>i</mi>
+                                                    </msub>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">a_i</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.58056em; vertical-align: -0.15em;"></span><span
+                                                class="mord"><span class="mord mathnormal">a</span><span
+                                                    class="msupsub"><span class="vlist-t vlist-t2"><span
+                                                            class="vlist-r"><span class="vlist"
+                                                                style="height: 0.311664em;"><span class=""
+                                                                    style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span
+                                                                        class="pstrut"
+                                                                        style="height: 2.7em;"></span><span
+                                                                        class="sizing reset-size6 size3 mtight"><span
+                                                                            class="mord mathnormal mtight">i</span></span></span></span><span
+                                                                class="vlist-s">​</span></span><span
+                                                            class="vlist-r"><span class="vlist"
+                                                                style="height: 0.15em;"><span
+                                                                    class=""></span></span></span></span></span></span></span></span></span></span></var>
+                        が光ります。<var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mi>i</mi>
+                                                    <mo>=</mo>
+                                                    <msub>
+                                                        <mi>a</mi>
+                                                        <mi>i</mi>
+                                                    </msub>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">i=a_i</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.65952em; vertical-align: 0em;"></span><span
+                                                class="mord mathnormal">i</span><span class="mspace"
+                                                style="margin-right: 0.277778em;"></span><span
+                                                class="mrel">=</span><span class="mspace"
+                                                style="margin-right: 0.277778em;"></span></span><span class="base"><span
+                                                class="strut"
+                                                style="height: 0.58056em; vertical-align: -0.15em;"></span><span
+                                                class="mord"><span class="mord mathnormal">a</span><span
+                                                    class="msupsub"><span class="vlist-t vlist-t2"><span
+                                                            class="vlist-r"><span class="vlist"
+                                                                style="height: 0.311664em;"><span class=""
+                                                                    style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span
+                                                                        class="pstrut"
+                                                                        style="height: 2.7em;"></span><span
+                                                                        class="sizing reset-size6 size3 mtight"><span
+                                                                            class="mord mathnormal mtight">i</span></span></span></span><span
+                                                                class="vlist-s">​</span></span><span
+                                                            class="vlist-r"><span class="vlist"
+                                                                style="height: 0.15em;"><span
+                                                                    class=""></span></span></span></span></span></span></span></span></span></span></var>
+                        であることもあります。
+                        光っていないボタンを押しても、何も起こりません。
+                    </p>
+                    <p>最初、ボタン
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>1</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">1</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">1</span></span></span></span></span></var>
+                        が光っています。高橋君は、ボタン
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>2</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">2</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">2</span></span></span></span></span></var>
+                        が光っている状態で、トレーニングをやめたいと思っています。
+                    </p>
+                    <p>そのようなことは可能かどうか判定し、もし可能なら最低で何回ボタンを押す必要があるかを求めてください。</p>
+                </section>
+            </div>
+
+            <div class="part">
+                <section>
+                    <h3>制約</h3>
+                    <ul>
+                        <li><var><span><span class="katex"><span class="katex-mathml"><math
+                                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                                <semantics>
+                                                    <mrow>
+                                                        <mn>2</mn>
+                                                        <mo>≦</mo>
+                                                        <mi>N</mi>
+                                                        <mo>≦</mo>
+                                                        <mn>1</mn>
+                                                        <msup>
+                                                            <mn>0</mn>
+                                                            <mn>5</mn>
+                                                        </msup>
+                                                    </mrow>
+                                                    <annotation encoding="application/x-tex">2 ≦ N ≦ 10^5</annotation>
+                                                </semantics>
+                                            </math></span><span class="katex-html" aria-hidden="true"><span
+                                                class="base"><span class="strut"
+                                                    style="height: 1.01166em; vertical-align: -0.25583em;"></span><span
+                                                    class="mord">2</span><span class="mspace"
+                                                    style="margin-right: 0.277778em;"></span><span
+                                                    class="mrel amsrm">≦</span><span class="mspace"
+                                                    style="margin-right: 0.277778em;"></span></span><span
+                                                class="base"><span class="strut"
+                                                    style="height: 1.01166em; vertical-align: -0.25583em;"></span><span
+                                                    class="mord mathnormal"
+                                                    style="margin-right: 0.10903em;">N</span><span class="mspace"
+                                                    style="margin-right: 0.277778em;"></span><span
+                                                    class="mrel amsrm">≦</span><span class="mspace"
+                                                    style="margin-right: 0.277778em;"></span></span><span
+                                                class="base"><span class="strut"
+                                                    style="height: 0.814108em; vertical-align: 0em;"></span><span
+                                                    class="mord">1</span><span class="mord"><span
+                                                        class="mord">0</span><span class="msupsub"><span
+                                                            class="vlist-t"><span class="vlist-r"><span class="vlist"
+                                                                    style="height: 0.814108em;"><span class=""
+                                                                        style="top: -3.063em; margin-right: 0.05em;"><span
+                                                                            class="pstrut"
+                                                                            style="height: 2.7em;"></span><span
+                                                                            class="sizing reset-size6 size3 mtight"><span
+                                                                                class="mord mtight">5</span></span></span></span></span></span></span></span></span></span></span></span></var>
+                        </li>
+                        <li><var><span><span class="katex"><span class="katex-mathml"><math
+                                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                                <semantics>
+                                                    <mrow>
+                                                        <mn>1</mn>
+                                                        <mo>≦</mo>
+                                                        <msub>
+                                                            <mi>a</mi>
+                                                            <mi>i</mi>
+                                                        </msub>
+                                                        <mo>≦</mo>
+                                                        <mi>N</mi>
+                                                    </mrow>
+                                                    <annotation encoding="application/x-tex">1 ≦ a_i ≦ N</annotation>
+                                                </semantics>
+                                            </math></span><span class="katex-html" aria-hidden="true"><span
+                                                class="base"><span class="strut"
+                                                    style="height: 1.01166em; vertical-align: -0.25583em;"></span><span
+                                                    class="mord">1</span><span class="mspace"
+                                                    style="margin-right: 0.277778em;"></span><span
+                                                    class="mrel amsrm">≦</span><span class="mspace"
+                                                    style="margin-right: 0.277778em;"></span></span><span
+                                                class="base"><span class="strut"
+                                                    style="height: 1.01166em; vertical-align: -0.25583em;"></span><span
+                                                    class="mord"><span class="mord mathnormal">a</span><span
+                                                        class="msupsub"><span class="vlist-t vlist-t2"><span
+                                                                class="vlist-r"><span class="vlist"
+                                                                    style="height: 0.311664em;"><span class=""
+                                                                        style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span
+                                                                            class="pstrut"
+                                                                            style="height: 2.7em;"></span><span
+                                                                            class="sizing reset-size6 size3 mtight"><span
+                                                                                class="mord mathnormal mtight">i</span></span></span></span><span
+                                                                    class="vlist-s">​</span></span><span
+                                                                class="vlist-r"><span class="vlist"
+                                                                    style="height: 0.15em;"><span
+                                                                        class=""></span></span></span></span></span></span><span
+                                                    class="mspace" style="margin-right: 0.277778em;"></span><span
+                                                    class="mrel amsrm">≦</span><span class="mspace"
+                                                    style="margin-right: 0.277778em;"></span></span><span
+                                                class="base"><span class="strut"
+                                                    style="height: 0.68333em; vertical-align: 0em;"></span><span
+                                                    class="mord mathnormal"
+                                                    style="margin-right: 0.10903em;">N</span></span></span></span></span></var>
+                        </li>
+                    </ul>
+                </section>
+            </div>
+
+            <hr>
+
+            <div class="io-style">
+                <div class="part">
+                    <section>
+                        <h3>入力</h3>
+                        <p>入力は以下の形式で標準入力から与えられる。</p>
+                        <pre><var><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.68333em; vertical-align: 0em;"></span><span class="mord mathnormal" style="margin-right: 0.10903em;">N</span></span></span></span></span></var>
+<var><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">a_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.58056em; vertical-align: -0.15em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.301108em;"><span class="" style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span class=""></span></span></span></span></span></span></span></span></span></span></var>
+<var><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">a_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.58056em; vertical-align: -0.15em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.301108em;"><span class="" style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span class=""></span></span></span></span></span></span></span></span></span></span></var>
+:
+<var><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mi>N</mi></msub></mrow><annotation encoding="application/x-tex">a_N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.58056em; vertical-align: -0.15em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.328331em;"><span class="" style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right: 0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span class=""></span></span></span></span></span></span></span></span></span></span></var>
 </pre>
-<p align="left">
-	Text grouped in [ ] does not appear in the input file.
-</p>
-<h3>Output</h3>
-<pre>The <em>expression</em>s in RPN form, one per line.
-</pre>
-<h3>Example</h3>
-<pre>Input:
+
+                    </section>
+                </div>
+
+                <div class="part">
+                    <section>
+                        <h3>出力</h3>
+                        <p>ボタン
+                            <var><span><span class="katex"><span class="katex-mathml"><math
+                                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                                <semantics>
+                                                    <mrow>
+                                                        <mn>2</mn>
+                                                    </mrow>
+                                                    <annotation encoding="application/x-tex">2</annotation>
+                                                </semantics>
+                                            </math></span><span class="katex-html" aria-hidden="true"><span
+                                                class="base"><span class="strut"
+                                                    style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                    class="mord">2</span></span></span></span></span></var>
+                            を光らせることが不可能な場合、<var><span><span class="katex"><span class="katex-mathml"><math
+                                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                                <semantics>
+                                                    <mrow>
+                                                        <mo>−</mo>
+                                                        <mn>1</mn>
+                                                    </mrow>
+                                                    <annotation encoding="application/x-tex">-1</annotation>
+                                                </semantics>
+                                            </math></span><span class="katex-html" aria-hidden="true"><span
+                                                class="base"><span class="strut"
+                                                    style="height: 0.72777em; vertical-align: -0.08333em;"></span><span
+                                                    class="mord">−</span><span
+                                                    class="mord">1</span></span></span></span></span></var>
+                            を出力せよ。
+                            そうでない場合、ボタン
+                            <var><span><span class="katex"><span class="katex-mathml"><math
+                                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                                <semantics>
+                                                    <mrow>
+                                                        <mn>2</mn>
+                                                    </mrow>
+                                                    <annotation encoding="application/x-tex">2</annotation>
+                                                </semantics>
+                                            </math></span><span class="katex-html" aria-hidden="true"><span
+                                                class="base"><span class="strut"
+                                                    style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                    class="mord">2</span></span></span></span></span></var>
+                            を光らせるために必要なボタンを押す回数の最小値を出力せよ。
+                        </p>
+                    </section>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="part">
+                <section>
+                    <h3>入力例 1
+                        <span class="btn btn-default btn-sm btn-copy" tabindex="0" data-toggle="tooltip"
+                            data-trigger="manual" title="" data-target="pre-sample0"
+                            data-original-title="Copied!">Copy</span>
+                    </h3>
+                    <div class="div-btn-copy">
+                        <span class="btn-copy btn-pre" tabindex="0" data-toggle="tooltip" data-trigger="manual" title=""
+                            data-target="pre-sample0" data-original-title="Copied!">Copy</span>
+                    </div>
+                    <pre id="pre-sample0">3
 3
-(a+(b*c))
-((a+b)*(z+x))
-((a+t)*((b+(a+c))^(c+d)))
+1
+2
+</pre>
 
-Output:
-abc*+
-ab+zx+*
-at+bac++cd+^*</pre>
-</body>
+                </section>
+            </div>
 
-</html>
+            <div class="part">
+                <section>
+                    <h3>出力例 1
+                        <span class="btn btn-default btn-sm btn-copy" tabindex="0" data-toggle="tooltip"
+                            data-trigger="manual" title="" data-target="pre-sample1"
+                            data-original-title="Copied!">Copy</span>
+                    </h3>
+                    <div class="div-btn-copy">
+                        <span class="btn-copy btn-pre" tabindex="0" data-toggle="tooltip" data-trigger="manual" title=""
+                            data-target="pre-sample1" data-original-title="Copied!">Copy</span>
+                    </div>
+                    <pre id="pre-sample1">2
+</pre>
+
+                    <p>ボタン
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>1</mn>
+                                                    <mo separator="true">,</mo>
+                                                    <mn>3</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">1,3</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.83888em; vertical-align: -0.19444em;"></span><span
+                                                class="mord">1</span><span class="mpunct">,</span><span class="mspace"
+                                                style="margin-right: 0.166667em;"></span><span
+                                                class="mord">3</span></span></span></span></span></var>
+                        の順に押せばよいです。
+                    </p>
+                </section>
+            </div>
+
+            <hr>
+
+            <div class="part">
+                <section>
+                    <h3>入力例 2
+                        <span class="btn btn-default btn-sm btn-copy" tabindex="0" data-toggle="tooltip"
+                            data-trigger="manual" title="" data-target="pre-sample2"
+                            data-original-title="Copied!">Copy</span>
+                    </h3>
+                    <div class="div-btn-copy">
+                        <span class="btn-copy btn-pre" tabindex="0" data-toggle="tooltip" data-trigger="manual" title=""
+                            data-target="pre-sample2" data-original-title="Copied!">Copy</span>
+                    </div>
+                    <pre id="pre-sample2">4
+3
+4
+1
+2
+</pre>
+
+                </section>
+            </div>
+
+            <div class="part">
+                <section>
+                    <h3>出力例 2
+                        <span class="btn btn-default btn-sm btn-copy" tabindex="0" data-toggle="tooltip"
+                            data-trigger="manual" title="" data-target="pre-sample3"
+                            data-original-title="Copied!">Copy</span>
+                    </h3>
+                    <div class="div-btn-copy">
+                        <span class="btn-copy btn-pre" tabindex="0" data-toggle="tooltip" data-trigger="manual" title=""
+                            data-target="pre-sample3" data-original-title="Copied!">Copy</span>
+                    </div>
+                    <pre id="pre-sample3">-1
+</pre>
+
+                    <p>ボタン
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>1</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">1</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">1</span></span></span></span></span></var>
+                        を押すとボタン
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>3</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">3</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">3</span></span></span></span></span></var>
+                        、ボタン
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>3</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">3</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">3</span></span></span></span></span></var>
+                        を押すとボタン
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>1</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">1</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">1</span></span></span></span></span></var>
+                        が光るので、ボタン
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>2</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">2</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">2</span></span></span></span></span></var>
+                        が光ることはありません。
+                    </p>
+                </section>
+            </div>
+
+            <hr>
+
+            <div class="part">
+                <section>
+                    <h3>入力例 3
+                        <span class="btn btn-default btn-sm btn-copy" tabindex="0" data-toggle="tooltip"
+                            data-trigger="manual" title="" data-target="pre-sample4"
+                            data-original-title="Copied!">Copy</span>
+                    </h3>
+                    <div class="div-btn-copy">
+                        <span class="btn-copy btn-pre" tabindex="0" data-toggle="tooltip" data-trigger="manual" title=""
+                            data-target="pre-sample4" data-original-title="Copied!">Copy</span>
+                    </div>
+                    <pre id="pre-sample4">5
+3
+3
+4
+2
+4
+</pre>
+
+                </section>
+            </div>
+
+            <div class="part">
+                <section>
+                    <h3>出力例 3
+                        <span class="btn btn-default btn-sm btn-copy" tabindex="0" data-toggle="tooltip"
+                            data-trigger="manual" title="" data-target="pre-sample5"
+                            data-original-title="Copied!">Copy</span>
+                    </h3>
+                    <div class="div-btn-copy">
+                        <span class="btn-copy btn-pre" tabindex="0" data-toggle="tooltip" data-trigger="manual" title=""
+                            data-target="pre-sample5" data-original-title="Copied!">Copy</span>
+                    </div>
+                    <pre id="pre-sample5">3
+</pre>
+                </section>
+            </div>
+        </span>
+        <span class="lang-en" style="display: inline;">
+            <p>Score : <var><span><span class="katex"><span class="katex-mathml"><math
+                                    xmlns="http://www.w3.org/1998/Math/MathML">
+                                    <semantics>
+                                        <mrow>
+                                            <mn>200</mn>
+                                        </mrow>
+                                        <annotation encoding="application/x-tex">200</annotation>
+                                    </semantics>
+                                </math></span><span class="katex-html" aria-hidden="true"><span class="base"><span
+                                        class="strut" style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                        class="mord">2</span><span class="mord">0</span><span
+                                        class="mord">0</span></span></span></span></span></var>
+                points</p>
+
+            <div class="part">
+                <section>
+                    <h3>Problem Statement</h3>
+                    <p>Takahashi wants to gain muscle, and decides to work out at AtCoder Gym.</p>
+                    <p>The exercise machine at the gym has
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mi>N</mi>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">N</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.68333em; vertical-align: 0em;"></span><span
+                                                class="mord mathnormal"
+                                                style="margin-right: 0.10903em;">N</span></span></span></span></span></var>
+                        buttons, and exactly one of the buttons is lighten up.
+                        These buttons are numbered
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>1</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">1</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">1</span></span></span></span></span></var>
+                        through
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mi>N</mi>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">N</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.68333em; vertical-align: 0em;"></span><span
+                                                class="mord mathnormal"
+                                                style="margin-right: 0.10903em;">N</span></span></span></span></span></var>.
+                        When Button
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mi>i</mi>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">i</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.65952em; vertical-align: 0em;"></span><span
+                                                class="mord mathnormal">i</span></span></span></span></span></var>
+                        is lighten up and you press it, the light is turned off, and then Button
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <msub>
+                                                        <mi>a</mi>
+                                                        <mi>i</mi>
+                                                    </msub>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">a_i</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.58056em; vertical-align: -0.15em;"></span><span
+                                                class="mord"><span class="mord mathnormal">a</span><span
+                                                    class="msupsub"><span class="vlist-t vlist-t2"><span
+                                                            class="vlist-r"><span class="vlist"
+                                                                style="height: 0.311664em;"><span class=""
+                                                                    style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span
+                                                                        class="pstrut"
+                                                                        style="height: 2.7em;"></span><span
+                                                                        class="sizing reset-size6 size3 mtight"><span
+                                                                            class="mord mathnormal mtight">i</span></span></span></span><span
+                                                                class="vlist-s">​</span></span><span
+                                                            class="vlist-r"><span class="vlist"
+                                                                style="height: 0.15em;"><span
+                                                                    class=""></span></span></span></span></span></span></span></span></span></span></var>
+                        will be lighten up. It is possible that
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mi>i</mi>
+                                                    <mo>=</mo>
+                                                    <msub>
+                                                        <mi>a</mi>
+                                                        <mi>i</mi>
+                                                    </msub>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">i=a_i</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.65952em; vertical-align: 0em;"></span><span
+                                                class="mord mathnormal">i</span><span class="mspace"
+                                                style="margin-right: 0.277778em;"></span><span
+                                                class="mrel">=</span><span class="mspace"
+                                                style="margin-right: 0.277778em;"></span></span><span class="base"><span
+                                                class="strut"
+                                                style="height: 0.58056em; vertical-align: -0.15em;"></span><span
+                                                class="mord"><span class="mord mathnormal">a</span><span
+                                                    class="msupsub"><span class="vlist-t vlist-t2"><span
+                                                            class="vlist-r"><span class="vlist"
+                                                                style="height: 0.311664em;"><span class=""
+                                                                    style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span
+                                                                        class="pstrut"
+                                                                        style="height: 2.7em;"></span><span
+                                                                        class="sizing reset-size6 size3 mtight"><span
+                                                                            class="mord mathnormal mtight">i</span></span></span></span><span
+                                                                class="vlist-s">​</span></span><span
+                                                            class="vlist-r"><span class="vlist"
+                                                                style="height: 0.15em;"><span
+                                                                    class=""></span></span></span></span></span></span></span></span></span></span></var>.
+                        When Button
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mi>i</mi>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">i</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.65952em; vertical-align: 0em;"></span><span
+                                                class="mord mathnormal">i</span></span></span></span></span></var>
+                        is not lighten up, nothing will happen by pressing it.
+                    </p>
+                    <p>Initially, Button
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>1</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">1</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">1</span></span></span></span></span></var>
+                        is lighten up. Takahashi wants to quit pressing buttons when Button
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>2</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">2</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">2</span></span></span></span></span></var>
+                        is lighten up.
+                    </p>
+                    <p>Determine whether this is possible. If the answer is positive, find the minimum number of times
+                        he needs
+                        to press buttons.</p>
+                </section>
+            </div>
+
+            <div class="part">
+                <section>
+                    <h3>Constraints</h3>
+                    <ul>
+                        <li><var><span><span class="katex"><span class="katex-mathml"><math
+                                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                                <semantics>
+                                                    <mrow>
+                                                        <mn>2</mn>
+                                                        <mo>≤</mo>
+                                                        <mi>N</mi>
+                                                        <mo>≤</mo>
+                                                        <mn>1</mn>
+                                                        <msup>
+                                                            <mn>0</mn>
+                                                            <mn>5</mn>
+                                                        </msup>
+                                                    </mrow>
+                                                    <annotation encoding="application/x-tex">2 ≤ N ≤ 10^5</annotation>
+                                                </semantics>
+                                            </math></span><span class="katex-html" aria-hidden="true"><span
+                                                class="base"><span class="strut"
+                                                    style="height: 0.78041em; vertical-align: -0.13597em;"></span><span
+                                                    class="mord">2</span><span class="mspace"
+                                                    style="margin-right: 0.277778em;"></span><span
+                                                    class="mrel">≤</span><span class="mspace"
+                                                    style="margin-right: 0.277778em;"></span></span><span
+                                                class="base"><span class="strut"
+                                                    style="height: 0.8193em; vertical-align: -0.13597em;"></span><span
+                                                    class="mord mathnormal"
+                                                    style="margin-right: 0.10903em;">N</span><span class="mspace"
+                                                    style="margin-right: 0.277778em;"></span><span
+                                                    class="mrel">≤</span><span class="mspace"
+                                                    style="margin-right: 0.277778em;"></span></span><span
+                                                class="base"><span class="strut"
+                                                    style="height: 0.814108em; vertical-align: 0em;"></span><span
+                                                    class="mord">1</span><span class="mord"><span
+                                                        class="mord">0</span><span class="msupsub"><span
+                                                            class="vlist-t"><span class="vlist-r"><span class="vlist"
+                                                                    style="height: 0.814108em;"><span class=""
+                                                                        style="top: -3.063em; margin-right: 0.05em;"><span
+                                                                            class="pstrut"
+                                                                            style="height: 2.7em;"></span><span
+                                                                            class="sizing reset-size6 size3 mtight"><span
+                                                                                class="mord mtight">5</span></span></span></span></span></span></span></span></span></span></span></span></var>
+                        </li>
+                        <li><var><span><span class="katex"><span class="katex-mathml"><math
+                                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                                <semantics>
+                                                    <mrow>
+                                                        <mn>1</mn>
+                                                        <mo>≤</mo>
+                                                        <msub>
+                                                            <mi>a</mi>
+                                                            <mi>i</mi>
+                                                        </msub>
+                                                        <mo>≤</mo>
+                                                        <mi>N</mi>
+                                                    </mrow>
+                                                    <annotation encoding="application/x-tex">1 ≤ a_i ≤ N</annotation>
+                                                </semantics>
+                                            </math></span><span class="katex-html" aria-hidden="true"><span
+                                                class="base"><span class="strut"
+                                                    style="height: 0.78041em; vertical-align: -0.13597em;"></span><span
+                                                    class="mord">1</span><span class="mspace"
+                                                    style="margin-right: 0.277778em;"></span><span
+                                                    class="mrel">≤</span><span class="mspace"
+                                                    style="margin-right: 0.277778em;"></span></span><span
+                                                class="base"><span class="strut"
+                                                    style="height: 0.78597em; vertical-align: -0.15em;"></span><span
+                                                    class="mord"><span class="mord mathnormal">a</span><span
+                                                        class="msupsub"><span class="vlist-t vlist-t2"><span
+                                                                class="vlist-r"><span class="vlist"
+                                                                    style="height: 0.311664em;"><span class=""
+                                                                        style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span
+                                                                            class="pstrut"
+                                                                            style="height: 2.7em;"></span><span
+                                                                            class="sizing reset-size6 size3 mtight"><span
+                                                                                class="mord mathnormal mtight">i</span></span></span></span><span
+                                                                    class="vlist-s">​</span></span><span
+                                                                class="vlist-r"><span class="vlist"
+                                                                    style="height: 0.15em;"><span
+                                                                        class=""></span></span></span></span></span></span><span
+                                                    class="mspace" style="margin-right: 0.277778em;"></span><span
+                                                    class="mrel">≤</span><span class="mspace"
+                                                    style="margin-right: 0.277778em;"></span></span><span
+                                                class="base"><span class="strut"
+                                                    style="height: 0.68333em; vertical-align: 0em;"></span><span
+                                                    class="mord mathnormal"
+                                                    style="margin-right: 0.10903em;">N</span></span></span></span></span></var>
+                        </li>
+                    </ul>
+                </section>
+            </div>
+
+            <hr>
+
+            <div class="io-style">
+                <div class="part">
+                    <section>
+                        <h3>Input</h3>
+                        <p>Input is given from Standard Input in the following format:</p>
+                        <pre><var><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.68333em; vertical-align: 0em;"></span><span class="mord mathnormal" style="margin-right: 0.10903em;">N</span></span></span></span></span></var>
+<var><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">a_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.58056em; vertical-align: -0.15em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.301108em;"><span class="" style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span class=""></span></span></span></span></span></span></span></span></span></span></var>
+<var><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">a_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.58056em; vertical-align: -0.15em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.301108em;"><span class="" style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span class=""></span></span></span></span></span></span></span></span></span></span></var>
+:
+<var><span><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>a</mi><mi>N</mi></msub></mrow><annotation encoding="application/x-tex">a_N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.58056em; vertical-align: -0.15em;"></span><span class="mord"><span class="mord mathnormal">a</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.328331em;"><span class="" style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right: 0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span class=""></span></span></span></span></span></span></span></span></span></span></var>
+</pre>
+
+                    </section>
+                </div>
+
+                <div class="part">
+                    <section>
+                        <h3>Output</h3>
+                        <p>Print
+                            <var><span><span class="katex"><span class="katex-mathml"><math
+                                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                                <semantics>
+                                                    <mrow>
+                                                        <mo>−</mo>
+                                                        <mn>1</mn>
+                                                    </mrow>
+                                                    <annotation encoding="application/x-tex">-1</annotation>
+                                                </semantics>
+                                            </math></span><span class="katex-html" aria-hidden="true"><span
+                                                class="base"><span class="strut"
+                                                    style="height: 0.72777em; vertical-align: -0.08333em;"></span><span
+                                                    class="mord">−</span><span
+                                                    class="mord">1</span></span></span></span></span></var>
+                            if it is impossible to lighten up Button
+                            <var><span><span class="katex"><span class="katex-mathml"><math
+                                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                                <semantics>
+                                                    <mrow>
+                                                        <mn>2</mn>
+                                                    </mrow>
+                                                    <annotation encoding="application/x-tex">2</annotation>
+                                                </semantics>
+                                            </math></span><span class="katex-html" aria-hidden="true"><span
+                                                class="base"><span class="strut"
+                                                    style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                    class="mord">2</span></span></span></span></span></var>.
+                            Otherwise, print the minimum number of times we need to press buttons in order to lighten up
+                            Button
+                            <var><span><span class="katex"><span class="katex-mathml"><math
+                                                xmlns="http://www.w3.org/1998/Math/MathML">
+                                                <semantics>
+                                                    <mrow>
+                                                        <mn>2</mn>
+                                                    </mrow>
+                                                    <annotation encoding="application/x-tex">2</annotation>
+                                                </semantics>
+                                            </math></span><span class="katex-html" aria-hidden="true"><span
+                                                class="base"><span class="strut"
+                                                    style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                    class="mord">2</span></span></span></span></span></var>.
+                        </p>
+                    </section>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="part">
+                <section>
+                    <h3>Sample Input 1
+                        <span class="btn btn-default btn-sm btn-copy" tabindex="0" data-toggle="tooltip"
+                            data-trigger="manual" title="" data-target="pre-sample6"
+                            data-original-title="Copied!">Copy</span>
+                    </h3>
+                    <div class="div-btn-copy">
+                        <span class="btn-copy btn-pre" tabindex="0" data-toggle="tooltip" data-trigger="manual" title=""
+                            data-target="pre-sample6" data-original-title="Copied!">Copy</span>
+                    </div>
+                    <pre id="pre-sample6">3
+3
+1
+2
+</pre>
+
+                </section>
+            </div>
+
+            <div class="part">
+                <section>
+                    <h3>Sample Output 1
+                        <span class="btn btn-default btn-sm btn-copy" tabindex="0" data-toggle="tooltip"
+                            data-trigger="manual" title="" data-target="pre-sample7"
+                            data-original-title="Copied!">Copy</span>
+                    </h3>
+                    <div class="div-btn-copy">
+                        <span class="btn-copy btn-pre" tabindex="0" data-toggle="tooltip" data-trigger="manual" title=""
+                            data-target="pre-sample7" data-original-title="Copied!">Copy</span>
+                    </div>
+                    <pre id="pre-sample7">2
+</pre>
+
+                    <p>Press Button
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>1</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">1</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">1</span></span></span></span></span></var>,
+                        then Button
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>3</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">3</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">3</span></span></span></span></span></var>.
+                    </p>
+                </section>
+            </div>
+
+            <hr>
+
+            <div class="part">
+                <section>
+                    <h3>Sample Input 2
+                        <span class="btn btn-default btn-sm btn-copy" tabindex="0" data-toggle="tooltip"
+                            data-trigger="manual" title="" data-target="pre-sample8"
+                            data-original-title="Copied!">Copy</span>
+                    </h3>
+                    <div class="div-btn-copy">
+                        <span class="btn-copy btn-pre" tabindex="0" data-toggle="tooltip" data-trigger="manual" title=""
+                            data-target="pre-sample8" data-original-title="Copied!">Copy</span>
+                    </div>
+                    <pre id="pre-sample8">4
+3
+4
+1
+2
+</pre>
+
+                </section>
+            </div>
+
+            <div class="part">
+                <section>
+                    <h3>Sample Output 2
+                        <span class="btn btn-default btn-sm btn-copy" tabindex="0" data-toggle="tooltip"
+                            data-trigger="manual" title="" data-target="pre-sample9"
+                            data-original-title="Copied!">Copy</span>
+                    </h3>
+                    <div class="div-btn-copy">
+                        <span class="btn-copy btn-pre" tabindex="0" data-toggle="tooltip" data-trigger="manual" title=""
+                            data-target="pre-sample9" data-original-title="Copied!">Copy</span>
+                    </div>
+                    <pre id="pre-sample9">-1
+</pre>
+
+                    <p>Pressing Button
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>1</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">1</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">1</span></span></span></span></span></var>
+                        lightens up Button
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>3</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">3</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">3</span></span></span></span></span></var>,
+                        and vice versa, so Button
+                        <var><span><span class="katex"><span class="katex-mathml"><math
+                                            xmlns="http://www.w3.org/1998/Math/MathML">
+                                            <semantics>
+                                                <mrow>
+                                                    <mn>2</mn>
+                                                </mrow>
+                                                <annotation encoding="application/x-tex">2</annotation>
+                                            </semantics>
+                                        </math></span><span class="katex-html" aria-hidden="true"><span
+                                            class="base"><span class="strut"
+                                                style="height: 0.64444em; vertical-align: 0em;"></span><span
+                                                class="mord">2</span></span></span></span></span></var>
+                        will never be lighten up.
+                    </p>
+                </section>
+            </div>
+
+            <hr>
+
+            <div class="part">
+                <section>
+                    <h3>Sample Input 3
+                        <span class="btn btn-default btn-sm btn-copy" tabindex="0" data-toggle="tooltip"
+                            data-trigger="manual" title="" data-target="pre-sample10"
+                            data-original-title="Copied!">Copy</span>
+                    </h3>
+                    <div class="div-btn-copy">
+                        <span class="btn-copy btn-pre" tabindex="0" data-toggle="tooltip" data-trigger="manual" title=""
+                            data-target="pre-sample10" data-original-title="Copied!">Copy</span>
+                    </div>
+                    <pre id="pre-sample10">5
+3
+3
+4
+2
+4
+</pre>
+
+                </section>
+            </div>
+
+            <div class="part">
+                <section>
+                    <h3>Sample Output 3
+                        <span class="btn btn-default btn-sm btn-copy" tabindex="0" data-toggle="tooltip"
+                            data-trigger="manual" title="" data-target="pre-sample11"
+                            data-original-title="Copied!">Copy</span>
+                    </h3>
+                    <div class="div-btn-copy">
+                        <span class="btn-copy btn-pre" tabindex="0" data-toggle="tooltip" data-trigger="manual" title=""
+                            data-target="pre-sample11" data-original-title="Copied!">Copy</span>
+                    </div>
+                    <pre id="pre-sample11">3
+</pre>
+                </section>
+            </div>
+        </span>
+    </span>
+
+</div>

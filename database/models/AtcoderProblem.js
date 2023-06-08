@@ -30,24 +30,12 @@ const problemSchema = new mongoose.Schema({
                 type: String,
                 required: true,
             },
-            problemStatement: {
-                body: {
+            problemStatement: [
+                {
                     type: String,
                     default: null,
                 },
-                constraint: {
-                    type: String,
-                    default: null,
-                },
-                input: {
-                    type: String,
-                    default: null,
-                },
-                output: {
-                    type: String,
-                    default: null,
-                },
-            },
+            ],
             sampleTestCase: {
                 inputs: [
                     {
