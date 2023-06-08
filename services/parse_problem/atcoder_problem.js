@@ -46,45 +46,78 @@ async function parseProblem(url, judge, problemID) {
     timeLimit = timeLimit === '1' ? `${timeLimit} second` : `${timeLimit} seconds`;
     memoryLimit = `${memoryLimit} megabytes`;
 
-    // Parse the problem statement
+    // check language switching button hidden or not
+    const spanElement = $('#task-lang-btn');
+    const isHidden = spanElement.attr('style') === 'display: none;';
+
+    // Parse the problem statement, sample inputs and outputs and relevant notes
     const len = $('.part').length;
 
     const problemStatement = [];
-    let breakPoint = 0;
-    for (let i = 0; i < len / 2; i += 1) {
-        const element = $('div.part')
-            .eq(len / 2 + i)
-            .html();
-        const divElement = $(element);
-        const h3Element = divElement.find('h3');
-
-        if (h3Element.length > 0 && h3Element.text().trim() === 'Sample Input 1 Copy') {
-            breakPoint = i;
-            break;
-        }
-        problemStatement.push(element);
-    }
-
-    // Parse the sample inputs and outputs and relevant notes
     const inputs = [];
     const outputs = [];
     const notes = [];
+    let breakPoint = 0;
 
-    const totalPreTag = len / 2 - breakPoint;
-    for (let i = totalPreTag; i <= 2 * totalPreTag - 1; i += 1) {
-        const data = $(`#pre-sample${i}`).text().trim();
-        if (i % 2 === 0) {
-            inputs.push(data);
-        } else {
-            outputs.push(data);
-            const notesInnerHtml = $(`#pre-sample${i}`)
-                .nextAll()
-                .map((index, el) => $.html(el))
-                .get()
+    if (isHidden) {
+        for (let i = 0; i < len; i += 1) {
+            const element = $('div.part').eq(i).html();
+            const divElement = $(element);
+            if (divElement.text().startsWith('Sample Input 1')) {
+                breakPoint = i;
+                break;
+            }
+            problemStatement.push(element);
+        }
+        const totalPreTag = len - breakPoint;
+        for (let i = 0; i < totalPreTag; i += 1) {
+            const data = $(`#pre-sample${i}`).text().trim();
+            if (i % 2 === 0) {
+                inputs.push(data);
+            } else {
+                outputs.push(data);
+                const notesInnerHtml = $(`#pre-sample${i}`)
+                    .nextAll()
+                    .map((index, el) => $.html(el))
+                    .get()
 
-                .join('');
-            if (notesInnerHtml !== null) {
-                notes.push(notesInnerHtml);
+                    .join('');
+                if (notesInnerHtml !== null) {
+                    notes.push(notesInnerHtml);
+                }
+            }
+        }
+    } else {
+        for (let i = 0; i < len / 2; i += 1) {
+            const element = $('div.part')
+                .eq(len / 2 + i)
+                .html();
+            const divElement = $(element);
+            const h3Element = divElement.find('h3');
+
+            if (h3Element.length > 0 && h3Element.text().trim() === 'Sample Input 1 Copy') {
+                breakPoint = i;
+                break;
+            }
+            problemStatement.push(element);
+        }
+
+        const totalPreTag = len / 2 - breakPoint;
+        for (let i = totalPreTag; i <= 2 * totalPreTag - 1; i += 1) {
+            const data = $(`#pre-sample${i}`).text().trim();
+            if (i % 2 === 0) {
+                inputs.push(data);
+            } else {
+                outputs.push(data);
+                const notesInnerHtml = $(`#pre-sample${i}`)
+                    .nextAll()
+                    .map((index, el) => $.html(el))
+                    .get()
+
+                    .join('');
+                if (notesInnerHtml !== null) {
+                    notes.push(notesInnerHtml);
+                }
             }
         }
     }
