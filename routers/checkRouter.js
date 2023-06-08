@@ -31,7 +31,7 @@ async function parseProblem(url, judge, problemID) {
         '#task-statement',
         (el) => el.parentElement.innerHTML
     );
-
+    // return problemStatementHTML;
     // Load the problem statement HTML to cheerio
     const $ = cheerio.load(problemStatementHTML);
 
@@ -65,8 +65,33 @@ async function parseProblem(url, judge, problemID) {
 
     if (isHidden) {
         for (let i = 0; i < len; i += 1) {
-            const element = $('div.part').eq(i).html();
+            let element = $('div.part').eq(i).html();
             const divElement = $(element);
+
+            if (divElement.length > 0 && divElement.text().trim().startsWith('Input')) {
+                console.log('dukse');
+                const $2 = cheerio.load(element);
+
+                // Select the <pre> tag and find all <var> tags within it
+                const preTag = $2('pre');
+                const varTags = preTag.find('var');
+
+                // Insert <br> tag after each <var> tag where there is a line break
+                varTags.each((index, varTag) => {
+                    const { nextSibling } = varTag;
+                    if (
+                        nextSibling &&
+                        nextSibling.type === 'text' &&
+                        /\r?\n/.test(nextSibling.data)
+                    ) {
+                        $2(varTag).after('<br>');
+                    }
+                });
+
+                // Get the modified HTML
+                element = $2.html();
+            }
+
             if (divElement.text().startsWith('Sample Input 1')) {
                 breakPoint = i;
                 break;
@@ -92,12 +117,36 @@ async function parseProblem(url, judge, problemID) {
             }
         }
     } else {
+        console.log(len);
         for (let i = 0; i < len / 2; i += 1) {
-            const element = $('div.part')
+            let element = $('div.part')
                 .eq(len / 2 + i)
                 .html();
             const divElement = $(element);
             const h3Element = divElement.find('h3');
+
+            if (h3Element.length > 0 && h3Element.text().trim() === 'Input') {
+                const $2 = cheerio.load(element);
+
+                // Select the <pre> tag and find all <var> tags within it
+                const preTag = $2('pre');
+                const varTags = preTag.find('var');
+
+                // Insert <br> tag after each <var> tag where there is a line break
+                varTags.each((index, varTag) => {
+                    const { nextSibling } = varTag;
+                    if (
+                        nextSibling &&
+                        nextSibling.type === 'text' &&
+                        /\r?\n/.test(nextSibling.data)
+                    ) {
+                        $2(varTag).after('<br>');
+                    }
+                });
+
+                // Get the modified HTML
+                element = $2.html();
+            }
 
             if (h3Element.length > 0 && h3Element.text().trim() === 'Sample Input 1 Copy') {
                 breakPoint = i;
