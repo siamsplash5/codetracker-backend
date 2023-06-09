@@ -99,12 +99,21 @@ async function watchAtcoderVerdict(watchInfo) {
         for (let i = 0; i < 20; i += 1) {
             const { text } = await agent.get(watchUrl);
             status = getStatus(text, contestID, submissionID);
-            console.log(status);
+            console.log(status.verdict);
 
-            if (status.memory !== undefined) {
+            if (
+                status.verdict === 'Accepted' ||
+                status.verdict === 'Wrong Answer' ||
+                status.verdict === 'Time Limit Exceeded' ||
+                status.verdict === 'Memory Limit Exceeded' ||
+                status.verdict === 'Runtime Error' ||
+                status.verdict === 'Compilation Error' ||
+                status.verdict === 'Queued Limit Exceeded' ||
+                status.verdict === 'Output Limit Exceeded' ||
+                status.verdict === 'Internal Error'
+            ) {
                 break;
             }
-
             await sleep(2000);
         }
 

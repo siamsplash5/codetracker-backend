@@ -20,19 +20,19 @@ submitRouter.post('/', async (req, res) => {
         const { username, userDatabaseID } = req;
 
         let status;
-        if (submitInfo.judge === 'Atcoder') {
+        if (judge === 'Atcoder') {
             const watchInfo = await atcoderSubmit(submitInfo);
             console.log('Submitted');
             status = await watchAtcoderVerdict(watchInfo);
-        } else if (submitInfo.judge === 'Codeforces') {
+        } else if (judge === 'Codeforces') {
             const watchInfo = await codeforcesSubmit(submitInfo);
             console.log('Submitted');
             status = await watchCodeforcesVerdict(watchInfo);
-        } else if (submitInfo.judge === 'Spoj') {
+        } else if (judge === 'Spoj') {
             const watchInfo = await spojSubmit(submitInfo);
             console.log('Submitted');
             status = await watchSPOJVerdict(watchInfo);
-        } else if (submitInfo.judge === 'Timus') {
+        } else if (judge === 'Timus') {
             const watchInfo = await timusSubmit(submitInfo);
             console.log('Submitted');
             status = await watchTimusVerdict(watchInfo);

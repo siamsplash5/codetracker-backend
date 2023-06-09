@@ -59,6 +59,15 @@ async function isLogin(username) {
     }
 }
 
+function extractProblemInfo(problemID) {
+    const lastIndex = problemID.lastIndexOf('_');
+    if (lastIndex !== -1) {
+        const contestID = problemID.substring(0, lastIndex);
+        const problemIndex = problemID.substring(lastIndex + 1);
+        return { contestID, problemIndex };
+    }
+    return null; // Return null if no underscore is found
+}
 /**
  * Submits the received code to the Atcoder judge.
  * @param {Object} info - The submission information.
@@ -71,7 +80,8 @@ async function isLogin(username) {
  */
 async function atcoderSubmit(info) {
     try {
-        const { contestID, problemIndex, langID, sourceCode } = info;
+        const { problemID, langID, sourceCode } = info;
+        const { contestID, problemIndex } = extractProblemInfo(problemID);
         const submitUrl = `https://atcoder.jp/contests/${contestID}/submit`;
         let botInfo = await readInfo('bot_user_1', 'atcoder');
         const { username, password, atcoderCredentials } = botInfo;
@@ -108,7 +118,7 @@ async function atcoderSubmit(info) {
         const submissionID = getSubmissionID(res.text);
         return { agent, contestID, submissionID };
     } catch (error) {
-        console.error('An error occurred during Atcoder submission:', error);
+        console.error('An error occurred during Atcoder submission');
         throw new Error(error);
     }
 }
