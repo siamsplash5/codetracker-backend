@@ -27,7 +27,6 @@ async function parseProblem(url, judge, problemID) {
         '#task-statement',
         (el) => el.parentElement.innerHTML
     );
-
     // Load the problem statement HTML to cheerio
     const $ = cheerio.load(problemStatementHTML);
 
@@ -113,9 +112,10 @@ async function parseProblem(url, judge, problemID) {
             }
         }
     } else {
-        for (let i = 0; i < len / 2; i += 1) {
+        const startPoint = Math.ceil(len / 2);
+        for (let i = 0; i < startPoint; i += 1) {
             let element = $('div.part')
-                .eq(len / 2 + i)
+                .eq(startPoint + i)
                 .html();
             const divElement = $(element);
             const h3Element = divElement.find('h3');
@@ -150,7 +150,7 @@ async function parseProblem(url, judge, problemID) {
             problemStatement.push(element);
         }
 
-        const totalPreTag = len / 2 - breakPoint;
+        const totalPreTag = startPoint - breakPoint - (len % 2 === 1);
         for (let i = totalPreTag; i <= 2 * totalPreTag - 1; i += 1) {
             const data = $(`#pre-sample${i}`).text().trim();
             if (i % 2 === 0) {

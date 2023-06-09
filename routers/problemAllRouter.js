@@ -27,6 +27,8 @@ problemAllRouter.get('/', async (req, res) => {
             .concat(...spojProblems.map((volumeObject) => volumeObject.problems))
             .concat(...timusProblems.map((volumeObject) => volumeObject.problems));
 
+        problemList.sort((a, b) => b.parsedAt - a.parsedAt);
+
         responseHandler.ok(res, problemList);
     } catch (error) {
         console.log(error);
