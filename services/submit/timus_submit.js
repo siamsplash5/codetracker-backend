@@ -49,7 +49,7 @@ function getSubmissionID(html) {
  */
 async function timusSubmit(info) {
     try {
-        const { problemIndex, langID, sourceCode } = info;
+        const { problemID, langID, sourceCode } = info;
         const submitUrl = 'https://acm.timus.ru/submit.aspx?space=1';
         const formToken = randomStringGenerator({
             lowerCase: true,
@@ -67,7 +67,7 @@ async function timusSubmit(info) {
             SpaceID: 1,
             JudgeID: judgeID,
             Language: langID,
-            ProblemNum: problemIndex,
+            ProblemNum: problemID,
             Source: sourceCode,
             SourceFile: '(binary)',
         };
@@ -84,11 +84,11 @@ async function timusSubmit(info) {
             throw new Error(`Timus submit failed, status code ${res.status}`);
         }
 
-        const submissionID = getSubmissionID(res.text);
+        const timusSubmissionID = getSubmissionID(res.text);
 
-        return { agent, submissionID };
+        return { agent, timusSubmissionID };
     } catch (error) {
-        console.error('An error occurred during Spoj submission:', error);
+        console.error('An error occurred during Timus submission:', error);
         throw new Error(error);
     }
 }

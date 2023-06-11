@@ -76,7 +76,7 @@ async function watchTimusVerdict(submissionInfo) {
     try {
         let status;
 
-        for (let i = 0; i < 10000; i += 1) {
+        for (let i = 0; i < 50; i += 1) {
             const { text } = await agent.get(watchUrl);
             status = getStatus(text, timusSubmissionID);
             console.log(status.verdict);
@@ -85,7 +85,7 @@ async function watchTimusVerdict(submissionInfo) {
                 break;
             }
 
-            await sleep(1000);
+            await sleep(2000);
         }
 
         console.log(status);
