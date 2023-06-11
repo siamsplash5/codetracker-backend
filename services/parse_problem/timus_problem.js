@@ -1,7 +1,6 @@
 /* eslint-disable max-len */
 import cheerio from 'cheerio';
 import puppeteer from 'puppeteer';
-import { createProblem, readProblem } from '../../database/queries/problem_query.js';
 import extractTitle from '../../lib/extractTitle.js';
 import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
 
@@ -29,6 +28,15 @@ async function parseProblem(url, judge, problemID) {
 
     // load the div element in cheerio
     const $ = cheerio.load(problemStatementHTML);
+    // Select all <img> tags
+    const imgTags = $('img');
+
+    // Modify the src attribute for each <img> tag
+    imgTags.each((index, element) => {
+        const src = $(element).attr('src');
+        const modifiedSrc = `https://acm.timus.ru${src}`;
+        $(element).attr('src', modifiedSrc);
+    });
 
     // parsing the problem title
     const title = extractTitle(judge, $('.problem_title').text().trim());
@@ -46,44 +54,26 @@ async function parseProblem(url, judge, problemID) {
     if (note) note = note.replace(/\n(?=\S)/g, '');
 
     // parsing full problem statement
-    let count = 0;
-    const bg = $('h3.problem_subtitle:contains("Background")').length;
-    if (bg > 0) count -= 1;
-    let background = '';
-    let body = '';
-    let input = '';
-    let output = '';
-    for (let i = 0; i <= 300; i += 1) {
-        const data = $('div.problem_par')
-            .eq(i)
-            .html()
-            .replace(/\n(?=\S)/g, '');
-        if (count === -1) {
-            background += `${data}\n\n`;
-        } else if (count === 0) {
-            body += `${data}\n\n`;
-        } else if (count === 1) {
-            input += `${data}\n\n`;
-        } else if (count === 2) {
-            output += `${data}\n\n`;
+    const problemStatement = [];
+    const problemSection = $('#problem_text');
+    problemSection.children().each((index, element) => {
+        const htmlElement = $.html(element);
+        if ($(htmlElement).text() === 'Sample' || $(htmlElement).text() === 'Samples') {
+            return false;
         }
-        if ($('div.problem_par').eq(i).next().is('H3')) {
-            count += 1;
-        }
-        if (count === 3) break;
-    }
+        problemStatement.push(htmlElement);
+    });
 
     // parsing sample input and output
     const inputs = [];
     const outputs = [];
-    const totalPreTag = $('pre').length;
-    for (let i = 0; i < totalPreTag; i += 1) {
-        if (i % 2 === 0) {
-            inputs.push($('pre').eq(i).html().trim());
-        } else {
-            outputs.push($('pre').eq(i).html().trim());
-        }
-    }
+    const totalPreTag = $('table.sample');
+    const $2 = cheerio.load(totalPreTag.html());
+
+    $2('pre').each((index, element) => {
+        if (index % 2 === 0) inputs.push($.html(element));
+        else outputs.push($.html(element));
+    });
 
     // parsing problem tags
     const tags = [];
@@ -103,7 +93,8 @@ async function parseProblem(url, judge, problemID) {
     const author = $('div.problem_source')
         .text()
         .trim()
-        .replace('Problem Source', '\nProblem Source');
+        .split('Problem ')
+        .filter((item) => item !== '');
 
     // get the current date and time
     const currentDateTime = getCurrentDateTime();
@@ -114,12 +105,7 @@ async function parseProblem(url, judge, problemID) {
         title,
         timeLimit,
         memoryLimit,
-        problemStatement: {
-            background,
-            body,
-            input,
-            output,
-        },
+        problemStatement,
         sampleTestCase: {
             inputs,
             outputs,
@@ -159,11 +145,11 @@ function extractProblemID(url) {
 async function parseTimusProblem(judge, url) {
     try {
         const problemID = extractProblemID(url);
-        let problem = await readProblem(judge, problemID);
-        if (problem === 'not found') {
-            problem = await parseProblem(url, judge, problemID);
-            await createProblem(judge, problem);
-        }
+        // let problem = await readProblem(judge, problemID);
+        // if (problem === 'not found') {
+        const problem = await parseProblem(url, judge, problemID);
+        // await createProblem(judge, problem);
+        // }
         return problem;
     } catch (error) {
         console.error(error);

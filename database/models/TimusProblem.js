@@ -81,10 +81,12 @@ const problemSchema = new mongoose.Schema({
                 type: String,
                 required: true,
             },
-            author: {
-                type: String,
-                default: null,
-            },
+            author: [
+                {
+                    type: String,
+                    default: null,
+                },
+            ],
             parsedAt: Date,
         },
     ],

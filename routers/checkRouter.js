@@ -1,230 +1,152 @@
+/* eslint-disable no-unreachable */
+/* eslint-disable max-len */
 import cheerio from 'cheerio';
 import express from 'express';
 import puppeteer from 'puppeteer';
 import responseHandler from '../handlers/response.handler.js';
 import extractTitle from '../lib/extractTitle.js';
-
-/* eslint-disable no-unreachable */
-/* eslint-disable max-len */
-// import { createProblem, readProblem } from '../database/queries/problem_query.js';
 import getCurrentDateTime from '../lib/getCurrentDateTime.js';
+
 /**
- * Parses a problem from the given URL and returns the parsed problem object.
+ * Parses a problem from a specific URL.
  * @param {string} url - The URL of the problem.
  * @param {string} judge - The main judge of the problem.
  * @param {string} problemID - The ID of the problem.
- * @returns {Promise<object>} The parsed problem object.
- * @throws {Error} If the URL is invalid or if there is an error during parsing.
+ * @returns {Promise<object>} A promise that resolves to the parsed problem object.
+ * @throws {Error} If there is an error parsing the problem or the URL is invalid.
  */
 async function parseProblem(url, judge, problemID) {
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto(url, { timeout: 60000 });
-
-    if ((await page.title()) === '404 Not Found - AtCoder') {
+    if ((await page.title()) === 'Timus Online Judge') {
         console.log('Url redirect to another page');
         throw new Error('Invalid Url');
     }
-
-    // Grab problem statement from the webpage
+    // grab the div element which contains the problem statement
     const problemStatementHTML = await page.$eval(
-        '#task-statement',
+        '.problem_content',
         (el) => el.parentElement.innerHTML
     );
-    // return problemStatementHTML;
-    // Load the problem statement HTML to cheerio
+
+    // load the div element in cheerio
     const $ = cheerio.load(problemStatementHTML);
+    // Select all <img> tags
+    const imgTags = $('img');
 
-    // Parse the title of the problem
-    const title = extractTitle(judge, $('span.h2').text().trim().replace('\n\t\t\tEditorial', ''));
+    // Modify the src attribute for each <img> tag
+    imgTags.each((index, element) => {
+        const src = $(element).attr('src');
+        const modifiedSrc = `https://acm.timus.ru${src}`;
+        $(element).attr('src', modifiedSrc);
+    });
 
-    // Parsing the score of the problem
-    const score = $('span.lang-en p').find('mn').eq(0).text();
+    // parsing the problem title
+    const title = extractTitle(judge, $('.problem_title').text().trim());
 
-    // Parsing the time and memory limit of the problem
-    const timeAndMemoryLimit = $('p').eq(0).text().trim();
-    let timeLimit = timeAndMemoryLimit.match(/Time Limit: (\d+) sec/)[1];
-    let memoryLimit = timeAndMemoryLimit.match(/Memory Limit: (\d+) MB/)[1];
+    // parsing time and memory limit
+    const str = $('div.problem_limits').text().trim();
+    const timeLimit = str.substring(str.indexOf(':') + 2, str.indexOf('Memory'));
+    const memoryLimit = `${str.substring(
+        str.indexOf('Memory limit: ') + 14,
+        str.lastIndexOf(' MB')
+    )} megabytes`;
 
-    // checking the plurality of timelimit
-    timeLimit = timeLimit === '1' ? `${timeLimit} second` : `${timeLimit} seconds`;
-    memoryLimit = `${memoryLimit} megabytes`;
+    // parsing notes of input and output sections
+    let note = $('h3.problem_subtitle:contains("Notes")').next().html();
+    if (note) note = note.replace(/\n(?=\S)/g, '');
 
-    // check language switching button hidden or not
-    const spanElement = $('#task-lang-btn');
-    const isHidden = spanElement.attr('style') === 'display: none;';
-
-    // Parse the problem statement, sample inputs and outputs and relevant notes
-    const len = $('.part').length;
-
+    // parsing full problem statement
     const problemStatement = [];
+    const problemSection = $('#problem_text');
+    problemSection.children().each((index, element) => {
+        const htmlElement = $.html(element);
+        if ($(htmlElement).text() === 'Sample' || $(htmlElement).text() === 'Samples') {
+            return false;
+        }
+        problemStatement.push(htmlElement);
+    });
+
+    // parsing sample input and output
     const inputs = [];
     const outputs = [];
-    const notes = [];
-    let breakPoint = 0;
+    const totalPreTag = $('table.sample');
+    const $2 = cheerio.load(totalPreTag.html());
 
-    if (isHidden) {
-        for (let i = 0; i < len; i += 1) {
-            let element = $('div.part').eq(i).html();
-            const divElement = $(element);
+    $2('pre').each((index, element) => {
+        if (index % 2 === 0) inputs.push($.html(element));
+        else outputs.push($.html(element));
+    });
 
-            if (divElement.length > 0 && divElement.text().trim().startsWith('Input')) {
-                console.log('dukse');
-                const $2 = cheerio.load(element);
+    // parsing problem tags
+    const tags = [];
+    $('.problem_links')
+        .prev()
+        .find('a')
+        .each((index, element) => {
+            const text = $(element).text();
+            tags.push(text);
+        });
+    tags.pop();
 
-                // Select the <pre> tag and find all <var> tags within it
-                const preTag = $2('pre');
-                const varTags = preTag.find('var');
+    // parsing difficulty
+    const difficulty = $('div.problem_links span').text().trim().replace('Difficulty: ', '');
 
-                // Insert <br> tag after each <var> tag where there is a line break
-                varTags.each((index, varTag) => {
-                    const { nextSibling } = varTag;
-                    if (
-                        nextSibling &&
-                        nextSibling.type === 'text' &&
-                        /\r?\n/.test(nextSibling.data)
-                    ) {
-                        $2(varTag).after('<br>');
-                    }
-                });
+    // parsing author
+    const author = $('div.problem_source')
+        .text()
+        .trim()
+        .split('Problem ')
+        .filter((item) => item !== '');
 
-                // Get the modified HTML
-                element = $2.html();
-            }
-
-            if (divElement.text().startsWith('Sample Input 1')) {
-                breakPoint = i;
-                break;
-            }
-            problemStatement.push(element);
-        }
-        const totalPreTag = len - breakPoint;
-        for (let i = 0; i < totalPreTag; i += 1) {
-            const data = $(`#pre-sample${i}`).text().trim();
-            if (i % 2 === 0) {
-                inputs.push(data);
-            } else {
-                outputs.push(data);
-                const notesInnerHtml = $(`#pre-sample${i}`)
-                    .nextAll()
-                    .map((index, el) => $.html(el))
-                    .get()
-
-                    .join('');
-                if (notesInnerHtml !== null) {
-                    notes.push(notesInnerHtml);
-                }
-            }
-        }
-    } else {
-        const startPoint = Math.ceil(len / 2);
-        for (let i = 0; i < startPoint; i += 1) {
-            let element = $('div.part')
-                .eq(startPoint + i)
-                .html();
-            const divElement = $(element);
-            const h3Element = divElement.find('h3');
-
-            if (h3Element.length > 0 && h3Element.text().trim() === 'Input') {
-                const $2 = cheerio.load(element);
-
-                // Select the <pre> tag and find all <var> tags within it
-                const preTag = $2('pre');
-                const varTags = preTag.find('var');
-
-                // Insert <br> tag after each <var> tag where there is a line break
-                varTags.each((index, varTag) => {
-                    const { nextSibling } = varTag;
-                    if (
-                        nextSibling &&
-                        nextSibling.type === 'text' &&
-                        /\r?\n/.test(nextSibling.data)
-                    ) {
-                        $2(varTag).after('<br>');
-                    }
-                });
-
-                // Get the modified HTML
-                element = $2.html();
-            }
-
-            if (h3Element.length > 0 && h3Element.text().trim() === 'Sample Input 1 Copy') {
-                breakPoint = i;
-                break;
-            }
-            problemStatement.push(element);
-        }
-
-        const totalPreTag = startPoint - breakPoint - (len % 2 === 1);
-        console.log(totalPreTag);
-        for (let i = totalPreTag; i <= 2 * totalPreTag - 1; i += 1) {
-            const data = $(`#pre-sample${i}`).text().trim();
-            if (i % 2 === 0) {
-                inputs.push(data);
-            } else {
-                outputs.push(data);
-                const notesInnerHtml = $(`#pre-sample${i}`)
-                    .nextAll()
-                    .map((index, el) => $.html(el))
-                    .get()
-
-                    .join('');
-                if (notesInnerHtml !== null) {
-                    notes.push(notesInnerHtml);
-                }
-            }
-        }
-    }
-
-    // Get current date and time
+    // get the current date and time
     const currentDateTime = getCurrentDateTime();
 
     const problem = {
         judge,
         problemID,
         title,
-        timeLimit: `${timeLimit}`,
-        memoryLimit: `${memoryLimit}`,
+        timeLimit,
+        memoryLimit,
         problemStatement,
         sampleTestCase: {
             inputs,
             outputs,
         },
-        notes,
-        score,
+        notes: note,
+        tags,
+        difficulty,
         source: url,
+        author,
         parsedAt: currentDateTime,
     };
     return problem;
 }
 
+/**
+ * Extracts the problem ID from the Timus Online Judge URL.
+ * @param {string} url - The Timus Online Judge URL.
+ * @returns {string} The extracted problem ID.
+ * @throws {Error} If the URL is invalid or the problem ID cannot be extracted.
+ */
 function extractProblemID(url) {
-    const pattern = /\/tasks\/([a-z0-9_]+)/i;
+    const pattern = /num=(\d+)/;
     const match = url.match(pattern);
-    if (!(match && match.length > 1)) {
+    if (!match) {
         console.log('Error occurred during extract problemID');
         throw new Error('Invalid Url');
     }
     return match[1];
 }
-
 /**
- * Parses an AtCoder problem from the given URL and returns the parsed problem object.
- * If the problem is not found in the database, it parses the problem and creates a new entry in the database.
- * @param {string} judge - The judge (e.g., 'atcoder').
+ * Parses a problem from Timus Online Judge.
+ * @param {string} judge - The judge name.
  * @param {string} url - The URL of the problem.
- * @returns {Promise<object>} The parsed problem object.
- * @throws {Error} If there is an error during parsing or database operations.
+ * @returns {Promise<object>} A promise that resolves to the parsed problem object.
+ * @throws {Error} If there is an error parsing the problem or the URL is invalid.
  */
-async function parseAtcoderProblem(judge, url) {
+async function parseTimusProblem(judge, url) {
     try {
-        // const problemID = extractProblemID(url);
-        // let problem = await readProblem(judge, problemID);
-        // if (problem === 'not found') {
-        //     problem = await parseProblem(url, judge, problemID);
-        //     await createProblem(judge, problem);
-        // }
-        // return problem;
         const problemID = extractProblemID(url);
         // let problem = await readProblem(judge, problemID);
         // if (problem === 'not found') {
@@ -247,7 +169,7 @@ const checkRouter = express.Router();
 checkRouter.post('/', async (req, res) => {
     try {
         const { url } = req.body;
-        const response = await parseAtcoderProblem('Atcoder', url);
+        const response = await parseTimusProblem('Timus', url);
         res.send(response);
     } catch (error) {
         console.log(error);
