@@ -31,24 +31,12 @@ const problemSchema = new mongoose.Schema({
                 type: String,
                 required: true,
             },
-            problemStatement: {
-                background: {
+            problemStatement: [
+                {
                     type: String,
                     default: null,
                 },
-                body: {
-                    type: String,
-                    default: null,
-                },
-                input: {
-                    type: String,
-                    default: null,
-                },
-                output: {
-                    type: String,
-                    default: null,
-                },
-            },
+            ],
             sampleTestCase: {
                 inputs: [
                     {
@@ -63,10 +51,12 @@ const problemSchema = new mongoose.Schema({
                     },
                 ],
             },
-            notes: {
-                type: String,
-                default: null,
-            },
+            notes: [
+                {
+                    type: String,
+                    default: null,
+                },
+            ],
             tags: [
                 {
                     type: String,

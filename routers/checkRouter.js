@@ -31,10 +31,9 @@ async function parseProblem(url, judge, problemID) {
 
     // load the div element in cheerio
     const $ = cheerio.load(problemStatementHTML);
-    // Select all <img> tags
-    const imgTags = $('img');
 
     // Modify the src attribute for each <img> tag
+    const imgTags = $('img');
     imgTags.each((index, element) => {
         const src = $(element).attr('src');
         const modifiedSrc = `https://acm.timus.ru${src}`;
@@ -52,19 +51,39 @@ async function parseProblem(url, judge, problemID) {
         str.lastIndexOf(' MB')
     )} megabytes`;
 
-    // parsing notes of input and output sections
-    let note = $('h3.problem_subtitle:contains("Notes")').next().html();
-    if (note) note = note.replace(/\n(?=\S)/g, '');
-
     // parsing full problem statement
     const problemStatement = [];
+    const notes = [];
+    let author = '';
+
     const problemSection = $('#problem_text');
+    let problemStatementFlag = true;
+    let noteFlag = false;
     problemSection.children().each((index, element) => {
         const htmlElement = $.html(element);
-        if ($(htmlElement).text() === 'Sample' || $(htmlElement).text() === 'Samples') {
+
+        if ($(htmlElement).hasClass('problem_source')) {
+            author = $(htmlElement)
+                .text()
+                .trim()
+                .split('Problem ')
+                .filter((item) => item !== '');
             return false;
         }
-        problemStatement.push(htmlElement);
+
+        if ($(htmlElement).text() === 'Sample' || $(htmlElement).text() === 'Samples') {
+            problemStatementFlag = false;
+        }
+        if (problemStatementFlag) {
+            problemStatement.push(htmlElement);
+        }
+
+        if (noteFlag) {
+            notes.push(htmlElement);
+        }
+        if ($(htmlElement).text() === 'Note' || $(htmlElement).text() === 'Notes') {
+            noteFlag = true;
+        }
     });
 
     // parsing sample input and output
@@ -92,13 +111,6 @@ async function parseProblem(url, judge, problemID) {
     // parsing difficulty
     const difficulty = $('div.problem_links span').text().trim().replace('Difficulty: ', '');
 
-    // parsing author
-    const author = $('div.problem_source')
-        .text()
-        .trim()
-        .split('Problem ')
-        .filter((item) => item !== '');
-
     // get the current date and time
     const currentDateTime = getCurrentDateTime();
 
@@ -113,7 +125,7 @@ async function parseProblem(url, judge, problemID) {
             inputs,
             outputs,
         },
-        notes: note,
+        notes,
         tags,
         difficulty,
         source: url,
