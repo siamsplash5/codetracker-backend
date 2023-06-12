@@ -71,8 +71,7 @@ function extractProblemInfo(problemID) {
 /**
  * Submits the received code to the Atcoder judge.
  * @param {Object} info - The submission information.
- * @param {string} info.contestID - The ID of the contest.
- * @param {string} info.problemIndex - The index of the problem.
+ * @param {string} info.problemID - The ID of the contest.
  * @param {string} info.langID - The ID of the programming language.
  * @param {string} info.sourceCode - The source code to submit.
  * @returns {Object} The submission result containing the agent instance, contest ID, and submission ID.

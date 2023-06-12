@@ -41,7 +41,7 @@ function getSubmissionID(html) {
  * Submits a solution to the Timus Online Judge.
  *
  * @param {Object} info - Submission information.
- * @param {string} info.problemIndex - Problem index.
+ * @param {string} info.problemID - Problem index.
  * @param {string} info.langID - Language ID.
  * @param {string} info.sourceCode - Source code of the solution.
  * @returns {Promise<Object>} - Submission details.

@@ -58,7 +58,7 @@ async function isLogin(username) {
  * Submits a solution to SPOJ.
  *
  * @param {Object} info - Submission information.
- * @param {string} info.problemIndex - Problem index.
+ * @param {string} info.problemID - Problem index.
  * @param {string} info.langID - Language ID.
  * @param {string} info.sourceCode - Source code of the solution.
  * @returns {Promise<Object>} - Submission details.
@@ -67,7 +67,7 @@ async function isLogin(username) {
 
 async function spojSubmit(info) {
     try {
-        const { problemIndex, langID, sourceCode } = info;
+        const { problemID, langID, sourceCode } = info;
         const submitUrl = 'https://www.spoj.com/submit/complete/';
         const formToken = randomStringGenerator({
             lowerCase: true,
@@ -98,7 +98,7 @@ async function spojSubmit(info) {
             subm_file: '(binary)',
             file: sourceCode,
             lang: langID,
-            problemcode: problemIndex,
+            problemcode: problemID,
             submit: 'Submit!',
         };
         const res = await agent
@@ -112,8 +112,8 @@ async function spojSubmit(info) {
         if (![200, 301, 302].includes(res.status)) {
             throw new Error(`SPOJ submit failed, status code ${res.status}`);
         }
-
         const submissionID = getSubmissionID(res.text);
+        console.log(submissionID);
         return { agent, username, submissionID };
     } catch (error) {
         console.error('An error occurred during Spoj submission:', error);

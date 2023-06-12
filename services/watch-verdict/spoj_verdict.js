@@ -82,7 +82,7 @@ async function watchSPOJVerdict(submissionInfo) {
 
             await sleep(2000);
         }
-
+        status.verdict = `${status.verdict.charAt(0).toUpperCase()}${status.verdict.slice(1)}`;
         console.log(status);
         return status;
     } catch (error) {
