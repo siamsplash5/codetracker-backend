@@ -36,17 +36,15 @@ const problemSchema = new mongoose.Schema({
                 required: true,
             },
             problemStatement: {
-                problemFullBody: {
+                type: String,
+                default: null,
+            },
+            tags: [
+                {
                     type: String,
                     default: null,
                 },
-            },
-            sampleTestCase: {
-                inputAndOutput: {
-                    type: String,
-                    default: null,
-                },
-            },
+            ],
             source: {
                 type: String,
                 required: true,

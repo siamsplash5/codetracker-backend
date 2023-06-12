@@ -56,7 +56,7 @@ function getCodeforcesVolume(problemID) {
 
 // eslint-disable-next-line no-unused-vars
 function getSpojVolume(problemID) {
-    return 0;
+    return problemID.charCodeAt(0) - 64;
 }
 
 function getTimusVolume(problemID) {

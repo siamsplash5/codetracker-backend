@@ -14,7 +14,6 @@ import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
  * @throws {Error} If there is an error parsing the problem or the URL is invalid.
  */
 async function parseProblem(url, judge, problemID) {
-    console.log(url);
     const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto(url, { timeout: 60000 });
@@ -28,27 +27,19 @@ async function parseProblem(url, judge, problemID) {
     // Load the div element in Cheerio
     const $ = cheerio.load(problemStatementHTML);
 
+    // Modify the src attribute for each <img> tag
+    const imgTags = $('img');
+    imgTags.each((index, element) => {
+        const src = $(element).attr('src');
+        const modifiedSrc = `https://www.spoj.com/${src}`;
+        $(element).attr('src', modifiedSrc);
+    });
+
     // Parsing the problem title
     const title = extractTitle(judge, $('h2#problem-name').text().trim());
-    const problemBody = $('#problem-body');
 
-    // Parsing the full problem statement
-    let problemFullBody = '';
-    problemBody
-        .find('h3:contains("Example")')
-        .prevAll()
-        .each((index, element) => {
-            problemFullBody = `${$(element)}\n${problemFullBody}`;
-        });
-
-    // Parsing sample input and output
-    let inputAndOutput = '';
-    problemBody
-        .find('h3:contains("Example")')
-        .nextAll()
-        .each((index, element) => {
-            inputAndOutput += `${$(element)}\n`;
-        });
+    // parsing problem statement with sample input output and notes
+    const problemStatement = $('#problem-body').html();
 
     // Parsing author info
     const author = $('.probleminfo').find('td').eq(1).text();
@@ -67,6 +58,17 @@ async function parseProblem(url, judge, problemID) {
         .replace(/(\d+)B/, '$1 bytes');
     const memoryLimit = $('.probleminfo').find('td').eq(9).text().replace('MB', ' megabytes');
 
+    // parse the problem tag
+    let tags = $('div#problem-tags a').text();
+    if (tags.length) {
+        if (tags.startsWith('#')) {
+            tags = tags.substring(1);
+        }
+
+        // Split the string into an array of words using '#' as the delimiter
+        tags = tags.split('#');
+    }
+
     // Parsing current date and time
     const currentDateTime = getCurrentDateTime();
 
@@ -77,12 +79,8 @@ async function parseProblem(url, judge, problemID) {
         timeLimit,
         memoryLimit,
         sourceLimit,
-        problemStatement: {
-            problemFullBody,
-        },
-        sampleTestCase: {
-            inputAndOutput,
-        },
+        problemStatement,
+        tags,
         source: url,
         author,
         parsedAt: currentDateTime,
