@@ -55,7 +55,6 @@ function getStatus(html, contestID, atcSubmissionID) {
     const submissionID = atcSubmissionID;
     const timestamp = td[0];
     const botUsername = td[2];
-    const problemName = `${contestID.toUpperCase()} - ${td[1]}`;
     const language = td[3];
     const verdict = td[6].includes('/') ? td[6] : verdictNames(td[6]);
     let time;
@@ -70,7 +69,6 @@ function getStatus(html, contestID, atcSubmissionID) {
         submissionID,
         timestamp,
         botUsername,
-        problemName,
         language,
         verdict,
         time,

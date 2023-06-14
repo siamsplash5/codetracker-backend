@@ -25,7 +25,7 @@ import {
     loginRequestValidator,
     loginValidationSchema
 } from './middlewares/loginRequestValidator.js';
-import parseRequestValidator from './middlewares/parseRequestValidator.js';
+import problemRequestValidator from './middlewares/problemRequestValidator.js';
 import {
     passwordVerifyRequestSchema,
     passwordVerifyRequestValidator
@@ -114,7 +114,7 @@ app.use('/api/check', checkRouter);
 app.use('/api/submit', authGuard, submitRouter);
 app.use('/api/submissiondata', authGuard, submissionQueryRouter);
 
-app.use('/api/problem', parseRequestValidator, problemRouter);
+app.use('/api/problem', problemRequestValidator, problemRouter);
 app.use('/api/problem-all', problemAllRouter);
 
 app.use('/api/contest', authGuard, contestValidator, contestRouter);

@@ -27,7 +27,6 @@ function getStatus(html, cfSubmissionID) {
         const submissionID = tr.find('.id-cell a').text().trim();
         const timestamp = tr.find('.format-time').text().trim();
         const botUsername = tr.find('.status-party-cell a').text().trim();
-        const problemName = tr.find('.status-small a').text().trim();
         const language = tr.find(':nth-child(5)').text().trim();
         const verdict = tr.find('.submissionVerdictWrapper').text().trim();
         const time = tr.find('.time-consumed-cell').text().trim();
@@ -37,7 +36,6 @@ function getStatus(html, cfSubmissionID) {
             submissionID,
             timestamp,
             botUsername,
-            problemName,
             language,
             verdict,
             time,

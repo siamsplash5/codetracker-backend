@@ -29,9 +29,6 @@ function getStatus(html, spojSubmissionID, botUsername) {
     if (tr.length) {
         const submissionID = spojSubmissionID;
         const timestamp = tr.find('.status_sm span').text().trim();
-        const td = $('td.sproblem');
-        const title = td.find('a').attr('title');
-        const problemName = `${tr.find('.sproblem a').text().trim()} - (${title})`;
         const language = tr.find('.slang span').text().trim();
         const verdict = tr.find('.statusres').text().trim().split('\n')[0];
         const time = tr.find('.stime a').text().trim();
@@ -41,7 +38,6 @@ function getStatus(html, spojSubmissionID, botUsername) {
             submissionID,
             timestamp,
             botUsername,
-            problemName,
             language,
             verdict,
             time,

@@ -8,11 +8,12 @@ const submissionQueryRouter = express.Router();
  * Query User's submission for a particular problem
  */
 
-submissionQueryRouter.post('/specific-problem', async (req, res) => {
+submissionQueryRouter.get('/specific-problem/:judge/:problemID', async (req, res) => {
     try {
-        const { judge, problemID } = req.body;
+        const { judge, problemID } = req.params;
         const { username } = req;
         const result = await Submission.find({ submittedBy: username, judge, problemID });
+        result.reverse();
         responseHandler.ok(res, result);
     } catch (error) {
         console.log(error);
@@ -25,10 +26,11 @@ submissionQueryRouter.post('/specific-problem', async (req, res) => {
  * Query User's submission for all problem
  */
 
-submissionQueryRouter.post('/all-problem', async (req, res) => {
+submissionQueryRouter.get('/specific-user/:username', async (req, res) => {
     try {
-        const { username } = req;
+        const { username } = req.params;
         const result = await Submission.find({ submittedBy: username });
+        result.reverse();
         responseHandler.ok(res, result);
     } catch (error) {
         console.log(error);

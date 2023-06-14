@@ -31,7 +31,6 @@ function getStatus(html, timusSubmissionID) {
         const submissionID = timusSubmissionID;
         const timestamp = tr.find('.date nobr').text().trim();
         const botUsername = tr.find('.coder a').text().trim();
-        const problemName = tr.find('.problem a').text().trim();
         const language = tr.find('.language').text().trim();
         let verdict = tr.find(':nth-child(6)').text().trim().split('\n')[0];
 
@@ -47,7 +46,6 @@ function getStatus(html, timusSubmissionID) {
             submissionID,
             timestamp,
             botUsername,
-            problemName,
             language,
             verdict,
             time,
@@ -87,7 +85,6 @@ async function watchTimusVerdict(submissionInfo) {
 
             await sleep(2000);
         }
-
         console.log(status);
         return status;
     } catch (error) {

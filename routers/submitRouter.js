@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import express from 'express';
 import updateSubmission from '../database/queries/submission_query.js';
 import responseHandler from '../handlers/response.handler.js';
@@ -13,10 +14,28 @@ import watchTimusVerdict from '../services/watch-verdict/timus_verdict.js';
 
 const submitRouter = express.Router();
 
+/**
+ * Handle the submission of a problem solution.
+ * @route POST /submit
+ * @param {Object} req - The request object.
+ * @param {Object} req.body - The request body object.
+ * @param {string} req.body.judge - The judge name for the submission (e.g., "Atcoder", "Codeforces", "Spoj", "Timus").
+ * @param {string} req.body.problemID - The Problem ID of the problem being submitted.
+ * @param {string} req.body.problemName - The name of the problem being submitted.
+ * @param {string} req.body.langID - The language value of the submitted solution.
+ * @param {string} req.body.sourceCode - The source code of the problem solution.
+ * @param {string} req.username - The username associated with the request (comes from middleware)
+ * @param {string} req.userDatabaseID - The database ID associated with the requesting user. (comes from middleware)
+ * @param {number|null} req.contestID - The ID of the virtual judge contest, if applicable. Otherwise, it can be null.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} A Promise that resolves once the submission is processed.
+ * @throws {Error} If an error occurs during the submission process.
+ */
+
 submitRouter.post('/', async (req, res) => {
     try {
         const submitInfo = req.body;
-        const { judge, problemID, sourceCode } = submitInfo;
+        const { judge, problemID, problemName, sourceCode } = submitInfo;
         const { username, userDatabaseID } = req;
 
         let status;
@@ -42,7 +61,7 @@ submitRouter.post('/', async (req, res) => {
         if (req.contestID !== undefined && req.contestID !== null) {
             myContestID = req.contestID;
         }
-        const { submissionID, botUsername, problemName, language, verdict, time, memory } = status;
+        const { submissionID, botUsername, language, verdict, time, memory } = status;
         const { convertedDate, convertedTime } = dateFormatter(Date.now());
 
         const submittedSolution = {

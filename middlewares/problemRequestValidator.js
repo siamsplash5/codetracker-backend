@@ -1,15 +1,15 @@
-import responseHandler from "../handlers/response.handler.js";
+import responseHandler from '../handlers/response.handler.js';
 
-function parseRequestValidator(req, res, next) {
+function problemRequestValidator(req, res, next) {
     try {
         let { problemUrl } = req.body;
 
-        if (problemUrl===undefined || problemUrl===null || problemUrl === '') {
+        if (problemUrl === undefined || problemUrl === null || problemUrl === '') {
             return responseHandler.badRequest(res, "Problem url can't be empty");
         }
         problemUrl = problemUrl.toLowerCase();
 
-        //check if the given url is valid domain
+        // check if the given url is valid domain
         const cfRegex = /^https?:\/\/codeforces\.com\/[^\s]+$/;
         const timusRegex = /^https?:\/\/acm\.timus\.ru\/problem.aspx\?(space=[^\s]+&)?num=[^\s]+$/;
         const atcoderRegex = /^https?:\/\/atcoder\.jp\/contests\/[^\s]+\/tasks\/[^\s]+$/;
@@ -63,4 +63,4 @@ function parseRequestValidator(req, res, next) {
     }
 }
 
-export default parseRequestValidator;
+export default problemRequestValidator;
