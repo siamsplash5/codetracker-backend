@@ -12,6 +12,7 @@ Date: 24-04-2023
 // dependencies
 import superagent from 'superagent';
 import { readInfo } from '../../database/queries/bot_auth_query.js';
+import { spreadCFProblemID } from '../../lib/spreadProblemID.js';
 import codeforcesLogin from '../bot_login/codeforces_login.js';
 
 const agent = superagent.agent();
@@ -58,17 +59,6 @@ async function isLogin(username) {
     return username === tmp[1];
 }
 
-function extractInfo(input) {
-    const regex = /^(\d+)([A-Za-z]+(\d+)?)$/;
-    const matches = input.match(regex);
-
-    if (matches) {
-        const contestID = matches[1];
-        const problemIndex = matches[2];
-        return { contestID, problemIndex };
-    }
-    return null;
-}
 /**
  * Submits a solution to Codeforces.
  * @param {Object} info - Submission information.
@@ -82,7 +72,7 @@ function extractInfo(input) {
 async function codeforcesSubmit(info) {
     try {
         const { problemID, langID, sourceCode } = info;
-        const { contestID, problemIndex } = extractInfo(problemID);
+        const { contestID, problemIndex } = spreadCFProblemID(problemID);
 
         let botInfo = await readInfo('bot_user_1', 'codeforces');
         const { username, password, codeforcesCredentials } = botInfo;

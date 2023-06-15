@@ -11,6 +11,7 @@
 import cheerio from 'cheerio';
 import superagent from 'superagent';
 import { readInfo } from '../../database/queries/bot_auth_query.js';
+import { spreadAtcoderProblemID } from '../../lib/spreadProblemID.js';
 import atcoderLogin from '../bot_login/atcoder_login.js';
 
 const agent = superagent.agent();
@@ -59,15 +60,6 @@ async function isLogin(username) {
     }
 }
 
-function extractProblemInfo(problemID) {
-    const lastIndex = problemID.lastIndexOf('_');
-    if (lastIndex !== -1) {
-        const contestID = problemID.substring(0, lastIndex);
-        const problemIndex = problemID.substring(lastIndex + 1);
-        return { contestID, problemIndex };
-    }
-    return null; // Return null if no underscore is found
-}
 /**
  * Submits the received code to the Atcoder judge.
  * @param {Object} info - The submission information.
@@ -80,7 +72,7 @@ function extractProblemInfo(problemID) {
 async function atcoderSubmit(info) {
     try {
         const { problemID, langID, sourceCode } = info;
-        const { contestID, problemIndex } = extractProblemInfo(problemID);
+        const { contestID, problemIndex } = spreadAtcoderProblemID(problemID);
         const submitUrl = `https://atcoder.jp/contests/${contestID}/submit`;
         let botInfo = await readInfo('bot_user_1', 'atcoder');
         const { username, password, atcoderCredentials } = botInfo;

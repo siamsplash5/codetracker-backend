@@ -1,6 +1,5 @@
 import express from 'express';
 import responseHandler from '../handlers/response.handler.js';
-import extractTitle from '../lib/extractTitle.js';
 
 const checkRouter = express.Router();
 /**
@@ -10,9 +9,8 @@ const checkRouter = express.Router();
 
 checkRouter.post('/', (req, res) => {
     try {
-        const { judge, problemName } = req.body;
-        const response = extractTitle(judge, problemName);
-        res.send(response);
+        const { myJudge } = req.body;
+        res.send(`${myJudge.charAt(0).toUpperCase()}${myJudge.slice(1)}`);
     } catch (error) {
         console.log(error);
         responseHandler.error(res);
