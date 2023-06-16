@@ -1,5 +1,6 @@
 import express from 'express';
 import Submission from '../database/models/Submission.js';
+import User from '../database/models/User.js';
 import responseHandler from '../handlers/response.handler.js';
 
 const submissionQueryRouter = express.Router();
@@ -29,9 +30,14 @@ submissionQueryRouter.get('/specific-problem/:judge/:problemID', async (req, res
 submissionQueryRouter.get('/specific-user/:username', async (req, res) => {
     try {
         const { username } = req.params;
-        const result = await Submission.find({ submittedBy: username });
-        result.reverse();
-        responseHandler.ok(res, result);
+        const isUserExist = await User.findOne({ username });
+        if (isUserExist === null) {
+            responseHandler.notfound(res);
+        } else {
+            const result = await Submission.find({ submittedBy: username });
+            result.reverse();
+            responseHandler.ok(res, result);
+        }
     } catch (error) {
         console.log(error);
         responseHandler.error(res);
