@@ -9,9 +9,8 @@ const contestValidator = (req, res, next) => {
             next();
             return;
         }
-
-        let { contestID, privacy, password, title, category, beginTime, duration, problemSet } =
-            req.body;
+        const { contestID, title, duration, problemSet } = req.body;
+        let { privacy, password, category, beginTime } = req.body;
 
         if (req.method === 'PUT' || req.method === 'DELETE') {
             if (!contestID) {
