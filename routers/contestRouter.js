@@ -1,5 +1,6 @@
 import express from 'express';
-import contestModel from '../database/models/Contest.js';
+import { Contest as contestModel, Counter as counterModel } from '../database/models/Contest.js';
+import responseHandler from '../handlers/response.handler.js';
 
 const contestRouter = express.Router();
 
@@ -10,13 +11,15 @@ const contestRouter = express.Router();
 contestRouter.post('/', async (req, res) => {
     try {
         const contest = req.body;
-        contest.setter = req.username;
+        const counterID = '648e46e22c37934c74b20b45';
+        contest.owner = req.username;
+        contest.contestID = (await counterModel.findOne({ _id: counterID })).lastContestID + 1;
+        await counterModel.updateOne({ _id: counterID }, { lastContestID: contest.contestID });
         const createdContest = await contestModel.create(contest);
-        const { _id } = createdContest;
-        res.send(`Contest created successfully. ID: ${_id}`);
+        responseHandler.created(res, createdContest);
     } catch (error) {
         console.log(error);
-        res.status(500).send('Internal server error');
+        responseHandler.error(res);
     }
 });
 
@@ -24,30 +27,30 @@ contestRouter.post('/', async (req, res) => {
  * PUT /contest
  * Update an existing contest
  */
-contestRouter.put('/', async (req, res) => {
-    try {
-        const { contestID, ...contestData } = req.body;
-        await contestModel.findByIdAndUpdate(contestID, contestData);
-        res.send('Contest updated successfully');
-    } catch (error) {
-        console.log(error);
-        res.status(500).send('Internal server error');
-    }
-});
+// contestRouter.put('/', async (req, res) => {
+//     try {
+//         const { contestID, ...contestData } = req.body;
+//         await contestModel.findByIdAndUpdate(contestID, contestData);
+//         res.send('Contest updated successfully');
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).send('Internal server error');
+//     }
+// });
 
 /**
  * DELETE /contest
  * Delete a contest
  */
-contestRouter.delete('/', async (req, res) => {
-    try {
-        const { contestID } = req.body;
-        await contestModel.findByIdAndDelete(contestID);
-        res.send('Contest deleted successfully');
-    } catch (error) {
-        console.log(error);
-        res.status(500).send('Internal server error');
-    }
-});
+// contestRouter.delete('/', async (req, res) => {
+//     try {
+//         const { contestID } = req.body;
+//         await contestModel.findByIdAndDelete(contestID);
+//         res.send('Contest deleted successfully');
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).send('Internal server error');
+//     }
+// });
 
 export default contestRouter;

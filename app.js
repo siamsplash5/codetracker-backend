@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import 'dotenv/config';
@@ -6,12 +7,13 @@ import mongoose from 'mongoose';
 
 // routes
 import checkRouter from './routers/checkRouter.js';
+import contestQueryRouter from './routers/contestQueryRouter.js';
 import contestRouter from './routers/contestRouter.js';
 import loginRouter from './routers/loginRouter.js';
 import logoutRouter from './routers/logoutRouter.js';
 import passwordVerifyRouter from './routers/passwordVerifyRouter.js';
-import problemRouter from './routers/problemRouter.js';
 import problemAllRouter from './routers/problemAllRouter.js';
+import problemRouter from './routers/problemRouter.js';
 import registerRouter from './routers/registerRouter.js';
 import registrationVerifyRouter from './routers/registrationVerifyRouter.js';
 import resetPasswordRouter from './routers/resetPasswordRouter.js';
@@ -25,11 +27,11 @@ import {
     loginRequestValidator,
     loginValidationSchema
 } from './middlewares/loginRequestValidator.js';
-import problemRequestValidator from './middlewares/problemRequestValidator.js';
 import {
     passwordVerifyRequestSchema,
     passwordVerifyRequestValidator
 } from './middlewares/passwordVerifyRequestValidator.js';
+import problemRequestValidator from './middlewares/problemRequestValidator.js';
 import {
     registerRequestValidator,
     registerValidationSchema
@@ -52,7 +54,7 @@ const app = express();
 /**
  * Middleware
  * Parsing the incoming data
- */
+*/
 
 app.use(
     cors({
@@ -118,6 +120,7 @@ app.use('/api/problem', problemRequestValidator, problemRouter);
 app.use('/api/problem-all', problemAllRouter);
 
 app.use('/api/contest', authGuard, contestValidator, contestRouter);
+app.use('/api/contest-query', contestQueryRouter);
 
 /**
  * Error Handling Middleware

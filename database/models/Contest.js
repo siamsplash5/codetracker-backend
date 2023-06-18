@@ -5,17 +5,20 @@ const contestModel = mongoose.connection.useDb('contests');
 // Define the schema for the contest document
 const contestSchema = new mongoose.Schema(
     {
-        setter: {
-            type: [String],
+        contestID: {
+            type: Number,
+        },
+        owner: {
+            type: String,
         },
         privacy: {
             type: String,
-            enum: ['public', 'protected', 'private'],
+            enum: ['Public', 'Protected', 'Private'],
         },
         password: {
             type: String,
             required() {
-                return this.privacy === 'protected' || this.privacy === 'private';
+                return this.privacy === 'Protected' || this.privacy === 'Private';
             },
             default: '',
             trim: true,
@@ -24,34 +27,35 @@ const contestSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        category: {
-            type: String,
-            default: 'practice',
-        },
-        announcement: {
-            type: String,
-            default: '',
-            trim: true,
-        },
+        announcement: [
+            {
+                type: String,
+                trim: true,
+            },
+        ],
         description: {
             type: String,
             default: '',
             trim: true,
         },
-        beginTime: {
-            type: Date,
-            default: Date.now() + 300000,
+        startDate: {
+            type: String,
             trim: true,
         },
-        duration: {
+        startTime: {
             type: String,
+            trim: true,
+        },
+        length: {
+            type: Number,
             required: true,
         },
         problemSet: [
             {
                 judge: {
                     type: String,
-                    enum: ['atcoder', 'codeforces', 'spoj', 'timus'],
+                    enum: ['Atcoder', 'Codeforces', 'Spoj', 'Timus'],
+                    required: true,
                 },
                 problemID: {
                     type: String,
@@ -69,7 +73,14 @@ const contestSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-// Create and export the contest model
-const Contest = contestModel.model('Contest', contestSchema);
+const counterSchema = new mongoose.Schema(
+    {
+        lastContestID: {
+            type: Number,
+        },
+    },
+    { timestamps: true }
+);
 
-export default Contest;
+export const Contest = contestModel.model('Contest', contestSchema);
+export const Counter = contestModel.model('Counter', counterSchema);
