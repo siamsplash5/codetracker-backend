@@ -27,17 +27,17 @@ const contestSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
+        description: {
+            type: String,
+            default: '',
+            trim: true,
+        },
         announcement: [
             {
                 type: String,
                 trim: true,
             },
         ],
-        description: {
-            type: String,
-            default: '',
-            trim: true,
-        },
         startDate: {
             type: String,
             trim: true,
@@ -46,7 +46,11 @@ const contestSchema = new mongoose.Schema(
             type: String,
             trim: true,
         },
-        length: {
+        beginTime: {
+            type: Number,
+            required: true,
+        },
+        contestLength: {
             type: Number,
             required: true,
         },
@@ -61,6 +65,11 @@ const contestSchema = new mongoose.Schema(
                     type: String,
                     required: true,
                     trim: true,
+                },
+                alias: {
+                    type: String,
+                    trim: true,
+                    default: null,
                 },
             },
         ],

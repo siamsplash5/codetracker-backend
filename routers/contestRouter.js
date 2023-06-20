@@ -1,6 +1,7 @@
 import express from 'express';
 import { Contest as contestModel, Counter as counterModel } from '../database/models/Contest.js';
 import responseHandler from '../handlers/response.handler.js';
+import dateFormatter from '../lib/dateFormatter.js';
 
 const contestRouter = express.Router();
 
@@ -8,12 +9,16 @@ const contestRouter = express.Router();
  * POST /contest
  * Create a new contest
  */
-contestRouter.post('/', async (req, res) => {
+contestRouter.post('/create', async (req, res) => {
     try {
         const contest = req.body;
         const counterID = '648e46e22c37934c74b20b45';
+        const { convertedDate, convertedTime } = dateFormatter(contest.beginTime);
         contest.owner = req.username;
+        contest.startDate = convertedDate;
+        contest.startTime = convertedTime;
         contest.contestID = (await counterModel.findOne({ _id: counterID })).lastContestID + 1;
+        console.log(contest);
         await counterModel.updateOne({ _id: counterID }, { lastContestID: contest.contestID });
         const createdContest = await contestModel.create(contest);
         responseHandler.created(res, createdContest);

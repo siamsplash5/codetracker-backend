@@ -10,8 +10,8 @@ const contestValidator = (req, res, next) => {
             return next();
         }
         if (req.method === 'POST') {
-            const { privacy, password, title, startDate, startTime, problemSet } = req.body;
-            if (privacy && title && startDate && startTime && problemSet.length) {
+            const { privacy, password, title, problemSet } = req.body;
+            if (privacy && title && problemSet.length) {
                 if (privacy !== 'Public') {
                     if (password) {
                         return next();
