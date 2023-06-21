@@ -1,4 +1,5 @@
 // Import dependencies
+import getRandomString from '../../lib/randomStringGenerator.js';
 import Problem from '../models/Problem.js';
 
 /**
@@ -61,18 +62,31 @@ export const getAllProblem = async () => {
 
 export const getShortListedProblems = async (problemSet) => {
     try {
-        const data = [];
-        await Promise.all(
-            problemSet.map(async (problem) => {
-                const { judge, problemID } = problem;
-                const result = await Problem.findOne({ judge, problemID });
-                if (result) {
-                    data.push(result);
-                } else {
-                    data.push({ title: 'Error!' });
+        const judge = problemSet.map((problem) => problem.judge);
+        const problemID = problemSet.map((problem) => problem.problemID);
+        const results = await Problem.find({
+            judge: { $in: judge },
+            problemID: { $in: problemID },
+        });
+        const data = problemSet.map((problem) => {
+            const res = results.find(
+                (r) => r.judge === problem.judge && r.problemID === problem.problemID
+            );
+            return (
+                res || {
+                    title: 'Error!',
+
+                    _id: getRandomString({
+                        lowerCase: true,
+                        upperCase: false,
+                        numbers: true,
+                        specialChar: false,
+                        stringLen: 24,
+                    }),
                 }
-            })
-        );
+            );
+        });
+
         return data;
     } catch (error) {
         console.error(error);

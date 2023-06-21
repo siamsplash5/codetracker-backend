@@ -20,7 +20,7 @@ contestProblemRouter.post('/all', async (req, res) => {
         const problemSet = req.body;
         const contestProblem = await getShortListedProblems(problemSet);
         contestProblem.forEach((contest, index) => {
-            if (problemSet[index].alias.length) {
+            if (problemSet[index].alias.length && contestProblem[index].title !== 'Error!') {
                 contestProblem[index].title = problemSet[index].alias;
             }
         });
