@@ -18,10 +18,9 @@ const contestProblemRouter = express.Router();
 contestProblemRouter.post('/all', async (req, res) => {
     try {
         const problemSet = req.body;
-        console.log(problemSet);
         const contestProblem = await getShortListedProblems(problemSet);
         contestProblem.forEach((contest, index) => {
-            if (problemSet[index].alias) {
+            if (problemSet[index].alias.length) {
                 contestProblem[index].title = problemSet[index].alias;
             }
         });

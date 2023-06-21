@@ -61,7 +61,18 @@ export const getAllProblem = async () => {
 
 export const getShortListedProblems = async (problemSet) => {
     try {
-        const data = await Problem.find({ $or: problemSet }, { alias: 0 });
+        const data = [];
+        await Promise.all(
+            problemSet.map(async (problem) => {
+                const { judge, problemID } = problem;
+                const result = await Problem.findOne({ judge, problemID });
+                if (result) {
+                    data.push(result);
+                } else {
+                    data.push({ title: 'Error!' });
+                }
+            })
+        );
         return data;
     } catch (error) {
         console.error(error);
