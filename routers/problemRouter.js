@@ -52,4 +52,32 @@ problemRouter.post('/', async (req, res) => {
     }
 });
 
+problemRouter.post('/all-fetch', async (req, res) => {
+    try {
+        // eslint-disable-next-line prefer-const
+        const { links: problemList } = req.body;
+
+        problemList.forEach(async (link) => {
+            const { judge, problemUrl } = link;
+            if (judge === 'Atcoder') {
+                await parseAtcoderProblem(judge, problemUrl);
+            } else if (judge === 'Codeforces') {
+                await parseCodeforcesProblem(judge, problemUrl);
+            } else if (judge === 'Spoj') {
+                await parseSpojProblem(judge, problemUrl);
+            } else if (judge === 'Timus') {
+                await parseTimusProblem(judge, problemUrl);
+            }
+        });
+        responseHandler.ok(res, 'done');
+    } catch (error) {
+        console.log(error);
+        if (error.message === 'Invalid Url') {
+            responseHandler.badRequest(res, error.message);
+        } else {
+            responseHandler.error(res);
+        }
+    }
+});
+
 export default problemRouter;
