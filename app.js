@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 
 // routes
 import checkRouter from './routers/checkRouter.js';
+// import contestProblemRouter from './routers/contestProblemRouter.js';
 import contestQueryRouter from './routers/contestQueryRouter.js';
 import contestRouter from './routers/contestRouter.js';
 import loginRouter from './routers/loginRouter.js';
@@ -121,6 +122,7 @@ app.use('/api/problem-all', problemAllRouter);
 
 app.use('/api/contest', authGuard, contestValidator, contestRouter);
 app.use('/api/contest-query', contestQueryRouter);
+// app.use('/api/contest-problem', contestProblemRouter);
 
 /**
  * Error Handling Middleware

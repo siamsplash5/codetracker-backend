@@ -18,7 +18,6 @@ contestRouter.post('/create', async (req, res) => {
         contest.startDate = convertedDate;
         contest.startTime = convertedTime;
         contest.contestID = (await counterModel.findOne({ _id: counterID })).lastContestID + 1;
-        console.log(contest);
         await counterModel.updateOne({ _id: counterID }, { lastContestID: contest.contestID });
         const createdContest = await contestModel.create(contest);
         responseHandler.created(res, createdContest);

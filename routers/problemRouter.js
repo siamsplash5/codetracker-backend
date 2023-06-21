@@ -7,6 +7,16 @@ import parseSpojProblem from '../services/parse_problem/spoj_problem.js';
 import parseTimusProblem from '../services/parse_problem/timus_problem.js';
 
 const problemRouter = express.Router();
+/**
+ * POST /problem Router
+ * Return specific problem from database
+ * First check it in database
+ * If problem not found, then
+ * 1. The problem will scrap from the corresponding judge
+ * 2. Store the problem in database
+ * 3. Return the problem to the user
+ * 4. Report anything wrong occurs (eg. invalid url/problemID)
+ */
 
 problemRouter.post('/', async (req, res) => {
     try {
