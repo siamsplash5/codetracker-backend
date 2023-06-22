@@ -9,11 +9,16 @@ const submissionQueryRouter = express.Router();
  * Query User's submission for a particular problem
  */
 
-submissionQueryRouter.get('/specific-problem/:judge/:problemID', async (req, res) => {
+submissionQueryRouter.get('/specific-problem/:judge/:problemID/:contestID', async (req, res) => {
     try {
-        const { judge, problemID } = req.params;
+        const { judge, problemID, contestID } = req.params;
         const { username } = req;
-        const result = await Submission.find({ submittedBy: username, judge, problemID });
+        const result = await Submission.find({
+            submittedBy: username,
+            judge,
+            problemID,
+            'vjContest.contestID': contestID,
+        });
         result.reverse();
         responseHandler.ok(res, result);
     } catch (error) {
@@ -34,7 +39,18 @@ submissionQueryRouter.get('/specific-user/:username', async (req, res) => {
         if (isUserExist === null) {
             responseHandler.notfound(res);
         } else {
-            const result = await Submission.find({ submittedBy: username });
+            const currentDate = Date.now();
+
+            const result = await Submission.find({
+                submittedBy: username,
+                $expr: {
+                    $lt: [
+                        { $add: ['$vjContest.beginTime', '$vjContest.contestLength'] },
+                        currentDate,
+                    ],
+                },
+            });
+
             result.reverse();
             responseHandler.ok(res, result);
         }
