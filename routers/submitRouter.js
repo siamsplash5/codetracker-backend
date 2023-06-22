@@ -35,7 +35,7 @@ const submitRouter = express.Router();
 submitRouter.post('/', async (req, res) => {
     try {
         const submitInfo = req.body;
-        const { judge, problemID, problemName, sourceCode } = submitInfo;
+        const { judge, problemID, problemName, sourceCode, vjContest } = submitInfo;
         const { username, userDatabaseID } = req;
 
         let status;
@@ -57,10 +57,6 @@ submitRouter.post('/', async (req, res) => {
             status = await watchTimusVerdict(watchInfo);
         }
 
-        let myContestID = 0;
-        if (req.contestID !== undefined && req.contestID !== null) {
-            myContestID = req.contestID;
-        }
         const { submissionID, botUsername, language, verdict, time, memory } = status;
         const { convertedDate, convertedTime } = dateFormatter(Date.now());
 
@@ -69,7 +65,6 @@ submitRouter.post('/', async (req, res) => {
             submittedBy: username,
             botWhoSubmitted: botUsername,
             judge,
-            contestID: myContestID,
             problemID,
             problemName,
             sourceCode: String.raw`${sourceCode}`,
@@ -79,6 +74,7 @@ submitRouter.post('/', async (req, res) => {
             memory,
             submitDate: convertedDate,
             submitTime: convertedTime,
+            vjContest: vjContest || null,
         };
 
         await updateSubmission(userDatabaseID, submittedSolution);

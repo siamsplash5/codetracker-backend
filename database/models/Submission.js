@@ -24,9 +24,19 @@ const submissionSchema = new mongoose.Schema({
         enum: ['Atcoder', 'Codeforces', 'Spoj', 'Timus'],
         required: [true, "can't be blank"],
     },
-    contestID: {
-        type: Number,
-        default: 0,
+    vjContest: {
+        contestID: {
+            type: Number,
+            default: 0,
+        },
+        beginTime: {
+            type: Number,
+            default: 0,
+        },
+        contestLength: {
+            type: Number,
+            default: 0,
+        },
     },
     problemID: {
         type: String,

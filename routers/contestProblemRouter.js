@@ -19,9 +19,30 @@ contestProblemRouter.post('/all', async (req, res) => {
     try {
         const problemSet = req.body;
         const contestProblem = await getShortListedProblems(problemSet);
+        let problemIndex = 'A';
+        let counter = 0;
+        let flag = false;
         contestProblem.forEach((contest, index) => {
+            // adding alias if there any
             if (problemSet[index].alias.length && contestProblem[index].title !== 'Error!') {
                 contestProblem[index].title = problemSet[index].alias;
+            }
+
+            // adding problem index
+            if (contestProblem[index].title !== 'Error!') {
+                contestProblem[index].title = `${problemIndex}. ${contestProblem[index].title}`;
+                if (!flag) {
+                    // increment problem number by 1
+                    problemIndex = String.fromCharCode(problemIndex.charCodeAt(0) + 1);
+                } else {
+                    // if cross 'Z' problem number will be 'A1', 'B1'
+                    problemIndex = `${problemIndex}${counter}`;
+                }
+                if (problemIndex === 'Z') {
+                    flag = true;
+                    problemIndex = 'A';
+                    counter += 1;
+                }
             }
         });
         responseHandler.ok(res, contestProblem);

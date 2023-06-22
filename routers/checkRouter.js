@@ -1,4 +1,5 @@
 import express from 'express';
+import Submission from '../database/models/Submission.js';
 import responseHandler from '../handlers/response.handler.js';
 
 const checkRouter = express.Router();
@@ -7,10 +8,16 @@ const checkRouter = express.Router();
  * Check endpoint
  */
 
-checkRouter.post('/', (req, res) => {
+checkRouter.post('/', async (req, res) => {
     try {
-        const { myJudge } = req.body;
-        res.send(`${myJudge.charAt(0).toUpperCase()}${myJudge.slice(1)}`);
+        // Update all documents in the collection
+        await Submission.updateMany(
+            {},
+            {
+                $unset: { contestID: 0 },
+            }
+        );
+        res.send('done');
     } catch (error) {
         console.log(error);
         responseHandler.error(res);

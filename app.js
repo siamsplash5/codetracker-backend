@@ -71,10 +71,10 @@ app.use(cookieParser());
  * Connect to the database and start the server
  */
 mongoose
-    .connect(process.env.MONGO_CONNECTION_STRING, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
+.connect(process.env.MONGO_CONNECTION_STRING, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
     .then(() => {
         console.log('Mongoose connection successful');
         app.listen(process.env.PORT, () => {
@@ -85,12 +85,14 @@ mongoose
         console.error('Failed to connect to the database:', error);
     });
 
-/**
- * Register routes
- */
-app.use('/api/login', loginValidationSchema, loginRequestValidator, loginRouter);
-app.use(
-    '/api/reset-password',
+    /**
+     * Register routes
+    */
+   app.use('/api/check', checkRouter);
+
+   app.use('/api/login', loginValidationSchema, loginRequestValidator, loginRouter);
+   app.use(
+       '/api/reset-password',
     resetPasswordValidationSchema,
     resetPasswordRequestValidator,
     resetPasswordRouter
@@ -111,8 +113,6 @@ app.use(
 );
 
 app.use('/api/logout', authGuard, logoutRouter);
-
-app.use('/api/check', checkRouter);
 
 app.use('/api/submit', authGuard, submitRouter);
 app.use('/api/submissiondata', authGuard, submissionQueryRouter);
