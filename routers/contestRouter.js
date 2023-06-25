@@ -17,10 +17,25 @@ contestRouter.post('/create', async (req, res) => {
         contest.owner = req.username;
         contest.startDate = convertedDate;
         contest.startTime = convertedTime;
+        contest.registered.push(req.username);
         contest.contestID = (await counterModel.findOne({ _id: counterID })).lastContestID + 1;
         await counterModel.updateOne({ _id: counterID }, { lastContestID: contest.contestID });
         const createdContest = await contestModel.create(contest);
         responseHandler.created(res, createdContest);
+    } catch (error) {
+        console.log(error);
+        responseHandler.error(res);
+    }
+});
+
+contestRouter.post('/register', async (req, res) => {
+    try {
+        const { contestID } = req.body;
+        const { username } = req;
+        const filter = { contestID };
+        const update = { $push: { registered: username } };
+        const updatedContest = await contestModel.findOneAndUpdate(filter, update, { new: true });
+        responseHandler.created(res, updatedContest);
     } catch (error) {
         console.log(error);
         responseHandler.error(res);

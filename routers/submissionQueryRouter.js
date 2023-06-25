@@ -5,7 +5,7 @@ import responseHandler from '../handlers/response.handler.js';
 
 const submissionQueryRouter = express.Router();
 /**
- * POST /submissionQueryRouter
+ * GET /submissionQueryRouter
  * Query User's submission for a particular problem
  */
 
@@ -28,7 +28,28 @@ submissionQueryRouter.get('/specific-problem/:judge/:problemID/:contestID', asyn
 });
 
 /**
- * POST /submissionQueryRouter
+ * GET /submissionQueryRouter
+ * Query User's all submission for a specific contest
+ */
+
+submissionQueryRouter.get('/specific-contest/:contestID', async (req, res) => {
+    try {
+        const { contestID } = req.params;
+        const { username } = req;
+        const result = await Submission.find({
+            submittedBy: username,
+            'vjContest.contestID': contestID,
+        });
+        result.reverse();
+        responseHandler.ok(res, result);
+    } catch (error) {
+        console.log(error);
+        responseHandler.error(res);
+    }
+});
+
+/**
+ * GET /submissionQueryRouter
  * Query User's submission for all problem
  */
 

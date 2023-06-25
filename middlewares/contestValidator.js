@@ -9,7 +9,7 @@ const contestValidator = (req, res, next) => {
             }
             return next();
         }
-        if (req.method === 'POST') {
+        if (req.method === 'POST' && req.url === '/api/contest/create') {
             const { privacy, password, title, problemSet } = req.body;
             if (privacy && title && problemSet.length) {
                 if (privacy !== 'Public') {
@@ -22,6 +22,7 @@ const contestValidator = (req, res, next) => {
             }
             return responseHandler.badRequest(res, "Any field can't be empty");
         }
+        return next();
     } catch (error) {
         console.log(error);
         responseHandler.error(res);

@@ -73,7 +73,7 @@ const contestSchema = new mongoose.Schema(
                 },
             },
         ],
-        participants: [
+        registered: [
             {
                 type: String,
             },

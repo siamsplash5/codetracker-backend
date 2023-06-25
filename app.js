@@ -115,7 +115,7 @@ app.use(
 app.use('/api/logout', authGuard, logoutRouter);
 
 app.use('/api/submit', authGuard, submitRouter);
-app.use('/api/submissiondata', authGuard, submissionQueryRouter);
+app.use('/api/submissions', authGuard, submissionQueryRouter);
 
 app.use('/api/problem', problemRequestValidator, problemRouter);
 app.use('/api/problem-all', problemAllRouter);
