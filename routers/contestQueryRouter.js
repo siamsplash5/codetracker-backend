@@ -20,14 +20,29 @@ contestQueryRouter.get('/all', async (req, res) => {
 });
 
 /**
- * GET /contest
- * Update an existing contest
+ * GET /contest list
+ * GET user's contest list
  */
-contestQueryRouter.get('/:username', async (req, res) => {
+contestQueryRouter.get('/user/:username', async (req, res) => {
     try {
         const { username } = req.params;
         const usersContestList = await contestModel.find({ username });
-        responseHandler.ok({ usersContestList });
+        responseHandler.ok(res, usersContestList);
+    } catch (error) {
+        console.log(error);
+        responseHandler.error(res);
+    }
+});
+
+/**
+ * GET /contest
+ * GET contest by contest ID
+ */
+contestQueryRouter.get('/contest/:contestID', async (req, res) => {
+    try {
+        const { contestID } = req.params;
+        const contest = await contestModel.findOne({ contestID });
+        responseHandler.ok(res, contest);
     } catch (error) {
         console.log(error);
         responseHandler.error(res);
