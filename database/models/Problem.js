@@ -7,10 +7,13 @@ const problemSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
+        index: true,
     },
     problemID: {
         type: String,
         required: true,
+        trim: true,
+        index: true,
     },
     title: {
         type: String,
@@ -78,6 +81,8 @@ const problemSchema = new mongoose.Schema({
     },
     parsedAt: Date,
 });
+
+problemSchema.index({ contestID: 1, username: 1 });
 
 const Model = problemDb.model('problem', problemSchema);
 

@@ -37,6 +37,8 @@ submitRouter.post('/', async (req, res) => {
         const submitInfo = req.body;
         const { judge, problemID, problemName, sourceCode, vjContest } = submitInfo;
         const { username, userDatabaseID } = req;
+        const currentTimeInMS = Date.now();
+        const { convertedDate, convertedTime } = dateFormatter(currentTimeInMS);
 
         let status;
         if (judge === 'Atcoder') {
@@ -58,7 +60,6 @@ submitRouter.post('/', async (req, res) => {
         }
 
         const { submissionID, botUsername, language, verdict, time, memory } = status;
-        const { convertedDate, convertedTime } = dateFormatter(Date.now());
 
         const submittedSolution = {
             realJudgesSubmissionID: submissionID,

@@ -1,11 +1,14 @@
 import express from 'express';
-import { Contest as contestModel } from '../database/models/Contest.js';
+import {
+    Contest as contestModel,
+    Standings as standingsModel,
+} from '../database/models/Contest.js';
 import responseHandler from '../handlers/response.handler.js';
 
 const contestQueryRouter = express.Router();
 
 /**
- * GET /contest
+ * GET /contest-query
  * Get all contest's list
  */
 contestQueryRouter.get('/all', async (req, res) => {
@@ -20,7 +23,7 @@ contestQueryRouter.get('/all', async (req, res) => {
 });
 
 /**
- * GET /contest list
+ * GET /contest-query
  * GET user's contest list
  */
 contestQueryRouter.get('/user/:username', async (req, res) => {
@@ -35,7 +38,7 @@ contestQueryRouter.get('/user/:username', async (req, res) => {
 });
 
 /**
- * GET /contest
+ * GET /contest-query
  * GET contest by contest ID
  */
 contestQueryRouter.get('/contest/:contestID', async (req, res) => {
@@ -50,17 +53,17 @@ contestQueryRouter.get('/contest/:contestID', async (req, res) => {
 });
 
 /**
- * DELETE /contest
- * Delete a contest
+ * GET /contest-query
+ * GET contest by contest ID
  */
-contestQueryRouter.delete('/', async (req, res) => {
+contestQueryRouter.get('/standings/:contestID', async (req, res) => {
     try {
-        const { contestID } = req.body;
-        await contestModel.findByIdAndDelete(contestID);
-        res.send('Contest deleted successfully');
+        const { contestID } = req.params;
+        const standingsInfo = await standingsModel.find({ contestID });
+        responseHandler.ok(res, standingsInfo);
     } catch (error) {
         console.log(error);
-        res.status(500).send('Internal server error');
+        responseHandler.error(res);
     }
 });
 

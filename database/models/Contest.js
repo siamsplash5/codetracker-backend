@@ -7,9 +7,11 @@ const contestSchema = new mongoose.Schema(
     {
         contestID: {
             type: Number,
+            index: true,
         },
         owner: {
             type: String,
+            index: true,
         },
         privacy: {
             type: String,
@@ -86,10 +88,48 @@ const counterSchema = new mongoose.Schema(
     {
         lastContestID: {
             type: Number,
+            index: true,
         },
     },
     { timestamps: true }
 );
 
+const standingsSchema = new mongoose.Schema({
+    contestID: {
+        type: Number,
+        required: true,
+        index: true,
+    },
+    username: {
+        type: String,
+        required: true,
+        index: true,
+    },
+    submissions: [
+        {
+            problemIndex: {
+                type: String,
+                index: true,
+            },
+            totalSubmission: {
+                type: Number,
+                default: 0,
+            },
+            isAccepted: {
+                type: Boolean,
+                default: false,
+            },
+            acceptedTime: {
+                type: Number,
+                default: 0,
+            },
+        },
+    ],
+});
+
+contestSchema.index({ contestID: 1, owner: 1 });
+standingsSchema.index({ contestID: 1, username: 1 });
+
 export const Contest = contestModel.model('Contest', contestSchema);
 export const Counter = contestModel.model('Counter', counterSchema);
+export const Standings = contestModel.model('Standings', standingsSchema);
