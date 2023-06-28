@@ -89,7 +89,7 @@ submitRouter.post('/', async (req, res) => {
                 contestID,
                 problemIndex,
                 verdict,
-                submitTime: currentTimeInMS,
+                submitTime: currentTimeInMS - vjContest.beginTime,
             });
         }
     } catch (error) {

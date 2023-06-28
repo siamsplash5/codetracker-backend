@@ -70,10 +70,8 @@ export async function updateStandings({ contestID, username, problemIndex, verdi
                     if (standings.submissions[submissionIndex].isAccepted === false) {
                         standings.submissions[submissionIndex].isAccepted = true;
                         standings.submissions[submissionIndex].acceptedTime = submitTime;
-                        standings.submissions[submissionIndex].totalAcceptedSubmission += 1;
-                    } else {
-                        standings.submissions[submissionIndex].totalAcceptedSubmission += 1;
                     }
+                    standings.submissions[submissionIndex].totalAcceptedSubmission += 1;
                 }
             } else {
                 // Submission object not found, create a new one
@@ -81,6 +79,7 @@ export async function updateStandings({ contestID, username, problemIndex, verdi
                     problemIndex,
                     totalSubmission: 1,
                     isAccepted: verdict === 'Accepted',
+                    totalAcceptedSubmission: verdict === 'Accepted' ? 1 : 0,
                     acceptedTime: verdict === 'Accepted' ? submitTime : 0,
                 };
 
@@ -99,6 +98,7 @@ export async function updateStandings({ contestID, username, problemIndex, verdi
                         problemIndex,
                         totalSubmission: 1,
                         isAccepted: verdict === 'Accepted',
+                        totalAcceptedSubmission: verdict === 'Accepted' ? 1 : 0,
                         acceptedTime: verdict === 'Accepted' ? submitTime : 0,
                     },
                 ],
