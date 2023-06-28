@@ -114,7 +114,6 @@ async function codeforcesSubmit(info) {
         }
 
         const submissionID = getSubmissionID(res.text);
-        console.log(submissionID);
         return { agent, contestID, submissionID };
     } catch (error) {
         console.error('An error occurred during Codeforces submission:', error);

@@ -113,7 +113,6 @@ async function spojSubmit(info) {
             throw new Error(`SPOJ submit failed, status code ${res.status}`);
         }
         const submissionID = getSubmissionID(res.text);
-        console.log(submissionID);
         return { agent, username, submissionID };
     } catch (error) {
         console.error('An error occurred during Spoj submission:', error);
