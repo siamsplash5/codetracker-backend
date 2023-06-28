@@ -29,6 +29,9 @@ const submissionSchema = new mongoose.Schema({
             type: Number,
             default: 0,
         },
+        problemIndex: {
+            type: String,
+        },
         beginTime: {
             type: Number,
             default: 0,

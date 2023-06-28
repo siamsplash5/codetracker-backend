@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import express from 'express';
-import updateSubmission from '../database/queries/submission_query.js';
+import { updateStandings, updateSubmission } from '../database/queries/submission_query.js';
 import responseHandler from '../handlers/response.handler.js';
 import dateFormatter from '../lib/dateFormatter.js';
 import atcoderSubmit from '../services/submit/atcoder_submit.js';
@@ -81,6 +81,17 @@ submitRouter.post('/', async (req, res) => {
         await updateSubmission(userDatabaseID, submittedSolution);
 
         responseHandler.ok(res, submittedSolution);
+
+        if (vjContest) {
+            const { contestID, problemIndex } = vjContest;
+            await updateStandings({
+                username,
+                contestID,
+                problemIndex,
+                verdict,
+                submitTime: currentTimeInMS,
+            });
+        }
     } catch (error) {
         console.error(error);
         responseHandler.error(res);
