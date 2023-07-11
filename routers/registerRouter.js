@@ -12,8 +12,9 @@ registerRouter.post('/', async (req, res) => {
         const { username, email, password } = req.body;
 
         const existingUsername = await userModel.findOne({ username });
-        if (existingUsername)
+        if (existingUsername) {
             return responseHandler.badRequest(res, 'This username is already in use.');
+        }
 
         const existingEmail = await userModel.findOne({ email });
         if (existingEmail) return responseHandler.badRequest(res, 'This email is already in use.');
@@ -22,8 +23,9 @@ registerRouter.post('/', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         const { _id, otp, message } = await getOTP(username, email, hashedPassword);
-        if (message === 'otp already exist')
+        if (message === 'otp already exist') {
             return responseHandler.badRequest(res, 'OTP already sent.');
+        }
 
         await sendOTPVerificationMail(otp, username, email);
 

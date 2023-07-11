@@ -1,5 +1,5 @@
 import express from 'express';
-import { updateStandings } from '../database/queries/submission_query.js';
+import { Contest } from '../database/models/Contest.js';
 import responseHandler from '../handlers/response.handler.js';
 
 const checkRouter = express.Router();
@@ -10,8 +10,7 @@ const checkRouter = express.Router();
 
 checkRouter.post('/', async (req, res) => {
     try {
-        const { contestID, username, problemIndex, verdict, submitTime } = req.body;
-        await updateStandings({ contestID, username, problemIndex, verdict, submitTime });
+        await Contest.updateMany({ owner: 'siamsplash6' }, { owner: 'siamsplash5' });
         res.send('Done');
     } catch (error) {
         console.log(error);
