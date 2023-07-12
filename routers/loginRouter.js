@@ -39,7 +39,6 @@ loginRouter.post('/', async (req, res) => {
         res.cookie('JSESSIONID', token, {
             httpOnly: true,
             maxAge: maxAge * 1000,
-            domain: '.onrender.com',
         });
 
         responseHandler.ok(res, {
