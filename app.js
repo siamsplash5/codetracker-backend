@@ -60,7 +60,7 @@ const app = express();
 app.use(
     cors({
         credentials: true,
-        origin: 'https://codetrackervj.netlify.app/',
+        origin: 'https://codetrackervj.netlify.app',
     })
 );
 app.use(express.json());
