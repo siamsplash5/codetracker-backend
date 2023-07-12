@@ -1,5 +1,4 @@
 import express from 'express';
-import { Contest } from '../database/models/Contest.js';
 import responseHandler from '../handlers/response.handler.js';
 
 const checkRouter = express.Router();
@@ -8,10 +7,9 @@ const checkRouter = express.Router();
  * Check endpoint
  */
 
-checkRouter.post('/', async (req, res) => {
+checkRouter.get('/', async (req, res) => {
     try {
-        await Contest.updateMany({ owner: 'siamsplash6' }, { owner: 'siamsplash5' });
-        res.send('Done');
+        responseHandler.ok(res, 'hello from codetracker backend');
     } catch (error) {
         console.log(error);
         responseHandler.error(res);
