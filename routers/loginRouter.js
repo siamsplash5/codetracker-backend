@@ -36,8 +36,11 @@ loginRouter.post('/', async (req, res) => {
 
         res.clearCookie('JSESSIONID');
         res.clearCookie('uid');
-        res.cookie('JSESSIONID', token, { httpOnly: true, maxAge: maxAge * 1000 });
-
+        res.cookie('JSESSIONID', token, {
+            httpOnly: true,
+            maxAge: maxAge * 1000,
+            domain: 'https://codetrackervj.netlify.app',
+        });
         responseHandler.ok(res, {
             status: 200,
             message: `Welcome ${username}`,
