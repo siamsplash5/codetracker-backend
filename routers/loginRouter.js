@@ -39,8 +39,8 @@ loginRouter.post('/', async (req, res) => {
         res.cookie('JSESSIONID', token, {
             httpOnly: true,
             maxAge: maxAge * 1000,
-            domain: 'netlify.app',
-            sameSite: 'none',
+            domain: '.netlify.app',
+            sameSite: 'None',
             secure: true,
         });
 
