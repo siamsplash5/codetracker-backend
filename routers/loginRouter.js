@@ -40,6 +40,7 @@ loginRouter.post('/', async (req, res) => {
             httpOnly: true,
             maxAge: maxAge * 1000,
             sameSite: 'none',
+            secure: true,
         });
 
         responseHandler.ok(res, {
