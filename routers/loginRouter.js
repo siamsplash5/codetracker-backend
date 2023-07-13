@@ -39,6 +39,7 @@ loginRouter.post('/', async (req, res) => {
         res.cookie('JSESSIONID', token, {
             httpOnly: true,
             maxAge: maxAge * 1000,
+            domain: 'codetracker-backend.onrender.com',
             sameSite: 'none',
             secure: true,
         });
