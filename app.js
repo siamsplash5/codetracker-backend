@@ -58,12 +58,12 @@ const app = express();
 */
 
 app.use(
-    '*',
     cors({
         credentials: true,
-        origin: true,
+        origin: 'https://codetrackervj.netlify.app',
     })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

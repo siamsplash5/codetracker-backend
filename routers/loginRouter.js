@@ -39,6 +39,7 @@ loginRouter.post('/', async (req, res) => {
         res.cookie('JSESSIONID', token, {
             httpOnly: true,
             maxAge: maxAge * 1000,
+            sameSite: 'none',
         });
 
         responseHandler.ok(res, {
