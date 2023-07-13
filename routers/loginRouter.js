@@ -34,8 +34,20 @@ loginRouter.post('/', async (req, res) => {
             expiresIn: maxAge,
         });
 
-        res.clearCookie('JSESSIONID');
-        res.clearCookie('uid');
+        res.clearCookie('JSESSIONID', {
+            httpOnly: true,
+            maxAge: maxAge * 1000,
+            domain: '.netlify.app',
+            sameSite: 'None',
+            secure: true,
+        });
+        res.clearCookie('uid', {
+            httpOnly: true,
+            maxAge: maxAge * 1000,
+            domain: '.netlify.app',
+            sameSite: 'None',
+            secure: true,
+        });
         res.cookie('JSESSIONID', token, {
             httpOnly: true,
             maxAge: maxAge * 1000,
