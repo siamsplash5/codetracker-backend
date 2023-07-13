@@ -37,21 +37,21 @@ loginRouter.post('/', async (req, res) => {
         res.clearCookie('JSESSIONID', {
             httpOnly: true,
             maxAge: maxAge * 1000,
-            domain: '.netlify.app',
+            domain: '.onrender.com',
             sameSite: 'None',
             secure: true,
         });
         res.clearCookie('uid', {
             httpOnly: true,
             maxAge: maxAge * 1000,
-            domain: '.netlify.app',
+            domain: '.onrender.com',
             sameSite: 'None',
             secure: true,
         });
         res.cookie('JSESSIONID', token, {
             httpOnly: true,
             maxAge: maxAge * 1000,
-            domain: '.netlify.app',
+            domain: '.onrender.com',
             sameSite: 'None',
             secure: true,
         });
