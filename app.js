@@ -59,7 +59,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: 'https://codetrackervj.netlify.app',
+        origin: 'https://codetrackervj.vercel.app/',
         credentials: true,
     })
 );
