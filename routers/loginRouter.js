@@ -34,18 +34,19 @@ loginRouter.post('/', async (req, res) => {
             expiresIn: maxAge,
         });
 
-        res.clearCookie('JSESSIONID', {
-            httpOnly: true,
-            domain: 'codetrackervj.netlify.app',
-            sameSite: 'None',
-            secure: true,
-        });
-        res.clearCookie('uid', {
-            httpOnly: true,
-            domain: 'codetrackervj.netlify.app',
-            sameSite: 'None',
-            secure: true,
-        });
+        // res.clearCookie('JSESSIONID', {
+        //     httpOnly: true,
+        //     domain: 'codetrackervj.netlify.app',
+        //     sameSite: 'None',
+        //     secure: true,
+        // });
+        // res.clearCookie('uid', {
+        //     httpOnly: true,
+        //     domain: 'codetrackervj.netlify.app',
+        //     sameSite: 'None',
+        //     secure: true,
+        // });
+
         res.cookie('JSESSIONID', token, {
             httpOnly: true,
             maxAge,
