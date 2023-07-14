@@ -5,7 +5,7 @@ import userModel from '../database/models/User.js';
 import responseHandler from '../handlers/response.handler.js';
 
 const loginRouter = express.Router();
-const maxAge = 24 * 60 * 60; // 24 hours
+const maxAge = 24 * 60 * 60 * 1000; // 24 hours
 
 /**
  * POST /login
@@ -36,22 +36,20 @@ loginRouter.post('/', async (req, res) => {
 
         res.clearCookie('JSESSIONID', {
             httpOnly: true,
-            maxAge: maxAge * 1000,
-            domain: '.onrender.com',
+            domain: 'codetrackervj.netlify.app',
             sameSite: 'None',
             secure: true,
         });
         res.clearCookie('uid', {
             httpOnly: true,
-            maxAge: maxAge * 1000,
-            domain: '.onrender.com',
+            domain: 'codetrackervj.netlify.app',
             sameSite: 'None',
             secure: true,
         });
         res.cookie('JSESSIONID', token, {
             httpOnly: true,
-            maxAge: maxAge * 1000,
-            domain: '.onrender.com',
+            maxAge,
+            domain: 'codetrackervj.netlify.app',
             sameSite: 'None',
             secure: true,
         });
