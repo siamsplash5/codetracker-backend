@@ -6,7 +6,7 @@ import responseHandler from '../handlers/response.handler.js';
 
 const loginRouter = express.Router();
 const maxAge = 24 * 60 * 60 * 1000; // 24 hours
-const domain = '.vercel.app';
+const domain = 'vercel.app';
 /**
  * POST /login
  * User login
@@ -36,13 +36,13 @@ loginRouter.post('/', async (req, res) => {
 
         // res.clearCookie('JSESSIONID', {
         //     httpOnly: true,
-        //     domain: 'codetrackervj.netlify.app',
+        //     domain,
         //     sameSite: 'None',
         //     secure: true,
         // });
         // res.clearCookie('uid', {
         //     httpOnly: true,
-        //     domain: 'codetrackervj.netlify.app',
+        //     domain,
         //     sameSite: 'None',
         //     secure: true,
         // });
