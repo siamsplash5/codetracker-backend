@@ -36,10 +36,8 @@ loginRouter.post('/', async (req, res) => {
 
         // Configure the cookie options
         const cookieOptions = {
-            httpOnly: true,
+            httpOnly: false,
             maxAge,
-            secure: true,
-            sameSite: 'None',
         };
 
         // Set the cookie
