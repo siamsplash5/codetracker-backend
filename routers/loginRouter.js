@@ -6,7 +6,8 @@ import responseHandler from '../handlers/response.handler.js';
 
 const loginRouter = express.Router();
 const maxAge = 24 * 60 * 60 * 1000; // 24 hours
-const domain = 'codetrackervj.vercel.app';
+const domain = 'https://codetrackervj.vercel.app';
+
 /**
  * POST /login
  * User login
@@ -34,26 +35,17 @@ loginRouter.post('/', async (req, res) => {
             expiresIn: maxAge,
         });
 
-        // res.clearCookie('JSESSIONID', {
-        //     httpOnly: true,
-        //     domain,
-        //     sameSite: 'None',
-        //     secure: true,
-        // });
-        // res.clearCookie('uid', {
-        //     httpOnly: true,
-        //     domain,
-        //     sameSite: 'None',
-        //     secure: true,
-        // });
-
-        res.cookie('JSESSIONID', token, {
+        // Configure the cookie options
+        const cookieOptions = {
             httpOnly: true,
             maxAge,
             domain,
-            sameSite: 'None',
             secure: true,
-        });
+            sameSite: 'None',
+        };
+
+        // Set the cookie
+        res.cookie('JSESSIONID', token, cookieOptions);
 
         responseHandler.ok(res, {
             status: 200,
