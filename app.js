@@ -59,7 +59,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: 'https://codetrackervj.vercel.app',
+        origin: ['https://codetrackervj.vercel.app', 'http://localhost:5173'],
         credentials: true,
     })
 );
