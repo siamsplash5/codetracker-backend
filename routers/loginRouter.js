@@ -35,19 +35,20 @@ loginRouter.post('/', async (req, res) => {
         });
 
         // Configure the cookie options
-        const cookieOptions = {
-            httpOnly: true,
-            maxAge,
-            secure: true,
-            sameSite: 'None',
-        };
+        // const cookieOptions = {
+        //     httpOnly: true,
+        //     maxAge,
+        //     secure: true,
+        //     sameSite: 'None',
+        // };
 
-        // Set the cookie
-        res.cookie('JSESSIONID', token, cookieOptions);
+        // // Set the cookie
+        // res.cookie('JSESSIONID', token, cookieOptions);
 
         responseHandler.ok(res, {
             status: 200,
             message: `Welcome ${username}`,
+            token,
         });
     } catch (error) {
         console.log(error);
