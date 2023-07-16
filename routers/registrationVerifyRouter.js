@@ -8,8 +8,8 @@ const registrationVerifyRouter = express.Router();
 
 registrationVerifyRouter.post('/', async (req, res) => {
     try {
-        const { otp } = req.body;
-        const userID = req.cookies.uid;
+        const { otp, token: userID } = req.body;
+        // const userID = req.cookies.uid;
 
         const registrationData = await userOTPVerificationModel.findById(userID);
         if (!registrationData) {
@@ -34,7 +34,7 @@ registrationVerifyRouter.post('/', async (req, res) => {
         await userModel.create({ username, email, password });
         await userOTPVerificationModel.findByIdAndDelete(userID);
 
-        res.clearCookie('uid');
+        // res.clearCookie('uid');
         responseHandler.created(res, {
             status: 201,
             message: 'Registered Successfully!',

@@ -8,9 +8,9 @@ const passwordVerifyRouter = express.Router();
 
 passwordVerifyRouter.post('/', async (req, res) => {
     try {
-        const { otp, newPassword } = req.body;
+        const { otp, newPassword, token: userID } = req.body;
 
-        const userID = req.cookies.uid;
+        // const userID = req.cookies.uid;
 
         // Get the registration request info from the database
         const userOTP = await userOTPVerificationModel.findById(userID);
@@ -44,7 +44,7 @@ passwordVerifyRouter.post('/', async (req, res) => {
 
         await userModel.updateOne({ username }, { password: hashedPassword });
 
-        res.clearCookie('uid');
+        // res.clearCookie('uid');
         responseHandler.ok(res, {
             username,
             status: 200,

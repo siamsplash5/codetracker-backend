@@ -9,7 +9,7 @@ const submissionQueryRouter = express.Router();
  * Query User's submission for a particular problem
  */
 
-submissionQueryRouter.get('/specific-problem/:judge/:problemID/:contestID', async (req, res) => {
+submissionQueryRouter.post('/specific-problem/:judge/:problemID/:contestID', async (req, res) => {
     try {
         const { judge, problemID, contestID } = req.params;
         const { username } = req;
@@ -32,7 +32,7 @@ submissionQueryRouter.get('/specific-problem/:judge/:problemID/:contestID', asyn
  * Query User's all submission for a specific contest
  */
 
-submissionQueryRouter.get('/specific-contest/:contestID', async (req, res) => {
+submissionQueryRouter.post('/specific-contest/:contestID', async (req, res) => {
     try {
         const { contestID } = req.params;
         const { username } = req;
@@ -53,7 +53,7 @@ submissionQueryRouter.get('/specific-contest/:contestID', async (req, res) => {
  * Query User's submission for all problem
  */
 
-submissionQueryRouter.get('/specific-user/:username', async (req, res) => {
+submissionQueryRouter.post('/specific-user/:username', async (req, res) => {
     try {
         const { username } = req.params;
         const isUserExist = await User.findOne({ username });

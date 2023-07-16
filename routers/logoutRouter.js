@@ -6,10 +6,10 @@ import responseHandler from '../handlers/response.handler.js';
 const logoutRouter = express.Router();
 
 logoutRouter.post('/', async (req, res) => {
-    const { username } = req.body;
+    const { username, token } = req.body;
     try {
-        const token = req.cookies.JSESSIONID;
-        res.clearCookie('JSESSIONID');
+        // const token = req.cookies.JSESSIONID;
+        // res.clearCookie('JSESSIONID');
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         const { exp } = decodedToken;
         await blacklistedJWT.create({

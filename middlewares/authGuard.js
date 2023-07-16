@@ -8,7 +8,8 @@ import responseHandler from '../handlers/response.handler.js';
 const authGuard = async (req, res, next) => {
     try {
         // Check if the token exists in the cookie
-        const token = req.cookies.JSESSIONID;
+        // const token = req.cookies.JSESSIONID;
+        const { token } = req.body;
         if (!token) {
             console.log('Token not found');
             return responseHandler.unauthorize(res, "You're logged out. Please login.");

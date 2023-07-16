@@ -28,10 +28,11 @@ resetPasswordRouter.post('/', async (req, res) => {
 
         await passwordRecoveryMail(otp, username, email);
 
-        res.cookie('uid', _id);
+        // res.cookie('uid', _id);
         responseHandler.pending(res, {
             status: 202,
             message: 'A OTP has been sent to your email. Enter the code here to procceed.',
+            token: _id,
         });
     } catch (error) {
         console.log(error);

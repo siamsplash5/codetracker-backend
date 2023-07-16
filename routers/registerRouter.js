@@ -29,11 +29,12 @@ registerRouter.post('/', async (req, res) => {
 
         await sendOTPVerificationMail(otp, username, email);
 
-        res.cookie('uid', _id, { maxAge: 1000 * 60 * 60, httpOnly: true });
+        // res.cookie('uid', _id, { maxAge: 1000 * 60 * 60, httpOnly: true });
 
         responseHandler.pending(res, {
             status: 202,
             message: 'A OTP has been sent to your email. Enter the code here to procceed.',
+            token: _id,
         });
     } catch (error) {
         console.log(error);
