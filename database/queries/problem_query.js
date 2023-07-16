@@ -52,7 +52,7 @@ export const createProblem = async (judge, problem) => {
 
 export const getAllProblem = async () => {
     try {
-        const data = await Problem.find();
+        const data = await Problem.find().select('judge problemID title parsedAt');
         return data;
     } catch (error) {
         console.error(error);
