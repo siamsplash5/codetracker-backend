@@ -6,10 +6,10 @@ export const registerValidationSchema = [
         .trim()
         .notEmpty()
         .withMessage("Username can't be empty")
-        .toLowerCase()
         .matches(/^[a-z0-9._-]+$/)
+        .toLowerCase()
         .withMessage(
-            'Username should contain only Latin letters, digits, dot, underscore or dash characters'
+            'Username should contain only lowercase Latin letters, digits, dot, underscore or dash characters'
         ),
 
     body('email')
