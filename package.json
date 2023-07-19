@@ -18,7 +18,7 @@
     "dependencies": {
         "bcrypt": "^5.1.0",
         "cheerio": "^1.0.0-rc.12",
-        "chrome-aws-lambda": "10.1.0",
+        "chrome-aws-lambda": "6.0.0",
         "cookie-parser": "^1.4.6",
         "cors": "^2.8.5",
         "dotenv": "^16.0.3",
@@ -31,7 +31,7 @@
         "mongoose-unique-validator": "^4.0.0",
         "nodemailer": "^6.9.1",
         "puppeteer": "^20.8.3",
-        "puppeteer-core": "10.1.0",
+        "puppeteer-core": "6.0.0",
         "superagent": "^8.0.9"
     },
     "scripts": {
