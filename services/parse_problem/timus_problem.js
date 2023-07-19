@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import cheerio from 'cheerio';
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import { createProblem, readProblem } from '../../database/queries/problem_query.js';
 import extractTitle from '../../lib/extractTitle.js';
 import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
@@ -14,7 +14,7 @@ import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
  * @throws {Error} If there is an error parsing the problem or the URL is invalid.
  */
 async function parseProblem(url, judge, problemID) {
-    const browser = await puppeteer.launch({ headless: 'new' });
+    const browser = await puppeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto(url, { timeout: 60000 });
     if ((await page.title()) === 'Timus Online Judge') {
