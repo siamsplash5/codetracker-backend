@@ -13,7 +13,7 @@ import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
  * @throws {Error} If the URL is invalid or if there is an error during parsing.
  */
 async function parseProblem(url, judge, problemID) {
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url, { timeout: 60000 });
 

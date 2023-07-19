@@ -13,7 +13,7 @@ import extractTitle from '../../lib/extractTitle.js';
  * @throws {Error} If there is an error during parsing or database operations.
  */
 async function parseProblem(url, judge, problemID) {
-    const browser = await puppeteer.launch({ headless: true });
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url, { timeout: 60000 });
 
