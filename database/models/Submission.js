@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 
-const submissionDb = mongoose.connection.useDb('submissions');
+const db = mongoose.connection.useDb('codetrackervj');
 
 // Define the schema for the submission document
 const submissionSchema = new mongoose.Schema({
@@ -81,6 +81,6 @@ const submissionSchema = new mongoose.Schema({
 submissionSchema.plugin(uniqueValidator, { message: 'is already taken.' });
 
 // Create and export the submission model
-const Submission = submissionDb.model('Submission', submissionSchema);
+const Submission = db.model('Submission', submissionSchema);
 
 export default Submission;

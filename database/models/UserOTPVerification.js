@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 
-const userOTPVerificationModel = mongoose.connection.useDb('users');
+const db = mongoose.connection.useDb('codetrackervj');
 
 // Define the schema for the user OTP verification document
 const UserOTPVerificationSchema = new mongoose.Schema(
@@ -43,9 +43,6 @@ const UserOTPVerificationSchema = new mongoose.Schema(
 UserOTPVerificationSchema.plugin(uniqueValidator, { message: 'is already taken.' });
 
 // Create and export the user OTP verification model
-const UserOTPVerification = userOTPVerificationModel.model(
-    'UserOTPVerification',
-    UserOTPVerificationSchema
-);
+const UserOTPVerification = db.model('UserOTPVerification', UserOTPVerificationSchema);
 
 export default UserOTPVerification;

@@ -1,6 +1,6 @@
 /* eslint-disable consistent-return */
 import jwt from 'jsonwebtoken';
-import blackListedJWT from '../database/models/BlackListedJWT.js';
+import blacklistedToken from '../database/models/BlacklistedTokens.js';
 import userModel from '../database/models/User.js';
 import responseHandler from '../handlers/response.handler.js';
 
@@ -16,7 +16,7 @@ const authGuard = async (req, res, next) => {
         }
 
         // Check if the token is blacklisted
-        const isBlacklisted = await blackListedJWT.findOne({ token });
+        const isBlacklisted = await blacklistedToken.findOne({ token });
         if (isBlacklisted) {
             console.log('Token is blacklisted');
             return responseHandler.unauthorize(res, "You're logged out. Please login.");

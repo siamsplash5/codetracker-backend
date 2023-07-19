@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 
-const userModel = mongoose.connection.useDb('users');
+const db = mongoose.connection.useDb('codetrackervj');
 
 // Define the schema for the user document
 const UserSchema = new mongoose.Schema(
@@ -58,6 +58,6 @@ const UserSchema = new mongoose.Schema(
 UserSchema.plugin(uniqueValidator, { message: 'is already taken.' });
 
 // Create and export the user model
-const User = userModel.model('User', UserSchema);
+const User = db.model('User', UserSchema);
 
 export default User;

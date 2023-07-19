@@ -1,6 +1,6 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
-import blacklistedJWT from '../database/models/BlackListedJWT.js';
+import blacklistedToken from '../database/models/BlacklistedTokens.js';
 import responseHandler from '../handlers/response.handler.js';
 
 const logoutRouter = express.Router();
@@ -12,7 +12,7 @@ logoutRouter.post('/', async (req, res) => {
         // res.clearCookie('JSESSIONID');
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
         const { exp } = decodedToken;
-        await blacklistedJWT.create({
+        await blacklistedToken.create({
             token,
             expiresAt: exp * 1000,
         });

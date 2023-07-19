@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const problemDb = mongoose.connection.useDb('problems');
+const db = mongoose.connection.useDb('codetrackervj');
 
 const problemSchema = new mongoose.Schema({
     judge: {
@@ -84,6 +84,6 @@ const problemSchema = new mongoose.Schema({
 
 problemSchema.index({ contestID: 1, username: 1 });
 
-const Model = problemDb.model('problem', problemSchema);
+const Model = db.model('problem', problemSchema);
 
 export default Model;

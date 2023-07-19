@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const contestModel = mongoose.connection.useDb('contests');
+const db = mongoose.connection.useDb('codetrackervj');
 
 // Define the schema for the contest document
 const contestSchema = new mongoose.Schema(
@@ -134,6 +134,6 @@ const standingsSchema = new mongoose.Schema({
 contestSchema.index({ contestID: 1, owner: 1 });
 standingsSchema.index({ contestID: 1, username: 1 });
 
-export const Contest = contestModel.model('Contest', contestSchema);
-export const Counter = contestModel.model('Counter', counterSchema);
-export const Standings = contestModel.model('Standings', standingsSchema);
+export const Contest = db.model('Contest', contestSchema);
+export const Counter = db.model('ContestCounter', counterSchema);
+export const Standings = db.model('Standings', standingsSchema);
