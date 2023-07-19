@@ -1,8 +1,8 @@
 import cheerio from 'cheerio';
 import puppeteer from 'puppeteer';
 import { createProblem, readProblem } from '../../database/queries/problem_query.js';
-import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
 import extractTitle from '../../lib/extractTitle.js';
+import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
 
 /**
  * Parses an AtCoder problem from the given URL and returns the parsed problem object.
@@ -13,7 +13,7 @@ import extractTitle from '../../lib/extractTitle.js';
  * @throws {Error} If there is an error during parsing or database operations.
  */
 async function parseProblem(url, judge, problemID) {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ headless: 'new' });
     const page = await browser.newPage();
     await page.goto(url, { timeout: 60000 });
 

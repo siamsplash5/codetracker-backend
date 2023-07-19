@@ -14,7 +14,7 @@ import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
  * @throws {Error} If there is an error parsing the problem or the URL is invalid.
  */
 async function parseProblem(url, judge, problemID) {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({ headless: 'new' });
     const page = await browser.newPage();
     await page.goto(url, { timeout: 60000 });
     if ((await page.title()) === 'Timus Online Judge') {
