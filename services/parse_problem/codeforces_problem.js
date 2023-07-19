@@ -1,8 +1,12 @@
 import cheerio from 'cheerio';
-import puppeteer from 'puppeteer';
+import edgeChromium from 'chrome-aws-lambda';
+import puppeteer from 'puppeteer-core';
 import { createProblem, readProblem } from '../../database/queries/problem_query.js';
 import extractTitle from '../../lib/extractTitle.js';
 import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
+
+const LOCAL_CHROME_EXECUTABLE =
+    'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe';
 
 /**
  * Parses an AtCoder problem from the given URL and returns the parsed problem object.
@@ -13,7 +17,15 @@ import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
  * @throws {Error} If there is an error during parsing or database operations.
  */
 async function parseProblem(url, judge, problemID) {
-    const browser = await puppeteer.launch({ headless: 'new' });
+    const executablePath = (await edgeChromium.executablePath) || LOCAL_CHROME_EXECUTABLE;
+
+    // const browser = await puppeteer.launch({ headless: 'new' });
+    const browser = await puppeteer.launch({
+        executablePath,
+        args: edgeChromium.args,
+        headless: true,
+    });
+
     const page = await browser.newPage();
     await page.goto(url, { timeout: 60000 });
 
