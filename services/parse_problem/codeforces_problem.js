@@ -19,7 +19,6 @@ const LOCAL_CHROME_EXECUTABLE =
 async function parseProblem(url, judge, problemID) {
     const executablePath = (await edgeChromium.executablePath) || LOCAL_CHROME_EXECUTABLE;
 
-    // const browser = await puppeteer.launch({ headless: 'new' });
     const browser = await puppeteer.launch({
         executablePath,
         args: edgeChromium.args,
