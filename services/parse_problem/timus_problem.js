@@ -27,7 +27,10 @@ async function parseProblem(url, judge, problemID) {
     });
 
     const page = await browser.newPage();
-    await page.goto(url, { timeout: 60000 });
+    await page.goto(url, { timeout: 60000, waitUntil: 'domcontentloaded' });
+
+    await page.waitForTimeout(2000);
+
     if ((await page.title()) === 'Timus Online Judge') {
         console.log('Url redirect to another page');
         throw new Error('Invalid Url');
