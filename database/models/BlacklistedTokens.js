@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 
-const db = mongoose.connection.useDb('codetrackervj');
-
 // Define the schema for the blacklisted JWT document
 const blacklistedTokenSchema = new mongoose.Schema(
     {
@@ -19,6 +17,6 @@ const blacklistedTokenSchema = new mongoose.Schema(
 );
 
 // Create and export the blacklisted JWT model
-const BlacklistedTokens = db.model('BlacklistedTokens', blacklistedTokenSchema);
+const BlacklistedTokens = new mongoose.model('BlacklistedTokens', blacklistedTokenSchema);
 
 export default BlacklistedTokens;

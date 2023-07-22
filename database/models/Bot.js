@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 
-const db = mongoose.connection.useDb('codetrackervj');
-
 // Define the schema for the bot document
 const botSchema = new mongoose.Schema(
     {
@@ -34,6 +32,6 @@ const botSchema = new mongoose.Schema(
 );
 
 // Create and export the bot model
-const Bot = db.model('Bot', botSchema);
+const Bot = new mongoose.model('Bot', botSchema);
 
 export default Bot;
