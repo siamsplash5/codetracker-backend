@@ -34,6 +34,6 @@
         "superagent": "^8.0.9"
     },
     "scripts": {
-        "start": "node app.js"
+        "start": "nodemon app.js"
     }
 }

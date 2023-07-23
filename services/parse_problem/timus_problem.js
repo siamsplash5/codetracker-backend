@@ -33,7 +33,7 @@ async function parseProblem(url, judge, problemID) {
 
     if ((await page.title()) === 'Timus Online Judge') {
         console.log('Url redirect to another page');
-        throw new Error('Invalid Url');
+        throw new Error('Invalid URL');
     }
     // grab the div element which contains the problem statement
     const problemStatementHTML = await page.$eval(
@@ -158,7 +158,7 @@ function extractProblemID(url) {
     const match = url.match(pattern);
     if (!match) {
         console.log('Error occurred during extract problemID');
-        throw new Error('Invalid Url');
+        throw new Error('Invalid URL');
     }
     return match[1];
 }

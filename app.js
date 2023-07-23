@@ -13,7 +13,6 @@ import contestRouter from './routers/contestRouter.js';
 import loginRouter from './routers/loginRouter.js';
 import logoutRouter from './routers/logoutRouter.js';
 import passwordVerifyRouter from './routers/passwordVerifyRouter.js';
-import problemAllRouter from './routers/problemAllRouter.js';
 import problemRouter from './routers/problemRouter.js';
 import registerRouter from './routers/registerRouter.js';
 import registrationVerifyRouter from './routers/registrationVerifyRouter.js';
@@ -32,7 +31,6 @@ import {
     passwordVerifyRequestSchema,
     passwordVerifyRequestValidator
 } from './middlewares/passwordVerifyRequestValidator.js';
-import problemRequestValidator from './middlewares/problemRequestValidator.js';
 import {
     registerRequestValidator,
     registerValidationSchema
@@ -118,8 +116,7 @@ app.use('/api/logout', authGuard, logoutRouter);
 app.use('/api/submit', authGuard, submitRouter);
 app.use('/api/submissions', authGuard, submissionQueryRouter);
 
-app.use('/api/problem', problemRequestValidator, problemRouter);
-app.use('/api/problem-all', problemAllRouter);
+app.use('/api/problem', problemRouter);
 
 app.use('/api/contest', authGuard, contestValidator, contestRouter);
 app.use('/api/contest-query', contestQueryRouter);

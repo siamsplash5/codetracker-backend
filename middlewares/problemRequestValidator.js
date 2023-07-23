@@ -23,7 +23,7 @@ function problemRequestValidator(req, res, next) {
                     spojRegex.test(problemUrl)
                 )
             ) {
-                return responseHandler.badRequest(res, 'Invalid url');
+                return responseHandler.badRequest(res, 'Invalid URL');
             }
 
             let judge;
@@ -42,7 +42,7 @@ function problemRequestValidator(req, res, next) {
             } else if (spojDomainRegex.test(problemUrl)) {
                 judge = 'Spoj';
             } else {
-                return responseHandler.badRequest(res, 'Invalid url');
+                return responseHandler.badRequest(res, 'Invalid URL');
             }
 
             // Uppercase the problemID from problemUrl for spoj

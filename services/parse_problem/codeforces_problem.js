@@ -32,7 +32,7 @@ async function parseProblem(url, judge, problemID) {
 
     if (page.url() !== url) {
         console.log('Url redirect to another page');
-        throw new Error('Invalid Url');
+        throw new Error('Invalid URL');
     }
 
     const problemStatementHTML = await page.$eval('.problem-statement', (el) => el.innerHTML);
@@ -129,7 +129,7 @@ function extractProblemID(url) {
         return (contestNumber + problemCode).toUpperCase();
     }
     console.log('Error occurred during extract problemID');
-    throw new Error('Invalid Url');
+    throw new Error('Invalid URL');
 }
 
 /**

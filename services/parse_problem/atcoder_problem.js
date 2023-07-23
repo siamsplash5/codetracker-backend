@@ -33,7 +33,7 @@ async function parseProblem(url, judge, problemID) {
 
     if ((await page.title()) === '404 Not Found - AtCoder') {
         console.log('Url redirect to another page');
-        throw new Error('Invalid Url');
+        throw new Error('Invalid URL');
     }
 
     // Grab problem statement from the webpage
@@ -211,7 +211,7 @@ function extractProblemID(url) {
     const match = url.match(pattern);
     if (!(match && match.length > 1)) {
         console.log('Error occurred during extract problemID');
-        throw new Error('Invalid Url');
+        throw new Error('Invalid URL');
     }
     return match[1];
 }
