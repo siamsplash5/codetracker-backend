@@ -118,7 +118,11 @@ problemRouter.delete('/delete', authGuard, async (req, res) => {
     try {
         const { judge } = req.body;
         let { problemID } = req.body;
-        problemID = problemID.toLowerCase();
+        if (judge === 'Atcoder') {
+            problemID = problemID.toLowerCase();
+        } else {
+            problemID = problemID.toUpperCase();
+        }
         const { username } = req;
         const { role } = await User.findOne({ username }).select({ role: 1 });
         if (role === 'guest') {
