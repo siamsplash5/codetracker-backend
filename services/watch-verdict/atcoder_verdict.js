@@ -112,7 +112,7 @@ async function watchAtcoderVerdict(watchInfo) {
             ) {
                 break;
             }
-            await sleep(2000);
+            await sleep(1000);
         }
 
         console.log(status);

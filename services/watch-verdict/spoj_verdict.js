@@ -67,7 +67,7 @@ async function watchSPOJVerdict(submissionInfo) {
     try {
         let status;
 
-        for (let i = 0; i < 10000; i += 1) {
+        for (let i = 0; i < 20; i += 1) {
             const { text } = await agent.get(watchUrl);
             status = getStatus(text, submissionID, username);
             console.log(status.verdict);
@@ -76,7 +76,7 @@ async function watchSPOJVerdict(submissionInfo) {
                 break;
             }
 
-            await sleep(2000);
+            await sleep(1000);
         }
         status.verdict = `${status.verdict.charAt(0).toUpperCase()}${status.verdict.slice(1)}`;
         console.log(status);

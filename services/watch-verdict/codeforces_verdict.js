@@ -80,7 +80,7 @@ async function watchCodeforcesVerdict(submissionInfo) {
                 break;
             }
 
-            await sleep(3000);
+            await sleep(1000);
         }
 
         console.log(status);
