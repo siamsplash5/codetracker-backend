@@ -22,11 +22,6 @@ import submitRouter from './routers/submitRouter.js';
 
 // middlewares
 import authGuard from './middlewares/authGuard.js';
-import contestValidator from './middlewares/contestValidator.js';
-import {
-    loginRequestValidator,
-    loginValidationSchema
-} from './middlewares/loginRequestValidator.js';
 import {
     passwordVerifyRequestSchema,
     passwordVerifyRequestValidator
@@ -89,7 +84,7 @@ mongoose
     */
    app.use('/api/check', checkRouter);
 
-   app.use('/api/login', loginValidationSchema, loginRequestValidator, loginRouter);
+   app.use('/api/login', loginRouter);
    app.use(
        '/api/reset-password',
     resetPasswordValidationSchema,
@@ -118,7 +113,7 @@ app.use('/api/submissions', authGuard, submissionQueryRouter);
 
 app.use('/api/problem', problemRouter);
 
-app.use('/api/contest', authGuard, contestValidator, contestRouter);
+app.use('/api/contest', contestRouter);
 app.use('/api/contest-query', contestQueryRouter);
 app.use('/api/contest-problem', contestProblemRouter);
 

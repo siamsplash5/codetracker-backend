@@ -1,7 +1,7 @@
 import { body, validationResult } from 'express-validator';
 import responseHandler from '../handlers/response.handler.js';
 
-export const loginValidationSchema = [
+export const loginValidator = [
     body('username')
         .trim()
         .notEmpty()
@@ -18,11 +18,12 @@ export const loginValidationSchema = [
         .withMessage('Invalid username/password'),
 ];
 
-export function loginRequestValidator(req, res, next) {
+export function runLoginValidation(req, res, next) {
     try {
         const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return responseHandler.badRequest(res, errors.array()[0].msg);
+        if (errors.isEmpty() === false) {
+            const errorMessage = errors.array()[0].msg;
+            return responseHandler.badRequest(res, errorMessage);
         }
         next();
     } catch (error) {
