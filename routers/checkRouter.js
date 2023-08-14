@@ -5,7 +5,7 @@ import responseHandler from '../handlers/response.handler.js';
 const checkRouter = express.Router();
 
 function findUniqueElements(arr) {
-  return arr.filter((item, index) => arr.indexOf(item) === index);
+    return arr.filter((item, index) => arr.indexOf(item) === index);
 }
 
 checkRouter.get('/', async (req, res) => {
