@@ -3,10 +3,13 @@ import express from 'express';
 import userModel from '../database/models/User.js';
 import userOTPVerificationModel from '../database/models/UserOTPVerification.js';
 import responseHandler from '../handlers/response.handler.js';
+import {
+    passwordUpdateRequestValidator,
+    // eslint-disable-next-line prettier/prettier
+    runPasswordUpdateValidation
+} from '../middlewares/passwordUpdateValidation.js';
 
-const passwordVerifyRouter = express.Router();
-
-passwordVerifyRouter.post('/', async (req, res) => {
+async function handleUpdatePassword(req, res) {
     try {
         const { otp, newPassword, token: userID } = req.body;
 
@@ -54,6 +57,15 @@ passwordVerifyRouter.post('/', async (req, res) => {
         console.log(error);
         responseHandler.error(res);
     }
-});
+}
 
-export default passwordVerifyRouter;
+const setNewPasswordRouter = express.Router();
+
+setNewPasswordRouter.post(
+    '/',
+    passwordUpdateRequestValidator,
+    runPasswordUpdateValidation,
+    handleUpdatePassword
+);
+
+export default setNewPasswordRouter;

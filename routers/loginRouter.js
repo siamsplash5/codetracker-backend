@@ -3,7 +3,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import userModel from '../database/models/User.js';
 import responseHandler from '../handlers/response.handler.js';
-import { loginValidator, runLoginValidation } from '../middlewares/runLoginValidation.js';
+import { loginValidator, runLoginValidation } from '../middlewares/loginValidation.js';
 
 const loginRouter = express.Router();
 const maxAge = 24 * 60 * 60 * 1000; // 24 hours

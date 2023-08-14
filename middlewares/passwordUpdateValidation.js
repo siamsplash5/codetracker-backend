@@ -1,7 +1,7 @@
 import { body, validationResult } from 'express-validator';
 import responseHandler from '../handlers/response.handler.js';
 
-export const passwordVerifyRequestSchema = [
+export const passwordUpdateRequestValidator = [
     body('otp')
         .trim()
         .notEmpty()
@@ -16,7 +16,7 @@ export const passwordVerifyRequestSchema = [
         .withMessage('Password must contain a minimum of 8 characters'),
 ];
 
-export function passwordVerifyRequestValidator(req, res, next) {
+export function runPasswordUpdateValidation(req, res, next) {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

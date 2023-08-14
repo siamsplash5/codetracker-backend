@@ -10,34 +10,18 @@ import checkRouter from './routers/checkRouter.js';
 import contestProblemRouter from './routers/contestProblemRouter.js';
 import contestQueryRouter from './routers/contestQueryRouter.js';
 import contestRouter from './routers/contestRouter.js';
+import forgotPasswordRouter from './routers/forgotPasswordRouter.js';
 import loginRouter from './routers/loginRouter.js';
 import logoutRouter from './routers/logoutRouter.js';
-import passwordVerifyRouter from './routers/passwordVerifyRouter.js';
 import problemRouter from './routers/problemRouter.js';
 import registerRouter from './routers/registerRouter.js';
 import registrationVerifyRouter from './routers/registrationVerifyRouter.js';
-import resetPasswordRouter from './routers/resetPasswordRouter.js';
+import setNewPasswordRouter from './routers/setNewPasswordRouter.js';
 import submissionQueryRouter from './routers/submissionQueryRouter.js';
 import submitRouter from './routers/submitRouter.js';
 
 // middlewares
 import authGuard from './middlewares/authGuard.js';
-import {
-    passwordVerifyRequestSchema,
-    passwordVerifyRequestValidator
-} from './middlewares/passwordVerifyRequestValidator.js';
-import {
-    registerRequestValidator,
-    registerValidationSchema
-} from './middlewares/registerRequestValidator.js';
-import {
-    resetPasswordRequestValidator,
-    resetPasswordValidationSchema
-} from './middlewares/resetPasswordRequestValidator.js';
-import {
-    verifyRequestValidator,
-    verifyValidationSchema
-} from './middlewares/verifyRequestValidator.js';
 
 // handlers
 import responseHandler from './handlers/response.handler.js';
@@ -79,34 +63,14 @@ mongoose
         console.error('Failed to connect to the database:', error);
     });
 
-    /**
-     * Register routes
-    */
-   app.use('/api/check', checkRouter);
+app.use('/api/check', checkRouter);
+app.use('/api/login', loginRouter);
+app.use('/api/forgot-password', forgotPasswordRouter);
+app.use('/api/forgot-password/update', setNewPasswordRouter);
+app.use('/api/logout', logoutRouter);
 
-   app.use('/api/login', loginRouter);
-   app.use(
-       '/api/reset-password',
-    resetPasswordValidationSchema,
-    resetPasswordRequestValidator,
-    resetPasswordRouter
-);
-app.use(
-    '/api/reset-password-verify',
-    passwordVerifyRequestSchema,
-    passwordVerifyRequestValidator,
-    passwordVerifyRouter
-);
-
-app.use('/api/register', registerValidationSchema, registerRequestValidator, registerRouter);
-app.use(
-    '/api/register-verify',
-    verifyValidationSchema,
-    verifyRequestValidator,
-    registrationVerifyRouter
-);
-
-app.use('/api/logout', authGuard, logoutRouter);
+app.use('/api/register', registerRouter);
+app.use('/api/register-verify', registrationVerifyRouter);
 
 app.use('/api/submit', authGuard, submitRouter);
 app.use('/api/submissions', authGuard, submissionQueryRouter);

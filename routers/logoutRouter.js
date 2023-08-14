@@ -2,10 +2,9 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import blacklistedToken from '../database/models/BlacklistedTokens.js';
 import responseHandler from '../handlers/response.handler.js';
+import authGuard from '../middlewares/authGuard.js';
 
-const logoutRouter = express.Router();
-
-logoutRouter.post('/', async (req, res) => {
+async function logoutHandler(req, res) {
     const { username, token } = req.body;
     try {
         // const token = req.cookies.JSESSIONID;
@@ -30,6 +29,10 @@ logoutRouter.post('/', async (req, res) => {
         console.log(error);
         responseHandler.error(res);
     }
-});
+}
+
+const logoutRouter = express.Router();
+
+logoutRouter.post('/', authGuard, logoutHandler);
 
 export default logoutRouter;
