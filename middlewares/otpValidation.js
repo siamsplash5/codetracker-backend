@@ -1,7 +1,7 @@
 import { body, validationResult } from 'express-validator';
 import responseHandler from '../handlers/response.handler.js';
 
-export const verifyValidationSchema = [
+export const otpValidator = [
     body('otp')
         .trim()
         .notEmpty()
@@ -9,7 +9,7 @@ export const verifyValidationSchema = [
         .matches(/^\d{6}$/)
         .withMessage('Invalid OTP'),
 ];
-export function verifyRequestValidator(req, res, next) {
+export function runOTPValidation(req, res, next) {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

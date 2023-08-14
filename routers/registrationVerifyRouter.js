@@ -3,10 +3,9 @@ import express from 'express';
 import userModel from '../database/models/User.js';
 import userOTPVerificationModel from '../database/models/UserOTPVerification.js';
 import responseHandler from '../handlers/response.handler.js';
+import { otpValidator, runOTPValidation } from '../middlewares/otpValidation.js';
 
-const registrationVerifyRouter = express.Router();
-
-registrationVerifyRouter.post('/', async (req, res) => {
+async function completeRegistration(req, res) {
     try {
         const { otp, token: userID } = req.body;
         // const userID = req.cookies.uid;
@@ -43,6 +42,10 @@ registrationVerifyRouter.post('/', async (req, res) => {
         console.log(error);
         responseHandler.error(res);
     }
-});
+}
+
+const registrationVerifyRouter = express.Router();
+
+registrationVerifyRouter.post('/', otpValidator, runOTPValidation, completeRegistration);
 
 export default registrationVerifyRouter;
