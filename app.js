@@ -20,9 +20,6 @@ import setNewPasswordRouter from './routers/setNewPasswordRouter.js';
 import submissionQueryRouter from './routers/submissionQueryRouter.js';
 import submitRouter from './routers/submitRouter.js';
 
-// middlewares
-import authGuard from './middlewares/authGuard.js';
-
 // handlers
 import responseHandler from './handlers/response.handler.js';
 
@@ -63,6 +60,8 @@ mongoose
         console.error('Failed to connect to the database:', error);
     });
 
+// API Routes
+
 app.use('/api/check', checkRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/forgot-password', forgotPasswordRouter);
@@ -72,8 +71,8 @@ app.use('/api/logout', logoutRouter);
 app.use('/api/register', registerRouter);
 app.use('/api/register-verify', registrationVerifyRouter);
 
-app.use('/api/submit', authGuard, submitRouter);
-app.use('/api/submissions', authGuard, submissionQueryRouter);
+app.use('/api/submit', submitRouter);
+app.use('/api/submissions', submissionQueryRouter);
 
 app.use('/api/problem', problemRouter);
 

@@ -11,6 +11,7 @@ import watchAtcoderVerdict from '../services/watch-verdict/atcoder_verdict.js';
 import watchCodeforcesVerdict from '../services/watch-verdict/codeforces_verdict.js';
 import watchSPOJVerdict from '../services/watch-verdict/spoj_verdict.js';
 import watchTimusVerdict from '../services/watch-verdict/timus_verdict.js';
+import authGuard from '../middlewares/authGuard.js';
 
 const submitRouter = express.Router();
 
@@ -32,7 +33,7 @@ const submitRouter = express.Router();
  * @throws {Error} If an error occurs during the submission process.
  */
 
-submitRouter.post('/', async (req, res) => {
+submitRouter.post('/', authGuard, async (req, res) => {
     try {
         const submitInfo = req.body;
         const { judge, problemID, problemName, sourceCode, vjContest } = submitInfo;

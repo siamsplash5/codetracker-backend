@@ -2,6 +2,7 @@ import express from 'express';
 import Submission from '../database/models/Submission.js';
 import User from '../database/models/User.js';
 import responseHandler from '../handlers/response.handler.js';
+import authGuard from '../middlewares/authGuard.js';
 
 const submissionQueryRouter = express.Router();
 /**
@@ -9,23 +10,27 @@ const submissionQueryRouter = express.Router();
  * Query User's submission for a particular problem
  */
 
-submissionQueryRouter.post('/specific-problem/:judge/:problemID/:contestID', async (req, res) => {
-    try {
-        const { judge, problemID, contestID } = req.params;
-        const { username } = req;
-        const result = await Submission.find({
-            submittedBy: username,
-            judge,
-            problemID,
-            'vjContest.contestID': contestID,
-        });
-        result.reverse();
-        responseHandler.ok(res, result);
-    } catch (error) {
-        console.log(error);
-        responseHandler.error(res);
+submissionQueryRouter.post(
+    '/specific-problem/:judge/:problemID/:contestID',
+    authGuard,
+    async (req, res) => {
+        try {
+            const { judge, problemID, contestID } = req.params;
+            const { username } = req;
+            const result = await Submission.find({
+                submittedBy: username,
+                judge,
+                problemID,
+                'vjContest.contestID': contestID,
+            });
+            result.reverse();
+            responseHandler.ok(res, result);
+        } catch (error) {
+            console.log(error);
+            responseHandler.error(res);
+        }
     }
-});
+);
 
 /**
  * GET /submissionQueryRouter
