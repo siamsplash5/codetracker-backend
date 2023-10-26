@@ -41,15 +41,15 @@ problemRouter.post('/all-fetch', problemRequestValidator, async (req, res) => {
         const { links: problemList } = req.body;
 
         problemList.forEach(async (link) => {
-            const { judge, problemUrl } = link;
+            const { judge, problemFetchingUrl } = link;
             if (judge === 'Atcoder') {
-                await parseAtcoderProblem(judge, problemUrl);
+                await parseAtcoderProblem(judge, problemFetchingUrl);
             } else if (judge === 'Codeforces') {
-                await parseCodeforcesProblem(judge, problemUrl);
+                await parseCodeforcesProblem(judge, problemFetchingUrl);
             } else if (judge === 'Spoj') {
-                await parseSpojProblem(judge, problemUrl);
+                await parseSpojProblem(judge, problemFetchingUrl);
             } else if (judge === 'Timus') {
-                await parseTimusProblem(judge, problemUrl);
+                await parseTimusProblem(judge, problemFetchingUrl);
             }
         });
         responseHandler.ok(res, 'done');
@@ -77,23 +77,23 @@ problemRouter.post('/all-fetch', problemRequestValidator, async (req, res) => {
 problemRouter.post('/one', problemRequestValidator, async (req, res) => {
     try {
         // eslint-disable-next-line prefer-const
-        let { judge, problemID, problemUrl } = req.body;
+        let { judge, problemID, problemFetchingUrl } = req.body;
 
-        if (problemUrl === undefined) {
-            problemUrl = createProblemUrl(judge, problemID);
-            if (problemUrl === null) {
+        if (problemFetchingUrl === undefined) {
+            problemFetchingUrl = createProblemUrl(judge, problemID);
+            if (problemFetchingUrl === null) {
                 responseHandler.badRequest(res, 'Invalid judge/problem ID');
             }
         }
         let problem;
         if (judge === 'Atcoder') {
-            problem = await parseAtcoderProblem(judge, problemUrl);
+            problem = await parseAtcoderProblem(judge, problemFetchingUrl);
         } else if (judge === 'Codeforces') {
-            problem = await parseCodeforcesProblem(judge, problemUrl);
+            problem = await parseCodeforcesProblem(judge, problemFetchingUrl);
         } else if (judge === 'Spoj') {
-            problem = await parseSpojProblem(judge, problemUrl);
+            problem = await parseSpojProblem(judge, problemFetchingUrl);
         } else if (judge === 'Timus') {
-            problem = await parseTimusProblem(judge, problemUrl);
+            problem = await parseTimusProblem(judge, problemFetchingUrl);
         } else {
             return responseHandler.badRequest(res, 'Invalid online judge');
         }
