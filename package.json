@@ -6,6 +6,9 @@
     "repository": "https://github.com/siamsplash5/project-app.git",
     "author": "Siam Ahmed",
     "license": "MIT",
+    "engines": {
+        "node": "14.20.1"
+    },
     "devDependencies": {
         "eslint": "^8.37.0",
         "eslint-config-airbnb-base": "^15.0.0",
