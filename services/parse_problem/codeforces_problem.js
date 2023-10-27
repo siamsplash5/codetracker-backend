@@ -34,7 +34,6 @@ async function parseProblem(url, judge, problemID) {
 
     const problemStatementHTML = await page.$eval('.problem-statement', (el) => el.innerHTML);
     const $ = cheerio.load(problemStatementHTML);
-    browser.close();
 
     const title = extractTitle(judge, $('.header .title').text().trim());
     const timeLimit = $('.header .time-limit').text().replace('time limit per test', '').trim();
@@ -109,6 +108,7 @@ async function parseProblem(url, judge, problemID) {
         source: url,
         parsedAt: currentDateTime,
     };
+    browser.close();
     return problem;
 }
 

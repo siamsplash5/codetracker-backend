@@ -7,7 +7,7 @@
     "author": "Siam Ahmed",
     "license": "MIT",
     "engines": {
-        "node": "18.18.1"
+        "node": "18.14.2"
     },
     "devDependencies": {
         "eslint": "^8.37.0",
