@@ -1,13 +1,13 @@
 /* eslint-disable max-len */
 import cheerio from 'cheerio';
-import edgeChromium from 'chrome-aws-lambda';
-import puppeteer from 'puppeteer-core';
+// import edgeChromium from 'chrome-aws-lambda';
+import puppeteer from 'puppeteer';
 import { createProblem, readProblem } from '../../database/queries/problem_query.js';
 import extractTitle from '../../lib/extractTitle.js';
 import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
 
-const LOCAL_CHROME_EXECUTABLE =
-    'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe';
+// const LOCAL_CHROME_EXECUTABLE =
+//     'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe';
 
 /**
  * Parses a problem from the given URL and returns the parsed problem object.
@@ -18,11 +18,11 @@ const LOCAL_CHROME_EXECUTABLE =
  * @throws {Error} If the URL is invalid or if there is an error during parsing.
  */
 async function parseProblem(url, judge, problemID) {
-    const executablePath = (await edgeChromium.executablePath) || LOCAL_CHROME_EXECUTABLE;
+    // const executablePath = (await edgeChromium.executablePath) || LOCAL_CHROME_EXECUTABLE;
 
     const browser = await puppeteer.launch({
-        executablePath,
-        args: edgeChromium.args,
+        // executablePath,
+        // args: edgeChromium.args,
         headless: true,
     });
 
