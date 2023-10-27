@@ -1,14 +1,10 @@
 /* eslint-disable newline-per-chained-call */
 /* eslint-disable max-len */
 import cheerio from 'cheerio';
-import edgeChromium from 'chrome-aws-lambda';
-import puppeteer from 'puppeteer-core';
+import puppeteer from 'puppeteer';
 import { createProblem, readProblem } from '../../database/queries/problem_query.js';
 import extractTitle from '../../lib/extractTitle.js';
 import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
-
-const LOCAL_CHROME_EXECUTABLE =
-    'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe';
 
 /**
  * Parses a problem from a given URL and problem ID.
@@ -19,11 +15,12 @@ const LOCAL_CHROME_EXECUTABLE =
  * @throws {Error} If there is an error parsing the problem or the URL is invalid.
  */
 async function parseProblem(url, judge, problemID) {
-    const executablePath = (await edgeChromium.executablePath) || LOCAL_CHROME_EXECUTABLE;
-
     const browser = await puppeteer.launch({
-        executablePath,
-        args: edgeChromium.args,
+        args: ['--disable-setuid-sandbox', '--no-sandbox', '--single-process', '--no-zygote'],
+        executablePath:
+            process.env.NODE_ENV === 'production'
+                ? process.env.PUPPETEER_EXECUTABLE_PATH
+                : puppeteer.executablePath(),
         headless: true,
     });
 
@@ -41,6 +38,7 @@ async function parseProblem(url, judge, problemID) {
 
     // Load the div element in Cheerio
     const $ = cheerio.load(problemStatementHTML);
+    browser.close();
 
     // Modify the src attribute for each <img> tag
     const imgTags = $('img');

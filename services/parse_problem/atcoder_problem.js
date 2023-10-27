@@ -1,13 +1,8 @@
-/* eslint-disable max-len */
 import cheerio from 'cheerio';
-// import edgeChromium from 'chrome-aws-lambda';
 import puppeteer from 'puppeteer';
 import { createProblem, readProblem } from '../../database/queries/problem_query.js';
 import extractTitle from '../../lib/extractTitle.js';
 import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
-
-// const LOCAL_CHROME_EXECUTABLE =
-//     'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe';
 
 /**
  * Parses a problem from the given URL and returns the parsed problem object.
@@ -18,11 +13,7 @@ import getCurrentDateTime from '../../lib/getCurrentDateTime.js';
  * @throws {Error} If the URL is invalid or if there is an error during parsing.
  */
 async function parseProblem(url, judge, problemID) {
-    // const executablePath = (await edgeChromium.executablePath) || LOCAL_CHROME_EXECUTABLE;
-
     const browser = await puppeteer.launch({
-        // executablePath,
-        // args: edgeChromium.args,
         args: ['--disable-setuid-sandbox', '--no-sandbox', '--single-process', '--no-zygote'],
         executablePath:
             process.env.NODE_ENV === 'production'
@@ -48,6 +39,7 @@ async function parseProblem(url, judge, problemID) {
     );
     // Load the problem statement HTML to cheerio
     const $ = cheerio.load(problemStatementHTML);
+    browser.close();
 
     // Parse the title of the problem
     const title = extractTitle(judge, $('span.h2').text().trim().replace('\n\t\t\tEditorial', ''));
@@ -223,7 +215,8 @@ function extractProblemID(url) {
 
 /**
  * Parses an AtCoder problem from the given URL and returns the parsed problem object.
- * If the problem is not found in the database, it parses the problem and creates a new entry in the database.
+ * If the problem is not found in the database:
+ * it fetch the problem and creates a new entry in the database.
  * @param {string} judge - The judge (e.g., 'atcoder').
  * @param {string} url - The URL of the problem.
  * @returns {Promise<object>} The parsed problem object.
