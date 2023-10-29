@@ -6,7 +6,7 @@ const checkRouter = express.Router();
 checkRouter.get('/uptime-robot', async (req, res) => {
     try {
         console.log('UptimeRobot');
-        responseHandler.ok('Server is up');
+        responseHandler.ok(res, 'Server is up');
     } catch (error) {
         console.log(error);
         responseHandler.error(res);
