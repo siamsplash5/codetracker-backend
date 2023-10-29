@@ -3,11 +3,9 @@ import responseHandler from '../handlers/response.handler.js';
 
 const checkRouter = express.Router();
 
-checkRouter.get('/', async (req, res) => {
+checkRouter.get('/uptime-robot', async (req, res) => {
     try {
-        const fruits = ['banana', 'apple'];
-        fruits.push('orange');
-        fruits.push(34);
+        console.log('UptimeRobot');
     } catch (error) {
         console.log(error);
         responseHandler.error(res);
